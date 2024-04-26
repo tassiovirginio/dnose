@@ -71,6 +71,57 @@ void testWithoutDescription(ExpressionStatement e) {
   });
 }
 
+void magicNumber(AstNode e) {
+  if (e is IntegerLiteral || e is DoubleLiteral) {
+    print("----------------------------");
+    print("------- Magic Number -------");
+    print("----------------------------");
+  } else {
+    e.childEntities.forEach((element) {
+      if (element is AstNode) {
+        magicNumber(element);
+      }
+    });
+  }
+}
+
+void magicNumber2(ExpressionStatement e) {
+  e.childEntities.forEach((element) {
+    if (element is MethodInvocation) {
+      element.childEntities.forEach((e2) {
+        if (e2 is ArgumentList) {
+          e2.childEntities.forEach((e3) {
+            if (e3 is FunctionExpression) {
+              e3.childEntities.forEach((element) {
+                if (element is ExpressionFunctionBody) {
+                  element.childEntities.forEach((x5) {
+                    if (x5 is SetOrMapLiteral) {
+                      x5.childEntities.forEach((x6) {
+                        if (x6 is MethodInvocation) {
+                          x6.childEntities.forEach((x7) {
+                            if (x7 is ArgumentList) {
+                              x7.childEntities.forEach((x8) {
+                                print("---> " +
+                                    x8.toString() +
+                                    " ---- " +
+                                    x8.runtimeType.toString());
+                              });
+                            }
+                          });
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+}
+
 bool isTest(AstNode e) {
   return e is ExpressionStatement &&
       e.beginToken.type == TokenType.IDENTIFIER &&
@@ -82,6 +133,7 @@ void detectTestSmells(ExpressionStatement e) {
   detectPSF(e);
   detectSleep(e);
   testWithoutDescription(e);
+  magicNumber(e);
 }
 
 void scan(AstNode n) {

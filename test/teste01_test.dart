@@ -6,7 +6,10 @@ import 'dart:io';
 void main() {
   const valorSemDesconto = 150.0;
 
-  // setUpAll(() => print("Iniciando TODOS os testes..."));
+  const UM_SEGUNDO = 1;
+
+  // setUpAll(() {
+  // });
 
   // tearDownAll(() => print("Finalizando TODOS os testes..."));
 
@@ -64,7 +67,7 @@ void main() {
 
   test("PrintStatmentFixture", () => {print("")});
 
-  test("SleepyFixture", () => {sleep(Duration(seconds: 1))});
+  test("SleepyFixture", () => {sleep(Duration(seconds: UM_SEGUNDO))});
 
   test(
       "VerboseFixture",
