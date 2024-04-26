@@ -6,6 +6,7 @@ import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
+import 'package:teste01/TestSmell.dart';
 
 String src = r"""
 import 'package:mistletoe/mistletoe.dart';
@@ -20,11 +21,16 @@ f(p){
 }
 """;
 
+List<TestSmell> testSmells = List.empty(growable: true);
+
 void detectCTL(ExpressionStatement e) {
   String codigo = e.toSource();
   if (codigo.contains("if") ||
       codigo.contains("for") ||
       codigo.contains("while")) {
+    TestSmell testSmell = TestSmell();
+    testSmell.name = "Conditional Test Logic";
+    testSmells.add(testSmell);
     print("----------------------------");
     print("-- Conditional Test Logic --");
     print("----------------------------");
@@ -34,6 +40,9 @@ void detectCTL(ExpressionStatement e) {
 void detectPSF(ExpressionStatement e) {
   String codigo = e.toSource();
   if (codigo.contains("print")) {
+    TestSmell testSmell = TestSmell();
+    testSmell.name = "PrintStatmentFixture";
+    testSmells.add(testSmell);
     print("----------------------------");
     print("--- PrintStatmentFixture ---");
     print("----------------------------");
@@ -43,6 +52,9 @@ void detectPSF(ExpressionStatement e) {
 void detectSleep(ExpressionStatement e) {
   String codigo = e.toSource();
   if (codigo.contains("sleep")) {
+    TestSmell testSmell = TestSmell();
+    testSmell.name = "SleepyFixture";
+    testSmells.add(testSmell);
     print("----------------------------");
     print("------- SleepyFixture ------");
     print("----------------------------");
@@ -57,6 +69,9 @@ void testWithoutDescription(ExpressionStatement e) {
           e2.childEntities.forEach((e3) {
             if (e3 is SimpleStringLiteral) {
               if (e3.value.trim().isEmpty) {
+                TestSmell testSmell = TestSmell();
+                testSmell.name = "TestWithoutDescription";
+                testSmells.add(testSmell);
                 print("----------------------------");
                 print("-- TestWithoutDescription --");
                 print("----------------------------");
@@ -73,6 +88,9 @@ void testWithoutDescription(ExpressionStatement e) {
 
 void magicNumber(AstNode e) {
   if (e is IntegerLiteral || e is DoubleLiteral) {
+    TestSmell testSmell = TestSmell();
+    testSmell.name = "Magic Number";
+    testSmells.add(testSmell);
     print("----------------------------");
     print("------- Magic Number -------");
     print("----------------------------");
@@ -144,9 +162,7 @@ void scan(AstNode n) {
         print(element.toSource());
         detectTestSmells(element as ExpressionStatement);
       }
-
       scan(element);
-      // print(element.toSource());
     }
   });
 }
@@ -165,6 +181,8 @@ void main() async {
   // print("---------------  Achei uma função...");
 
   scan(astnode);
+
+  print("Foram encontrado " + testSmells.length.toString() + " Test Smells.");
 
   // astnode.childEntities.forEach((element) {
   //   print(element.toString() + "\n");

@@ -1,0 +1,3 @@
+class TestSmell {
+  String? name;
+}
