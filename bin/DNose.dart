@@ -20,7 +20,8 @@ f(p){
 }
 """;
 
-void detectCTL(String codigo) {
+void detectCTL(ExpressionStatement e) {
+  String codigo = e.toSource();
   if (codigo.contains("if") ||
       codigo.contains("for") ||
       codigo.contains("while")) {
@@ -30,7 +31,8 @@ void detectCTL(String codigo) {
   }
 }
 
-void detectPSF(String codigo) {
+void detectPSF(ExpressionStatement e) {
+  String codigo = e.toSource();
   if (codigo.contains("print")) {
     print("----------------------------");
     print("--- PrintStatmentFixture ---");
@@ -38,12 +40,35 @@ void detectPSF(String codigo) {
   }
 }
 
-void detectSleep(String codigo) {
+void detectSleep(ExpressionStatement e) {
+  String codigo = e.toSource();
   if (codigo.contains("sleep")) {
     print("----------------------------");
     print("------- SleepyFixture ------");
     print("----------------------------");
   }
+}
+
+void testWithoutDescription(ExpressionStatement e) {
+  e.childEntities.forEach((element) {
+    if (element is MethodInvocation) {
+      element.childEntities.forEach((e2) {
+        if (e2 is ArgumentList) {
+          e2.childEntities.forEach((e3) {
+            if (e3 is SimpleStringLiteral) {
+              if (e3.value.trim().isEmpty) {
+                print("----------------------------");
+                print("-- TestWithoutDescription --");
+                print("----------------------------");
+              }
+            }
+            // print(
+            //     "---> " + e3.toString() + " ---- " + e3.runtimeType.toString());
+          });
+        }
+      });
+    }
+  });
 }
 
 bool isTest(AstNode e) {
@@ -52,22 +77,23 @@ bool isTest(AstNode e) {
       e.beginToken.toString() == "test";
 }
 
-void detectTestSmells(AstNode e) {
-  detectCTL(e.toSource());
-  detectPSF(e.toSource());
-  detectSleep(e.toSource());
+void detectTestSmells(ExpressionStatement e) {
+  detectCTL(e);
+  detectPSF(e);
+  detectSleep(e);
+  testWithoutDescription(e);
 }
 
-void detect(AstNode n) {
+void scan(AstNode n) {
   n.childEntities.forEach((element) {
     if (element is AstNode) {
       if (isTest(element)) {
         print("Achei um Teste...");
         print(element.toSource());
-        detectTestSmells(element);
+        detectTestSmells(element as ExpressionStatement);
       }
 
-      detect(element);
+      scan(element);
       // print(element.toSource());
     }
   });
@@ -86,7 +112,7 @@ void main() async {
 
   // print("---------------  Achei uma função...");
 
-  detect(astnode);
+  scan(astnode);
 
   // astnode.childEntities.forEach((element) {
   //   print(element.toString() + "\n");
@@ -129,9 +155,9 @@ void detectar01(AstNode astnode) {
                           e.beginToken.type == TokenType.IDENTIFIER) {
                         print("Achei um Teste...");
                         print(e.toSource());
-                        detectCTL(e.toSource());
-                        detectPSF(e.toSource());
-                        detectSleep(e.toSource());
+                        // detectCTL(e.toSource());
+                        // detectPSF(e.toSource());
+                        // detectSleep(e.toSource());
                       }
 
                       // e.childEntities.forEach((e) {
