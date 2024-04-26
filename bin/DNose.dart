@@ -1,8 +1,10 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
 
 String src = r"""
@@ -44,6 +46,33 @@ void detectSleep(String codigo) {
   }
 }
 
+bool isTest(AstNode e) {
+  return e is ExpressionStatement &&
+      e.beginToken.type == TokenType.IDENTIFIER &&
+      e.beginToken.toString() == "test";
+}
+
+void detectTestSmells(AstNode e) {
+  detectCTL(e.toSource());
+  detectPSF(e.toSource());
+  detectSleep(e.toSource());
+}
+
+void detect(AstNode n) {
+  n.childEntities.forEach((element) {
+    if (element is AstNode) {
+      if (isTest(element)) {
+        print("Achei um Teste...");
+        print(element.toSource());
+        detectTestSmells(element);
+      }
+
+      detect(element);
+      // print(element.toSource());
+    }
+  });
+}
+
 void main() async {
   var ast = parseFile(
           path:
@@ -51,19 +80,27 @@ void main() async {
           featureSet: FeatureSet.latestLanguageVersion())
       .unit;
 
-  print(ast.toSource());
+  // print(ast.toSource());
 
   AstNode astnode = ast.root;
+
+  // print("---------------  Achei uma função...");
+
+  detect(astnode);
 
   // astnode.childEntities.forEach((element) {
   //   print(element.toString() + "\n");
   // });
 
+  // detectar01(astnode);
+}
+
+void detectar01(AstNode astnode) {
   astnode.childEntities.forEach((element) {
     // print(element.runtimeType);
 
     if (element is FunctionDeclaration) {
-      print("Achei uma função...");
+      print("---------------  Achei uma função...");
 
       element.childEntities.forEach((element) {
         // print(element.runtimeType);
