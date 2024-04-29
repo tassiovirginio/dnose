@@ -7,6 +7,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:teste01/TestSmell.dart';
+import 'package:teste01/testsnells/ConditionalTestLogic.dart';
 
 String src = r"""
 import 'package:mistletoe/mistletoe.dart';
@@ -152,6 +153,7 @@ void detectTestSmells(ExpressionStatement e) {
   detectSleep(e);
   testWithoutDescription(e);
   magicNumber(e);
+  ConditionalTestLogic.detect(e);
 }
 
 void scan(AstNode n) {
@@ -159,8 +161,13 @@ void scan(AstNode n) {
     if (element is AstNode) {
       if (isTest(element)) {
         print("Achei um Teste...");
+        print(element.offset);
+        print(element.end);
+        print(element.length);
         print(element.toSource());
-        detectTestSmells(element as ExpressionStatement);
+        print(element.toString());
+
+        // detectTestSmells(element as ExpressionStatement);
       }
       scan(element);
     }
@@ -174,21 +181,15 @@ void main() async {
           featureSet: FeatureSet.latestLanguageVersion())
       .unit;
 
-  // print(ast.toSource());
-
   AstNode astnode = ast.root;
 
-  // print("---------------  Achei uma função...");
+  print("start...");
+  print(ast.lineInfo.lineCount);
+  print(astnode.offset);
 
   scan(astnode);
 
   print("Foram encontrado " + testSmells.length.toString() + " Test Smells.");
-
-  // astnode.childEntities.forEach((element) {
-  //   print(element.toString() + "\n");
-  // });
-
-  // detectar01(astnode);
 }
 
 void detectar01(AstNode astnode) {
@@ -225,6 +226,7 @@ void detectar01(AstNode astnode) {
                           e.beginToken.type == TokenType.IDENTIFIER) {
                         print("Achei um Teste...");
                         print(e.toSource());
+                        print(e.offset);
                         // detectCTL(e.toSource());
                         // detectPSF(e.toSource());
                         // detectSleep(e.toSource());
