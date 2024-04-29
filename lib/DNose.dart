@@ -75,23 +75,5 @@ class DNose {
     return testSmells;
   }
 
-  void main() async {
-    TestClass testClass = TestClass(
-        '/home/tassio/Desenvolvimento/Dart/teste01/test/teste01_test.dart');
-
-    // var ast = parseFile(
-    //         path: testClass.path, featureSet: FeatureSet.latestLanguageVersion())
-    //     .unit;
-
-    // AstNode astNodeFile = ast.root;
-
-    // print("start...");
-    // print(ast.lineInfo.lineCount);
-    // print(astNodeFile.offset);
-
-    List<TestSmell> testSmells = scan(testClass);
-
-    print("Foram encontrado " + testSmells.length.toString() + " Test Smells.");
-  }
   
 }
