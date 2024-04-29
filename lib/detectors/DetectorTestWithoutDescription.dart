@@ -1,4 +1,4 @@
-import 'package:teste01/TestClass.dart';
+import 'package:teste01/detectors/TestClass.dart';
 import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
 import 'package:teste01/detectors/TestSmell.dart';
 import 'package:analyzer/dart/ast/ast.dart';

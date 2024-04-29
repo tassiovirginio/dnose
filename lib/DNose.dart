@@ -6,7 +6,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 // import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
-import 'package:teste01/TestClass.dart';
+import 'package:teste01/detectors/TestClass.dart';
 import 'package:teste01/detectors/TestSmell.dart';
 import 'package:teste01/detectors/DetectorConditionalTestLogic.dart';
 import 'package:teste01/detectors/DetectorPrintStatmentFixture.dart';
