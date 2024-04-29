@@ -16,7 +16,7 @@ class DetectorTestWithoutDescription implements AbstractDetectorTestSmell{
           e2.childEntities.forEach((e3) {
             if (e3 is SimpleStringLiteral) {
               if (e3.value.trim().isEmpty) {
-                testSmells.add(TestSmell("TestWithoutDescription", testClass, code: e.toSource()));
+                testSmells.add(TestSmell("Test Without Description", testClass, code: e.toSource()));
               }
             }
           });
