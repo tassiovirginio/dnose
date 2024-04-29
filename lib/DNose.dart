@@ -1,10 +1,10 @@
-import 'dart:ffi';
-import 'dart:io';
+// import 'dart:ffi';
+// import 'dart:io';
 
-import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/analysis/features.dart';
+// import 'package:analyzer/dart/analysis/utilities.dart';
+// import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/ast/syntactic_entity.dart';
+// import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:teste01/TestClass.dart';
 import 'package:teste01/detectors/TestSmell.dart';

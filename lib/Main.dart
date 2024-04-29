@@ -1,8 +1,8 @@
-import 'dart:ffi';
-import 'dart:io';
+// import 'dart:ffi';
+// import 'dart:io';
 
 import 'package:teste01/TestClass.dart';
-import 'package:teste01/detectors/TestSmell.dart';
+// import 'package:teste01/detectors/TestSmell.dart';
 import 'package:teste01/DNose.dart';
 
 void main() {
