@@ -6,244 +6,92 @@ import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
-import 'package:teste01/TestSmell.dart';
-import 'package:teste01/testsnells/ConditionalTestLogic.dart';
+import 'package:teste01/TestClass.dart';
+import 'package:teste01/detectors/TestSmell.dart';
+import 'package:teste01/detectors/DetectorConditionalTestLogic.dart';
+import 'package:teste01/detectors/DetectorPrintStatmentFixture.dart';
+import 'package:teste01/detectors/DetectorSleepyFixture.dart';
+import 'package:teste01/detectors/DetectorTestWithoutDescription.dart';
+import 'package:teste01/detectors/DetectorMagicNumber.dart';
 
-String src = r"""
-import 'package:mistletoe/mistletoe.dart';
-var o = new Object();
-main(){
-  f(o);
-}
-f(p){
-  var o = p;
-  o = o as Object;
-  print(o);
-}
-""";
-
-List<TestSmell> testSmells = List.empty(growable: true);
-
-void detectCTL(ExpressionStatement e) {
-  String codigo = e.toSource();
-  if (codigo.contains("if") ||
-      codigo.contains("for") ||
-      codigo.contains("while")) {
-    TestSmell testSmell = TestSmell();
-    testSmell.name = "Conditional Test Logic";
-    testSmells.add(testSmell);
-    print("----------------------------");
-    print("-- Conditional Test Logic --");
-    print("----------------------------");
+class DNose {
+  bool isTest(AstNode e) {
+    return e is ExpressionStatement &&
+        e.beginToken.type == TokenType.IDENTIFIER &&
+        e.beginToken.toString() == "test";
   }
-}
 
-void detectPSF(ExpressionStatement e) {
-  String codigo = e.toSource();
-  if (codigo.contains("print")) {
-    TestSmell testSmell = TestSmell();
-    testSmell.name = "PrintStatmentFixture";
-    testSmells.add(testSmell);
-    print("----------------------------");
-    print("--- PrintStatmentFixture ---");
-    print("----------------------------");
+  List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass) {
+    List<TestSmell> testSmells = List.empty(growable: true);
+
+    var detectorConditionalTestLogic = DetectorConditionalTestLogic();
+    var detectorPrintStatmentFixture = DetectorPrintStatmentFixture();
+    var detectorTestWithoutDescription = DetectorTestWithoutDescription();
+    var detectorMagicNumber = DetectorMagicNumber();
+    var detectorSleepyFixture = DetectorSleepyFixture();
+
+    testSmells.addAll(detectorConditionalTestLogic.detect(e, testClass));
+    testSmells.addAll(detectorPrintStatmentFixture.detect(e, testClass));
+    testSmells.addAll(detectorTestWithoutDescription.detect(e, testClass));
+    testSmells.addAll(detectorMagicNumber.detect(e, testClass));
+    testSmells.addAll(detectorSleepyFixture.detect(e, testClass));
+
+    return testSmells;
   }
-}
 
-void detectSleep(ExpressionStatement e) {
-  String codigo = e.toSource();
-  if (codigo.contains("sleep")) {
-    TestSmell testSmell = TestSmell();
-    testSmell.name = "SleepyFixture";
-    testSmells.add(testSmell);
-    print("----------------------------");
-    print("------- SleepyFixture ------");
-    print("----------------------------");
+  List<TestSmell> scan(TestClass testClass) {
+    List<TestSmell> testSmells = List.empty(growable: true);
+
+    AstNode n = testClass.root as AstNode;
+
+    print("Scanning...");
+    print("Path: " + testClass.path);
+    // print(testClass.ast?.lineInfo.lineCount);
+    // print(n.offset);
+
+    testSmells.addAll(_scan(n, testClass));
+
+    return testSmells;
   }
-}
 
-void testWithoutDescription(ExpressionStatement e) {
-  e.childEntities.forEach((element) {
-    if (element is MethodInvocation) {
-      element.childEntities.forEach((e2) {
-        if (e2 is ArgumentList) {
-          e2.childEntities.forEach((e3) {
-            if (e3 is SimpleStringLiteral) {
-              if (e3.value.trim().isEmpty) {
-                TestSmell testSmell = TestSmell();
-                testSmell.name = "TestWithoutDescription";
-                testSmells.add(testSmell);
-                print("----------------------------");
-                print("-- TestWithoutDescription --");
-                print("----------------------------");
-              }
-            }
-            // print(
-            //     "---> " + e3.toString() + " ---- " + e3.runtimeType.toString());
-          });
-        }
-      });
-    }
-  });
-}
-
-void magicNumber(AstNode e) {
-  if (e is IntegerLiteral || e is DoubleLiteral) {
-    TestSmell testSmell = TestSmell();
-    testSmell.name = "Magic Number";
-    testSmells.add(testSmell);
-    print("----------------------------");
-    print("------- Magic Number -------");
-    print("----------------------------");
-  } else {
-    e.childEntities.forEach((element) {
+  List<TestSmell> _scan(AstNode n, TestClass testClass) {
+    List<TestSmell> testSmells = List.empty(growable: true);
+    n.childEntities.forEach((element) {
       if (element is AstNode) {
-        magicNumber(element);
+        if (isTest(element)) {
+          print("Achei um Teste...");
+          // print(element.offset);
+          // print(element.end);
+          // print(element.length);
+          // print(element.toSource());
+          // print(element.toString());
+
+          testSmells.addAll(
+              detectTestSmells(element as ExpressionStatement, testClass));
+        }
+        testSmells.addAll(_scan(element, testClass));
       }
     });
+    return testSmells;
   }
-}
 
-void magicNumber2(ExpressionStatement e) {
-  e.childEntities.forEach((element) {
-    if (element is MethodInvocation) {
-      element.childEntities.forEach((e2) {
-        if (e2 is ArgumentList) {
-          e2.childEntities.forEach((e3) {
-            if (e3 is FunctionExpression) {
-              e3.childEntities.forEach((element) {
-                if (element is ExpressionFunctionBody) {
-                  element.childEntities.forEach((x5) {
-                    if (x5 is SetOrMapLiteral) {
-                      x5.childEntities.forEach((x6) {
-                        if (x6 is MethodInvocation) {
-                          x6.childEntities.forEach((x7) {
-                            if (x7 is ArgumentList) {
-                              x7.childEntities.forEach((x8) {
-                                print("---> " +
-                                    x8.toString() +
-                                    " ---- " +
-                                    x8.runtimeType.toString());
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-  });
-}
+  void main() async {
+    TestClass testClass = TestClass(
+        '/home/tassio/Desenvolvimento/Dart/teste01/test/teste01_test.dart');
 
-bool isTest(AstNode e) {
-  return e is ExpressionStatement &&
-      e.beginToken.type == TokenType.IDENTIFIER &&
-      e.beginToken.toString() == "test";
-}
+    // var ast = parseFile(
+    //         path: testClass.path, featureSet: FeatureSet.latestLanguageVersion())
+    //     .unit;
 
-void detectTestSmells(ExpressionStatement e) {
-  detectCTL(e);
-  detectPSF(e);
-  detectSleep(e);
-  testWithoutDescription(e);
-  magicNumber(e);
-  ConditionalTestLogic.detect(e);
-}
+    // AstNode astNodeFile = ast.root;
 
-void scan(AstNode n) {
-  n.childEntities.forEach((element) {
-    if (element is AstNode) {
-      if (isTest(element)) {
-        print("Achei um Teste...");
-        print(element.offset);
-        print(element.end);
-        print(element.length);
-        print(element.toSource());
-        print(element.toString());
+    // print("start...");
+    // print(ast.lineInfo.lineCount);
+    // print(astNodeFile.offset);
 
-        // detectTestSmells(element as ExpressionStatement);
-      }
-      scan(element);
-    }
-  });
-}
+    List<TestSmell> testSmells = scan(testClass);
 
-void main() async {
-  var ast = parseFile(
-          path:
-              '/home/tassio/Desenvolvimento/Dart/teste01/test/teste01_test.dart',
-          featureSet: FeatureSet.latestLanguageVersion())
-      .unit;
-
-  AstNode astnode = ast.root;
-
-  print("start...");
-  print(ast.lineInfo.lineCount);
-  print(astnode.offset);
-
-  scan(astnode);
-
-  print("Foram encontrado " + testSmells.length.toString() + " Test Smells.");
-}
-
-void detectar01(AstNode astnode) {
-  astnode.childEntities.forEach((element) {
-    // print(element.runtimeType);
-
-    if (element is FunctionDeclaration) {
-      print("---------------  Achei uma função...");
-
-      element.childEntities.forEach((element) {
-        // print(element.runtimeType);
-        // print(element.toString());
-
-        if (element is FunctionExpression) {
-          element.childEntities.forEach((e) {
-            // print(e.runtimeType);
-            // print(e.toString());
-
-            if (e is BlockFunctionBody) {
-              e.childEntities.forEach((e) {
-                // print(e.runtimeType);
-                // print(e.toString());
-
-                if (e is Block) {
-                  e.childEntities.forEach((e) {
-                    // print(e.runtimeType);
-                    // print(e.toString());
-
-                    if (e is ExpressionStatement) {
-                      // print("->" + e.beginToken.toString());
-                      // print(e.beginToken.type);
-
-                      if (e.beginToken.toString() == "test" &&
-                          e.beginToken.type == TokenType.IDENTIFIER) {
-                        print("Achei um Teste...");
-                        print(e.toSource());
-                        print(e.offset);
-                        // detectCTL(e.toSource());
-                        // detectPSF(e.toSource());
-                        // detectSleep(e.toSource());
-                      }
-
-                      // e.childEntities.forEach((e) {
-                      //   print(e.runtimeType);
-                      //   print(e.toString());
-                      // });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-  });
+    print("Foram encontrado " + testSmells.length.toString() + " Test Smells.");
+  }
+  
 }

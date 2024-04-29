@@ -1,3 +1,0 @@
-class TestSmell {
-  String? name;
-}
