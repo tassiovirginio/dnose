@@ -3,7 +3,7 @@ import 'package:teste01/TestClass.dart';
 import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
 import 'package:teste01/detectors/TestSmell.dart';
 
-class DetectorMagicNumber implements AbstractDetectorTestSmell{
+class DetectorMagicNumber implements AbstractDetectorTestSmell {
   List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
@@ -12,21 +12,19 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell{
     return testSmells;
   }
 
-  void _magicNumber(AstNode e, TestClass testClass) {//Melhorar - encontrar somente quando setado em uma variável
-  if (e is IntegerLiteral || e is DoubleLiteral) {
-    TestSmell testSmell = TestSmell("Magic Number", testClass);
-    testSmell.code = e.toSource();
-    testSmells.add(testSmell);
-  } else {
-    e.childEntities.forEach((element) {
-      if (element is AstNode) {
-        _magicNumber(element,testClass);
-      }
-    });
+  void _magicNumber(AstNode e, TestClass testClass) {
+    //Melhorar - encontrar somente quando setado em uma variável
+    if (e is IntegerLiteral || e is DoubleLiteral) {
+      testSmells.add(TestSmell("Magic Number", testClass, code: e.toSource()));
+    } else {
+      e.childEntities.forEach((element) {
+        if (element is AstNode) {
+          _magicNumber(element, testClass);
+        }
+      });
+    }
   }
-}
 
   @override
-  String get testSmellName =>"Magic Number";
-
+  String get testSmellName => "Magic Number";
 }
