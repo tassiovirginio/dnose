@@ -14,6 +14,7 @@ import 'package:teste01/detectors/DetectorSleepyFixture.dart';
 import 'package:teste01/detectors/DetectorTestWithoutDescription.dart';
 import 'package:teste01/detectors/DetectorMagicNumber.dart';
 import 'package:teste01/detectors/DetectorAssertionRoulette.dart';
+import 'package:teste01/detectors/DetectorResourceOptimism.dart';
 
 class DNose {
   bool isTest(AstNode e) {
@@ -31,6 +32,7 @@ class DNose {
     var detectorMagicNumber = DetectorMagicNumber();
     var detectorSleepyFixture = DetectorSleepyFixture();
     var detectorAssertionRoulette = DetectorAssertionRoulette();
+    var detectorResourceOptimism = DetectorResourceOptimism();
 
     testSmells.addAll(detectorConditionalTestLogic.detect(e, testClass));
     testSmells.addAll(detectorPrintStatmentFixture.detect(e, testClass));
@@ -38,6 +40,7 @@ class DNose {
     testSmells.addAll(detectorMagicNumber.detect(e, testClass));
     testSmells.addAll(detectorSleepyFixture.detect(e, testClass));
     testSmells.addAll(detectorAssertionRoulette.detect(e, testClass));
+    testSmells.addAll(detectorResourceOptimism.detect(e, testClass));
 
     return testSmells;
   }

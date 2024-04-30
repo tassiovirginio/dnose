@@ -70,10 +70,14 @@ void main() {
 
   // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
 
-  test("AssertionRoulette", () {
-    expect(1 + 2, 3);
-    expect(1 + 2, 3);
-    expect(1 + 2, 3);
+  // test("AssertionRoulette", () {
+  //   expect(1 + 2, 3);
+  //   expect(1 + 2, 3);
+  //   expect(1 + 2, 3);
+  // });
+
+  test("DetectorResourceOptimism", () {
+    var file = File('file.txt');
   });
 
   // test("PrintStatmentFixture", () => {print("")});
