@@ -6,6 +6,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 // import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
+import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
 import 'package:teste01/detectors/TestClass.dart';
 import 'package:teste01/detectors/TestSmell.dart';
 import 'package:teste01/detectors/DetectorConditionalTestLogic.dart';
@@ -13,7 +14,7 @@ import 'package:teste01/detectors/DetectorPrintStatmentFixture.dart';
 import 'package:teste01/detectors/DetectorSleepyFixture.dart';
 import 'package:teste01/detectors/DetectorTestWithoutDescription.dart';
 import 'package:teste01/detectors/DetectorMagicNumber.dart';
-import 'package:teste01/detectors/DetectorAssertionRoulette.dart';
+import 'package:teste01/detectors/DetectorDuplicateAssert.dart';
 import 'package:teste01/detectors/DetectorResourceOptimism.dart';
 
 class DNose {
@@ -26,21 +27,20 @@ class DNose {
   List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
 
-    var detectorConditionalTestLogic = DetectorConditionalTestLogic();
-    var detectorPrintStatmentFixture = DetectorPrintStatmentFixture();
-    var detectorTestWithoutDescription = DetectorTestWithoutDescription();
-    var detectorMagicNumber = DetectorMagicNumber();
-    var detectorSleepyFixture = DetectorSleepyFixture();
-    var detectorAssertionRoulette = DetectorAssertionRoulette();
-    var detectorResourceOptimism = DetectorResourceOptimism();
+    List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
 
-    testSmells.addAll(detectorConditionalTestLogic.detect(e, testClass));
-    testSmells.addAll(detectorPrintStatmentFixture.detect(e, testClass));
-    testSmells.addAll(detectorTestWithoutDescription.detect(e, testClass));
-    testSmells.addAll(detectorMagicNumber.detect(e, testClass));
-    testSmells.addAll(detectorSleepyFixture.detect(e, testClass));
-    testSmells.addAll(detectorAssertionRoulette.detect(e, testClass));
-    testSmells.addAll(detectorResourceOptimism.detect(e, testClass));
+    detectors.add(DetectorConditionalTestLogic());
+    detectors.add(DetectorPrintStatmentFixture());
+    detectors.add(DetectorTestWithoutDescription());
+    detectors.add(DetectorMagicNumber());
+    detectors.add(DetectorSleepyFixture());
+    detectors.add(DetectorDuplicateAssert());
+    detectors.add(DetectorResourceOptimism());
+
+
+    detectors.forEach((d) {
+      testSmells.addAll(d.detect(e, testClass));
+    });
 
     return testSmells;
   }

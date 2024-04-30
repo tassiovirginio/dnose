@@ -7,7 +7,7 @@ import 'package:teste01/DNose.dart';
 
 void main() {
   print("==============================================");
-  print("========= DART Test Smells Detector ==========");
+  print("========= Dart Test Smells Detector ==========");
   print("==============================================\n");
 
   DNose dnose = DNose();

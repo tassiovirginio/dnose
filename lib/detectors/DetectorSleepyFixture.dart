@@ -10,7 +10,7 @@ class DetectorSleepyFixture implements AbstractDetectorTestSmell{
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     String codigo = e.toSource();
-    if (codigo.contains("sleep")) {
+    if (codigo.contains("sleep(")) {
       testSmells.add(TestSmell(testSmellName, testClass, code: codigo));
     }
     return testSmells;

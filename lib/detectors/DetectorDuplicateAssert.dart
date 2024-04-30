@@ -3,9 +3,9 @@ import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
 import 'package:teste01/detectors/TestSmell.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
-class DetectorAssertionRoulette implements AbstractDetectorTestSmell{
+class DetectorDuplicateAssert implements AbstractDetectorTestSmell{
   @override
-  get testSmellName => "Assertion Roulette";
+  get testSmellName => "Duplicate Assert";
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
@@ -26,7 +26,7 @@ class DetectorAssertionRoulette implements AbstractDetectorTestSmell{
           code_1 = e.toSource();
         }else if(cont == 1){
           cont++;
-          testSmells.add(TestSmell("Assertion Roulette", testClass, code: e.toSource() + "\n" + code_1));    
+          testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource() + "\n" + code_1));    
         }
       }
     } else {

@@ -9,7 +9,7 @@ class DetectorPrintStatmentFixture implements AbstractDetectorTestSmell {
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     String codigo = e.toSource();
-    if (codigo.contains("print")) {
+    if (codigo.contains("print(")) {
       testSmells.add(TestSmell("PrintStatmentFixture", testClass, code: codigo));
     }
     return testSmells;
