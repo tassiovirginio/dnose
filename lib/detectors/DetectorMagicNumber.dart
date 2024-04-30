@@ -13,6 +13,9 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell {
   }
 
   void _magicNumber(AstNode e, TestClass testClass) {
+    if (e is ForElement || e is IfElement) {
+      return;
+    }
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is IntegerLiteral || e is DoubleLiteral) {
       testSmells.add(TestSmell("Magic Number", testClass, code: e.toSource()));
@@ -20,6 +23,25 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell {
       e.childEntities.forEach((element) {
         if (element is AstNode) {
           _magicNumber(element, testClass);
+        }
+      });
+    }
+  }
+
+  void detectar01(AstNode astnode) {
+    if (astnode is ForElement || astnode is IfElement) {
+      return;
+    }
+    if (astnode is VariableDeclaration) {
+      print(astnode.runtimeType);
+      print(astnode.toSource());
+      print("---------------------------------------------------");
+    }
+
+    if (astnode.childEntities.isNotEmpty) {
+      astnode.childEntities.forEach((element) {
+        if (element is AstNode) {
+          detectar01(element);
         }
       });
     }

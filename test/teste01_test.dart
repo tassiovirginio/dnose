@@ -63,7 +63,7 @@ void main() {
   // test("ConditionalFixture WHILE", () => {while (true) {}});
   // test("ConditionalFixture WHILE", () => { print(""), {} while (1 = 1)});
 
-  // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
+  test("MagicNumberFixture", () => {expect(1 + 2, 3)});
 
   test("PrintStatmentFixture", () => {print("")});
 
