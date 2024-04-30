@@ -53,26 +53,32 @@ void main() {
   // });
 
   //teste Empty Description Test
-  test("", () => {});
+  // test("", () => {});
 
   //teste vazio - Empty Test
-  test("EmptyFixture", () => {});
+  // test("EmptyFixture", () => {});
 
-  test("ConditionalFixture IF", () => {if (true) {}});
-  test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
+  // test("ConditionalFixture IF", () => {if (true) {}});
+  // test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
 
-  test("ConditionalFixture IF", () {
-    while(true){};
-  });
-  test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
+  // test("ConditionalFixture IF", () {
+  //   while(true){};
+  // });
+  // test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
   // test("ConditionalFixture WHILE", () => {while (true) {}});
   // test("ConditionalFixture WHILE", () => { print(""), {} while (1 = 1)});
 
-  test("MagicNumberFixture", () => {expect(1 + 2, 3)});
+  // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
 
-  test("PrintStatmentFixture", () => {print("")});
+  test("AssertionRoulette", () {
+    expect(1 + 2, 3);
+    expect(1 + 2, 3);
+    expect(1 + 2, 3);
+  });
 
-  test("SleepyFixture", () => {sleep(Duration(seconds: UM_SEGUNDO))});
+  // test("PrintStatmentFixture", () => {print("")});
+
+  // test("SleepyFixture", () => {sleep(Duration(seconds: UM_SEGUNDO))});
 
   // test(
   //     "VerboseFixture",

@@ -13,6 +13,7 @@ import 'package:teste01/detectors/DetectorPrintStatmentFixture.dart';
 import 'package:teste01/detectors/DetectorSleepyFixture.dart';
 import 'package:teste01/detectors/DetectorTestWithoutDescription.dart';
 import 'package:teste01/detectors/DetectorMagicNumber.dart';
+import 'package:teste01/detectors/DetectorAssertionRoulette.dart';
 
 class DNose {
   bool isTest(AstNode e) {
@@ -29,12 +30,14 @@ class DNose {
     var detectorTestWithoutDescription = DetectorTestWithoutDescription();
     var detectorMagicNumber = DetectorMagicNumber();
     var detectorSleepyFixture = DetectorSleepyFixture();
+    var detectorAssertionRoulette = DetectorAssertionRoulette();
 
     testSmells.addAll(detectorConditionalTestLogic.detect(e, testClass));
     testSmells.addAll(detectorPrintStatmentFixture.detect(e, testClass));
     testSmells.addAll(detectorTestWithoutDescription.detect(e, testClass));
     testSmells.addAll(detectorMagicNumber.detect(e, testClass));
     testSmells.addAll(detectorSleepyFixture.detect(e, testClass));
+    testSmells.addAll(detectorAssertionRoulette.detect(e, testClass));
 
     return testSmells;
   }
