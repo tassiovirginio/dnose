@@ -23,14 +23,14 @@ void main(List<String> args) {
 }
 
 void detectar01(AstNode astnode) {
-  if (astnode is ForElement || astnode is IfElement ) {
-    return;
-  }
-  if (astnode is VariableDeclaration) {
+  // if (astnode is ForElement || astnode is IfElement ) {
+  //   return;
+  // }
+  // if (astnode is VariableDeclaration) {
     print(astnode.runtimeType);
     print(astnode.toSource());
     print("---------------------------------------------------");
-  }
+  // }
    
   if (astnode.childEntities.isNotEmpty) {
     astnode.childEntities.forEach((element) {

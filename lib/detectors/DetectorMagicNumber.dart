@@ -13,7 +13,7 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell {
   }
 
   void _magicNumber(AstNode e, TestClass testClass) {
-    if (e is ForElement || e is IfElement) {
+    if (e is ForElement || e is IfElement || e is WhileStatement) {
       return;
     }
     //Melhorar - encontrar somente quando setado em uma variável

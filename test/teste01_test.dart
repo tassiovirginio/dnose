@@ -59,6 +59,11 @@ void main() {
   test("EmptyFixture", () => {});
 
   test("ConditionalFixture IF", () => {if (true) {}});
+  test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
+
+  test("ConditionalFixture IF", () {
+    while(true){};
+  });
   test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
   // test("ConditionalFixture WHILE", () => {while (true) {}});
   // test("ConditionalFixture WHILE", () => { print(""), {} while (1 = 1)});
