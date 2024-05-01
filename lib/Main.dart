@@ -13,7 +13,7 @@ void main() {
   DNose dnose = DNose();
 
   TestClass testClass = TestClass(
-      '/home/tassio/Desenvolvimento/Dart/teste01/test/teste01_test.dart');
+      '/home/tassio/Desenvolvimento/Dart/teste01/test/oraculo.dart');
 
   var testSmells = dnose.scan(testClass);
 

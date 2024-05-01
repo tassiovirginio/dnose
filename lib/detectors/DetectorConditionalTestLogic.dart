@@ -11,9 +11,10 @@ class DetectorConditionalTestLogic implements AbstractDetectorTestSmell {
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     String codigo = e.toSource();
-    if (codigo.contains("if") ||
-        codigo.contains("for") ||
-        codigo.contains("while")) {
+    String _codigo = e.toSource().trim().replaceAll(" ", "");
+    if (_codigo.contains("if(") ||
+        _codigo.contains("for(") ||
+        _codigo.contains("while(")) {
       testSmells.add(TestSmell(testSmellName, testClass, code: codigo));
     }
     return testSmells;

@@ -26,12 +26,16 @@ void detectar01(AstNode astnode) {
   // if (astnode is ForElement || astnode is IfElement ) {
   //   return;
   // }
-  // if (astnode is VariableDeclaration) {
-    print(astnode.runtimeType);
-    print(astnode.toSource());
-    print("---------------------------------------------------");
-  // }
-   
+  if (astnode is MethodInvocation) {
+    String code = astnode.toSource();
+
+    if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {
+      print(astnode.runtimeType);
+      print(astnode.toSource());
+      print("---------------------------------------------------");
+    }
+  }
+
   if (astnode.childEntities.isNotEmpty) {
     astnode.childEntities.forEach((element) {
       if (element is AstNode) {

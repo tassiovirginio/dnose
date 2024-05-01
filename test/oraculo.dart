@@ -6,7 +6,7 @@ import 'dart:io';
 void main() {
   // const valorSemDesconto = 150.0;
 
-  const UM_SEGUNDO = 1;
+  // const UM_SEGUNDO = 1;
 
   // setUpAll(() {
   // });
@@ -58,27 +58,34 @@ void main() {
   //teste vazio - Empty Test
   // test("EmptyFixture", () => {});
 
-  // test("ConditionalFixture IF", () => {if (true) {}});
-  // test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
+  test("ConditionalFixture IF", () => {if (true) {}});
+  test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
 
-  // test("ConditionalFixture IF", () {
-  //   while(true){};
-  // });
-  // test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
+  test("ConditionalFixture IF", () {
+    while(true){};
+  });
+  test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
   // test("ConditionalFixture WHILE", () => {while (true) {}});
   // test("ConditionalFixture WHILE", () => { print(""), {} while (1 = 1)});
 
   // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
 
-  test("DuplicateAssert", () {
-    expect(1 + 2, 3);
-    expect(1 + 2, 3);
-    expect(1 + 2, 3);
-  });
+  // test("DuplicateAssert", () {
+  //   expect(1 + 2, 3, reason: "Verificando o valor");
+  //   expect(1 + 2, 3, reason: "Verificando o valor");
+  //   expect(1 + 2, 3, reason: "Verificando o valor");
+  // });
 
-  test("DetectorResourceOptimism", () {
-    var file = File('file.txt');
-  });
+
+  // test("AssertionRoulet", () {
+  //   expect(1 + 2, 3, reason: "Verificando o valor");
+  //   expect(1 + 2, 3, reason: "");
+  //   expect(1 + 2, 3);
+  // });
+
+  // test("DetectorResourceOptimism", () {
+  //   var file = File('file.txt');
+  // });
 
   // test("PrintStatmentFixture", () => {print("")});
 
