@@ -32,6 +32,11 @@ void detectar01(AstNode astnode) {
     if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {
       print(astnode.runtimeType);
       print(astnode.toSource());
+      // print(element.offset);
+          // print(element.end);
+          // print(element.length);
+          // print(element.toSource());
+          // print(element.toString());
       print("---------------------------------------------------");
     }
   }

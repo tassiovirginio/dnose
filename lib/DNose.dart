@@ -26,7 +26,6 @@ class DNose {
 
   List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
-
     List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
 
     detectors.add(DetectorConditionalTestLogic());
@@ -63,12 +62,7 @@ class DNose {
       if (element is AstNode) {
         if (isTest(element)) {
           print("Achei um Teste...");
-          // print(element.offset);
-          // print(element.end);
-          // print(element.length);
-          // print(element.toSource());
-          // print(element.toString());
-
+          // Level.INFO("Achei um Teste...");
           testSmells.addAll(
               detectTestSmells(element as ExpressionStatement, testClass));
         }
