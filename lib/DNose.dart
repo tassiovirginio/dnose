@@ -37,10 +37,7 @@ class DNose {
     detectors.add(DetectorDuplicateAssert());
     detectors.add(DetectorResourceOptimism());
 
-
-    detectors.forEach((d) {
-      testSmells.addAll(d.detect(e, testClass));
-    });
+    detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass)));
 
     return testSmells;
   }
@@ -80,6 +77,4 @@ class DNose {
     });
     return testSmells;
   }
-
-  
 }
