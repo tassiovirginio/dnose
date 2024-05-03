@@ -23,13 +23,15 @@ class DNose {
     List<TestSmell> testSmells = List.empty(growable: true);
     List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
 
-    detectors.add(DetectorConditionalTestLogic());
-    detectors.add(DetectorPrintStatmentFixture());
-    detectors.add(DetectorTestWithoutDescription());
-    detectors.add(DetectorMagicNumber());
-    detectors.add(DetectorSleepyFixture());
-    detectors.add(DetectorDuplicateAssert());
-    detectors.add(DetectorResourceOptimism());
+    detectors.addAll([
+      DetectorConditionalTestLogic(),
+      DetectorPrintStatmentFixture(),
+      DetectorTestWithoutDescription(),
+      DetectorMagicNumber(),
+      DetectorSleepyFixture(),
+      DetectorDuplicateAssert(),
+      DetectorResourceOptimism(),
+     DetectorPrintStatmentFixture()]);
 
     detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass)));
 
