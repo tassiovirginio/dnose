@@ -1,4 +1,3 @@
-import 'package:teste01/teste01.dart';
 import 'package:test/test.dart';
 import '../lib/descontos.dart';
 import 'dart:io';
@@ -53,7 +52,7 @@ void main() {
   // });
 
   //teste Empty Description Test
-  // test("", () => {});
+  test("", () => {});
 
   //teste vazio - Empty Test
   // test("EmptyFixture", () => {});

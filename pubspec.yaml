@@ -1,5 +1,5 @@
-name: teste01
-description: A sample command-line application.
+name: dnose
+description: Dart Test Smell Detector
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
@@ -10,6 +10,7 @@ environment:
 dependencies:
   # path: ^1.8.0
   web: ^0.4.0
+  logging: ^1.2.0
 
 dev_dependencies:
   lints: ^3.0.0

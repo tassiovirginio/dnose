@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:teste01/detectors/TestClass.dart';
-import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
-import 'package:teste01/detectors/TestSmell.dart';
+import 'package:dnose/detectors/TestClass.dart';
+import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
+import 'package:dnose/detectors/TestSmell.dart';
 
 class DetectorPrintStatmentFixture implements AbstractDetectorTestSmell {
 

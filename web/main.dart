@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:web/helpers.dart';
-import 'package:teste01/DNose.dart';
+import 'package:dnose/DNose.dart';
 
 void main() {
   final now = DateTime.now();

@@ -1,3 +1,5 @@
+import 'package:logging/logging.dart';
+
 // import 'dart:ffi';
 // import 'dart:io';
 
@@ -6,16 +8,16 @@
 import 'package:analyzer/dart/ast/ast.dart';
 // import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
-import 'package:teste01/detectors/AbstractDetectorTestSmell.dart';
-import 'package:teste01/detectors/TestClass.dart';
-import 'package:teste01/detectors/TestSmell.dart';
-import 'package:teste01/detectors/DetectorConditionalTestLogic.dart';
-import 'package:teste01/detectors/DetectorPrintStatmentFixture.dart';
-import 'package:teste01/detectors/DetectorSleepyFixture.dart';
-import 'package:teste01/detectors/DetectorTestWithoutDescription.dart';
-import 'package:teste01/detectors/DetectorMagicNumber.dart';
-import 'package:teste01/detectors/DetectorDuplicateAssert.dart';
-import 'package:teste01/detectors/DetectorResourceOptimism.dart';
+import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
+import 'package:dnose/detectors/TestClass.dart';
+import 'package:dnose/detectors/TestSmell.dart';
+import 'package:dnose/detectors/DetectorConditionalTestLogic.dart';
+import 'package:dnose/detectors/DetectorPrintStatmentFixture.dart';
+import 'package:dnose/detectors/DetectorSleepyFixture.dart';
+import 'package:dnose/detectors/DetectorTestWithoutDescription.dart';
+import 'package:dnose/detectors/DetectorMagicNumber.dart';
+import 'package:dnose/detectors/DetectorDuplicateAssert.dart';
+import 'package:dnose/detectors/DetectorResourceOptimism.dart';
 
 class DNose {
   bool isTest(AstNode e) {
@@ -61,7 +63,7 @@ class DNose {
     n.childEntities.forEach((element) {
       if (element is AstNode) {
         if (isTest(element)) {
-          print("Achei um Teste...");
+          // print("Achei um Teste...");
           // Level.INFO("Achei um Teste...");
           testSmells.addAll(
               detectTestSmells(element as ExpressionStatement, testClass));

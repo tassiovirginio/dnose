@@ -1,5 +1,5 @@
 
-import 'package:teste01/detectors/TestClass.dart';
+import 'package:dnose/detectors/TestClass.dart';
 
 class TestSmell{
   String? name;

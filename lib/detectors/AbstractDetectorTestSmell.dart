@@ -1,5 +1,5 @@
-import 'package:teste01/detectors/TestClass.dart';
-import 'package:teste01/detectors/TestSmell.dart';
+import 'package:dnose/detectors/TestClass.dart';
+import 'package:dnose/detectors/TestSmell.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
 abstract class AbstractDetectorTestSmell {
