@@ -57,8 +57,8 @@ class DNose {
     List<TestSmell> testSmells = List.empty(growable: true);
     n.childEntities.forEach((element) {
       if (element is AstNode) {
-        if (isTest(element)) {
-          // print("Achei um Teste...");
+        if (isTest(element)) {//Verifica se é um nó de teste
+          print("Achei um Teste...");
           // Level.INFO("Achei um Teste...");
           testSmells.addAll(
               detectTestSmells(element as ExpressionStatement, testClass));
