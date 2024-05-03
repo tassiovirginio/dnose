@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import '../lib/descontos.dart';
 import 'dart:io';
 
 void main() {
@@ -61,7 +60,9 @@ void main() {
   test("ConditionalFixture IF", () => {if (true) {} else if(false){}});
 
   test("ConditionalFixture IF", () {
-    while(true){};
+    while(true){
+      if (true) {}
+    }
   });
   test("ConditionalFixture FOR", () => {for (int i = 0; i < 10; i++) {}});
   // test("ConditionalFixture WHILE", () => {while (true) {}});

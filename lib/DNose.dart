@@ -1,12 +1,5 @@
 import 'package:logging/logging.dart';
-
-// import 'dart:ffi';
-// import 'dart:io';
-
-// import 'package:analyzer/dart/analysis/utilities.dart';
-// import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-// import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
 import 'package:dnose/detectors/TestClass.dart';
