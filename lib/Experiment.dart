@@ -5,7 +5,7 @@ import 'package:analyzer/dart/analysis/features.dart';
 void main(List<String> args) {
   var ast = parseFile(
           path:
-              '/home/tassio/Desenvolvimento/Dart/teste01/test/teste01_test.dart',
+              '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo.dart',
           featureSet: FeatureSet.latestLanguageVersion())
       .unit;
 
@@ -16,8 +16,10 @@ void detectar01(AstNode astnode) {
   // if (astnode is ForElement || astnode is IfElement ) {
   //   return;
   // }
-  if (astnode is MethodInvocation) {
+  if (astnode is AstNode) {
     String code = astnode.toSource();
+    print(astnode.runtimeType);
+    print(astnode.toSource());
 
     if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {
       print(astnode.runtimeType);

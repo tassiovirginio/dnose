@@ -7,12 +7,20 @@ class DetectorSleepyFixture implements AbstractDetectorTestSmell{
   @override
   get testSmellName => "Sleepy Fixture";
 
+  List<TestSmell> testSmells = List.empty(growable: true);
+
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
-    List<TestSmell> testSmells = List.empty(growable: true);
-    String codigo = e.toSource();
-    if (codigo.contains("sleep(")) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: codigo));
-    }
+    _detect(e as AstNode, testClass);
     return testSmells;
+  }
+
+  void _detect(AstNode e, TestClass testClass) {
+    if (e is MethodInvocation && e.toSource().contains("sleep")) {
+      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource()));
+    } else {
+      e.childEntities.forEach((e) {
+        if (e is AstNode) _detect(e, testClass);
+      });
+    }
   }
 }

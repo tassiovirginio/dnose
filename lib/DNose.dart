@@ -30,8 +30,8 @@ class DNose {
       DetectorMagicNumber(),
       DetectorSleepyFixture(),
       DetectorDuplicateAssert(),
-      DetectorResourceOptimism(),
-     DetectorPrintStatmentFixture()]);
+      DetectorResourceOptimism()
+    ]);
 
     detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass)));
 
@@ -57,7 +57,8 @@ class DNose {
     List<TestSmell> testSmells = List.empty(growable: true);
     n.childEntities.forEach((element) {
       if (element is AstNode) {
-        if (isTest(element)) {//Verifica se é um nó de teste
+        if (isTest(element)) {
+          //Verifica se é um nó de teste
           print("Achei um Teste...");
           // Level.INFO("Achei um Teste...");
           testSmells.addAll(
