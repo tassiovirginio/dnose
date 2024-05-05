@@ -4,19 +4,23 @@ import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 class DetectorConditionalTestLogic implements AbstractDetectorTestSmell {
+  List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
   get testSmellName => "Conditional Test Logic";
 
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
-    List<TestSmell> testSmells = List.empty(growable: true);
-    String codigo = e.toSource();
-    String _codigo = e.toSource().trim().replaceAll(" ", "");
-    if (_codigo.contains("if") ||
-        _codigo.contains("for") ||
-        _codigo.contains("while")) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: codigo));
-    }
+    _detect(e, testClass);
     return testSmells;
+  }
+
+  void _detect(AstNode e, TestClass testClass) {
+    if (e is ForElement || e is IfElement || e is WhileStatement) {
+      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource()));
+    } else {
+      e.childEntities.forEach((e) {
+        if (e is AstNode) _detect(e, testClass);
+      });
+    }
   }
 }
