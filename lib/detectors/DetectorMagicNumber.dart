@@ -18,7 +18,7 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell {
     }
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is IntegerLiteral || e is DoubleLiteral) {
-      testSmells.add(TestSmell("Magic Number", testClass, code: e.toSource()));
+      testSmells.add(TestSmell("Magic Number", testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((element) {
         if (element is AstNode) {

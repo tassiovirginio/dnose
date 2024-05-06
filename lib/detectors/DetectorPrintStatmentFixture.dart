@@ -19,7 +19,7 @@ class DetectorPrintStatmentFixture implements AbstractDetectorTestSmell {
     if (e is SimpleIdentifier &&
         e.name == "print" &&
         e.parent is MethodInvocation) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: e.parent!.toSource()));
+      testSmells.add(TestSmell(testSmellName, testClass, code: e.parent!.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((e) {
         if (e is AstNode) _detect(e, testClass);
