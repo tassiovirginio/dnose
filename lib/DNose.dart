@@ -19,7 +19,8 @@ class DNose {
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
-        e.beginToken.toString() == "test";
+        (e.beginToken.toString() == "test" ||
+            e.beginToken.toString() == "testWidgets"); //Métodos de teste do Flutter
   }
 
   List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass) {
