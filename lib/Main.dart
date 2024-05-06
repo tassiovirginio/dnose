@@ -6,6 +6,14 @@ import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 void main() {
+  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
+  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  processar(path_project);
+}
+
+
+void processar(String path_project) {
   final Logger _logger = Logger('Main');
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -16,10 +24,6 @@ void main() {
   _logger.info("==============================================");
   _logger.info("========= Dart Test Smells Detector ==========");
   _logger.info("==============================================");
-
-  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
-  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
 
   Directory dir = Directory(path_project);
 
@@ -62,5 +66,4 @@ void main() {
   sink.close();
 
   _logger.info("Foram encontrado " + lista_total.length.toString() + " Test Smells.");
-
 }
