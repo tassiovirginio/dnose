@@ -51,7 +51,7 @@ void main() {
   // });
 
   // //teste Empty Description Test
-  // test("", () => {});
+  test("", () => {});
   //
   // //teste vazio - Empty Test
   // test("EmptyFixture", () => {});
@@ -94,7 +94,7 @@ void main() {
   //   var file = File('file.txt');
   // });
   //
-  test("PrintStatmentFixture", () => {print("")});
+  // test("PrintStatmentFixture", () => {print("")});
   //
   // test("SleepyFixture", () => {sleep(Duration(seconds: UM_SEGUNDO))});
 
