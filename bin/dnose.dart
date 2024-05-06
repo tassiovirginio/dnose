@@ -8,18 +8,22 @@ import 'package:dnose/Main.dart';
 void main() async {
   var app = Router.Router();
 
+  String current = Directory.current.path.toString() + "/resultado.csv";
+
   app.get('/hello', (Request request) {
     return Response.ok('Hello, World!');
   });
 
   app.get('/download', (Request request) {
-    var file = File("/home/tassio/Desenvolvimento/dart/dnose/resultado.csv");
+    var file = File(current);
     return Response.ok('Hello, World!');
   });
 
   app.get('/processar', (Request request) {
     var path_project = request.url.queryParameters['path_project'];
     processar(path_project!);
+
+    // current = "file://" + current;
 
     var pagina =
     """
@@ -31,7 +35,7 @@ void main() async {
     <br>
     Projeto: $path_project
     <br>
-    <a href='file:/home/tassio/Desenvolvimento/dart/dnose/resultado.csv'>Download Result</a>
+    <a href="file://$current">Download Result</a>
     </html>
     """;
 
