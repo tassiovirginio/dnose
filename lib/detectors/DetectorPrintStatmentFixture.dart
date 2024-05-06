@@ -4,7 +4,6 @@ import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 class DetectorPrintStatmentFixture implements AbstractDetectorTestSmell {
-
   List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
@@ -17,13 +16,14 @@ class DetectorPrintStatmentFixture implements AbstractDetectorTestSmell {
   }
 
   void _detect(AstNode e, TestClass testClass) {
-    if (e is MethodInvocation && e.toSource().contains("print")) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource()));
+    if (e is SimpleIdentifier &&
+        e.name == "print" &&
+        e.parent is MethodInvocation) {
+      testSmells.add(TestSmell(testSmellName, testClass, code: e.parent!.toSource()));
     } else {
       e.childEntities.forEach((e) {
         if (e is AstNode) _detect(e, testClass);
       });
     }
   }
-
 }

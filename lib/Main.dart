@@ -14,8 +14,9 @@ void main() {
   print("========= Dart Test Smells Detector ==========");
   print("==============================================\n");
 
-  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
 
   Directory dir = Directory(path_project);
 
@@ -34,10 +35,10 @@ void main() {
     }
   });
 
-  lista_total.forEach((element) {
-    print("Test Smell: " + element.name!);
-    print("Código: " + element.code);
-    print("----------------------------------------------");
+  lista_total.forEach((ts) {
+    print("${ts.testClass?.path},${ts.name!}\n");
+    print("Código: " + ts.code);
+    print("\n\n----------------------------------------------");
   });
 
   print("\n\n----------------------------------------------");
