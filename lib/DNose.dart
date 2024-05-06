@@ -13,6 +13,9 @@ import 'package:dnose/detectors/DetectorDuplicateAssert.dart';
 import 'package:dnose/detectors/DetectorResourceOptimism.dart';
 
 class DNose {
+  static final Logger _logger = Logger('DNose');
+  static final String TESTE = "DNOSE";
+
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
@@ -40,16 +43,10 @@ class DNose {
 
   List<TestSmell> scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
-
     AstNode n = testClass.root as AstNode;
-
-    print("Scanning...");
-    print("Path: " + testClass.path);
-    // print(testClass.ast?.lineInfo.lineCount);
-    // print(n.offset);
-
+    _logger.info("Scanning...");
+    _logger.info("Path: " + testClass.path);
     testSmells.addAll(_scan(n, testClass));
-
     return testSmells;
   }
 
@@ -58,9 +55,7 @@ class DNose {
     n.childEntities.forEach((element) {
       if (element is AstNode) {
         if (isTest(element)) {
-          //Verifica se é um nó de teste
-          print("Achei um Teste...");
-          // Level.INFO("Achei um Teste...");
+          _logger.info("Test Detect: " + element.toSource());
           testSmells.addAll(
               detectTestSmells(element as ExpressionStatement, testClass));
         }

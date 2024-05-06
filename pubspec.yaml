@@ -9,8 +9,10 @@ environment:
 # Add regular dependencies here.
 dependencies:
   # path: ^1.8.0
-  web: ^0.4.0
   logging: ^1.2.0
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  shelf_static: ^1.1.2
 
 dev_dependencies:
   lints: ^3.0.0

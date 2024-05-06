@@ -1,17 +1,21 @@
-// import 'dart:ffi';
-// import 'dart:io';
-
+import 'package:logging/logging.dart';
 import 'dart:io';
 import "package:yaml/yaml.dart";
 import 'package:dnose/detectors/TestClass.dart';
-// import 'package:teste01/detectors/TestSmell.dart';
 import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 void main() {
-  print("==============================================");
-  print("========= Dart Test Smells Detector ==========");
-  print("==============================================\n");
+  final Logger _logger = Logger('Main');
+
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
+  _logger.info("==============================================");
+  _logger.info("========= Dart Test Smells Detector ==========");
+  _logger.info("==============================================");
 
   // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
@@ -37,7 +41,7 @@ void main() {
         Map yaml = loadYaml(yamlString);
         module_atual = yaml['name'];
       }else{
-        print("Analisando: " + file.path + "\n");
+        _logger.info("Analyzing: " + file.path);
         TestClass testClass = TestClass(file.path,module_atual, project_name);
         var testSmells = dnose.scan(testClass);
         lista_total.addAll(testSmells);
@@ -47,22 +51,16 @@ void main() {
 
   var file = File('resultado.csv');
   var sink = file.openWrite();
-
+  sink.write("project_name,module,path,testsmell\n");
   lista_total.forEach((ts) {
     sink.write("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}\n");
-    print("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}\n");
-    print("Código: " + ts.code);
-    print("\n\n----------------------------------------------");
+    _logger.info("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}");
+    _logger.info("Code: " + ts.code);
   });
 
   // Close the IOSink to free system resources.
   sink.close();
 
-  print("\n\n----------------------------------------------");
-  print("Foram encontrado " + lista_total.length.toString() +
-      " Test Smells.\n");
-
-
-
+  _logger.info("Foram encontrado " + lista_total.length.toString() + " Test Smells.");
 
 }
