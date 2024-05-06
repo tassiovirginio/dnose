@@ -9,6 +9,7 @@ class DetectorConditionalTestLogic implements AbstractDetectorTestSmell {
   @override
   get testSmellName => "Conditional Test Logic";
 
+  @override
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
     _detect(e, testClass);
     return testSmells;

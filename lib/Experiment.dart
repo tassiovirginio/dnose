@@ -5,7 +5,7 @@ import 'package:analyzer/dart/analysis/features.dart';
 void main(List<String> args) {
   var ast = parseFile(
           path:
-              '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo.dart',
+              '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
           featureSet: FeatureSet.latestLanguageVersion())
       .unit;
 
