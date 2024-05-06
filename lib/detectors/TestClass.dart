@@ -7,13 +7,14 @@ class TestClass {
   CompilationUnit? ast;
   String path = "";
   AstNode? root;
+  String? project;
 
-  TestClass(String path) {
+  TestClass(String path, String project) {
     this.path = path;
     this.ast = parseFile(
             path: path, featureSet: FeatureSet.latestLanguageVersion())
         .unit;
-
+    this.project = project;
     root = ast?.root;
   }
 }
