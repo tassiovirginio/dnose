@@ -13,9 +13,9 @@ void main() {
   print("========= Dart Test Smells Detector ==========");
   print("==============================================\n");
 
-  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
 
   Directory dir = Directory(path_project);
 
@@ -25,14 +25,9 @@ void main() {
 
   List<TestSmell> lista_total = List.empty(growable: true);
 
-  // String path_project_pubspec = path_project + "/pubspec.yaml";
-  // File file = new File(path_project_pubspec);
-  // String yamlString = file.readAsStringSync();
-  // Map yaml = loadYaml(yamlString);
-  // print(yaml['name']);
+  String project_name = path_project.split("/").last;
 
-
-  String projeto_atual = "";
+  String module_atual = "";
 
   entries.forEach((file) {
     if(file.path.endsWith("_test.dart") == true || file.path.endsWith("/pubspec.yaml") == true) {
@@ -40,10 +35,10 @@ void main() {
         File file2 = new File(file.path);
         String yamlString = file2.readAsStringSync();
         Map yaml = loadYaml(yamlString);
-        projeto_atual = yaml['name'];
+        module_atual = yaml['name'];
       }else{
         print("Analisando: " + file.path + "\n");
-        TestClass testClass = TestClass(file.path,projeto_atual);
+        TestClass testClass = TestClass(file.path,module_atual, project_name);
         var testSmells = dnose.scan(testClass);
         lista_total.addAll(testSmells);
       }
@@ -54,8 +49,8 @@ void main() {
   var sink = file.openWrite();
 
   lista_total.forEach((ts) {
-    sink.write("${ts.testClass?.project},${ts.testClass?.path},${ts.name!}\n");
-    print("${ts.testClass?.path},${ts.name!},${ts.testClass?.project}\n");
+    sink.write("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}\n");
+    print("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}\n");
     print("Código: " + ts.code);
     print("\n\n----------------------------------------------");
   });
