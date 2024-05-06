@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'dart:io';
+import 'dart:io' as system;
 
 void main() {
   // const valorSemDesconto = 150.0;
@@ -51,7 +52,7 @@ void main() {
   // });
 
   // //teste Empty Description Test
-  test("", () => {});
+  // test("", () => {});
   //
   // //teste vazio - Empty Test
   // test("EmptyFixture", () => {});
@@ -96,7 +97,7 @@ void main() {
   //
   // test("PrintStatmentFixture", () => {print("")});
   //
-  // test("SleepyFixture", () => {sleep(Duration(seconds: UM_SEGUNDO))});
+  test("SleepyFixture", () => {system.sleep(Duration(seconds: UM_SEGUNDO))});
 
   // test(
   //     "VerboseFixture",

@@ -8,9 +8,9 @@ import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 void main() {
-  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 }
 

@@ -14,8 +14,15 @@ class DetectorSleepyFixture implements AbstractDetectorTestSmell{
     return testSmells;
   }
 
+  //MethodInvocationImpl
+  // sleep(Duration(seconds: UM_SEGUNDO))
+  // SimpleIdentifierImpl
+  // sleep
+
   void _detect(AstNode e, TestClass testClass) {
-    if (e is MethodInvocation && e.toSource().contains("sleep")) {
+    if (e is SimpleIdentifier &&
+        e.name == "sleep" &&
+        e.parent is MethodInvocation) {
       testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((e) {
