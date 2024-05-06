@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shelf_router/shelf_router.dart' as Router;
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
@@ -11,6 +13,7 @@ void main() async {
   });
 
   app.get('/download', (Request request) {
+    var file = File("/home/tassio/Desenvolvimento/dart/dnose/resultado.csv");
     return Response.ok('Hello, World!');
   });
 
@@ -28,7 +31,7 @@ void main() async {
     <br>
     Projeto: $path_project
     <br>
-    <a href='/home/tassio/Desenvolvimento/dart/dnose/resultado.csv'>Download Result</a>
+    <a href='file:/home/tassio/Desenvolvimento/dart/dnose/resultado.csv'>Download Result</a>
     </html>
     """;
 
