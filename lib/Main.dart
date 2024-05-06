@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:logging/logging.dart';
 import 'dart:io';
 import "package:yaml/yaml.dart";
@@ -6,9 +8,9 @@ import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
 void main() {
-  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
-  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 }
 
@@ -55,10 +57,10 @@ void processar(String path_project) {
 
   var file = File('resultado.csv');
   var sink = file.openWrite();
-  sink.write("project_name,module,path,testsmell\n");
+  sink.write("project_name,module,path,testsmell,start,end\n");
   lista_total.forEach((ts) {
-    sink.write("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}\n");
-    _logger.info("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!}");
+    sink.write("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!},${ts.start},${ts.end}\n");
+    _logger.info("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!},${ts.start},${ts.end}");
     _logger.info("Code: " + ts.code);
   });
 
@@ -67,3 +69,5 @@ void processar(String path_project) {
 
   _logger.info("Foram encontrado " + lista_total.length.toString() + " Test Smells.");
 }
+
+

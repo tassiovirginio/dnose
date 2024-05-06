@@ -15,8 +15,13 @@ class TestClass {
     this.ast = parseFile(
             path: path, featureSet: FeatureSet.latestLanguageVersion())
         .unit;
+
     this.module_atual = module_atual;
     this.project_name = project_name;
     root = ast?.root;
+  }
+
+  int lineNumber(int offset) {
+    return ast?.lineInfo?.getLocation(offset)?.lineNumber ?? 0;
   }
 }

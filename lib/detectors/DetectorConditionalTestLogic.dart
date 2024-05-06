@@ -17,7 +17,7 @@ class DetectorConditionalTestLogic implements AbstractDetectorTestSmell {
 
   void _detect(AstNode e, TestClass testClass) {
     if (e is ForElement || e is IfElement || e is WhileStatement) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource()));
+      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((e) {
         if (e is AstNode) _detect(e, testClass);
