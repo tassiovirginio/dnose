@@ -23,7 +23,13 @@ class DetectorAssertionRoulette implements AbstractDetectorTestSmell{
         e.parent is NamedExpression &&
         e.parent!.parent!.parent!.childEntities.firstOrNull!.toString() == "expect"){
       testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
-    } else {
+    } else if (e is ArgumentList && e.parent is MethodInvocation && !e.toString().contains("reason:")
+    && e.parent!.childEntities.first.toString() == "expect") {
+      testSmells.add(TestSmell(
+          testSmellName, testName, testClass, code: e.toSource(),
+          start: testClass.lineNumber(e.offset),
+          end: testClass.lineNumber(e.end)));
+    }else {
       e.childEntities.forEach((element) {
         if (element is AstNode) {
           _detect(element, testClass, testName);
