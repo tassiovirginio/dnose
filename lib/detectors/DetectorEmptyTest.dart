@@ -19,7 +19,12 @@ class DetectorEmptyTest implements AbstractDetectorTestSmell{
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
-    if (e is SetOrMapLiteral && e.toString().replaceAll(" ", "") == "{}") {
+    if (e is Block
+        && e.parent is BlockFunctionBody
+        && e.parent!.parent is FunctionExpression
+        && e.parent!.parent!.parent!.parent is MethodInvocation
+        && e.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"
+        && e.toString().replaceAll(" ", "") == "{}") {
       testSmells.add(TestSmell(
           testSmellName, testName, testClass, code: e.toSource(),
           start: testClass.lineNumber(e.offset),

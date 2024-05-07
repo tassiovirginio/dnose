@@ -13,7 +13,7 @@ void main(List<String> args) {
 }
 
 int lineNumber(int offset) {
-  return ast.lineInfo.getLocation(offset).lineNumber ?? 0;
+  return ast.lineInfo.getLocation(offset).lineNumber;
 }
 
 void detectar01(AstNode astnode) {
@@ -25,7 +25,14 @@ void detectar01(AstNode astnode) {
     print(astnode.runtimeType);
     print(astnode.toSource());
 
-    if (astnode is SetOrMapLiteral && astnode.toString().replaceAll(" ", "") == "{}"){
+    // if (astnode is SetOrMapLiteral && astnode.toString().replaceAll(" ", "") == "{}"
+    // && astnode.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"){
+    if (astnode is Block
+        && astnode.parent is BlockFunctionBody
+        && astnode.parent!.parent is FunctionExpression
+    && astnode.parent!.parent!.parent!.parent is MethodInvocation
+    && astnode.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"
+    && astnode.toString().replaceAll(" ", "") == "{}"){
 
       // int start = lineNumber(astnode.parent!.offset);
       // int end = lineNumber(astnode.parent!.end);
@@ -33,12 +40,19 @@ void detectar01(AstNode astnode) {
 
       print("Linha start: " + lineNumber(astnode.parent!.offset).toString());
       print("Linha end: " + lineNumber(astnode.parent!.end).toString());
-      print("1 => " + (astnode.toString() == '{}').toString());
-      print("1 => " + (astnode.toString().replaceAll(" ", "") == "{}").toString());
-      print("3 => " + astnode.runtimeType.toString());
+      print("1 => " + astnode.childEntities.isEmpty.toString());
+      print("1 => " + astnode.toString());
+      print("1.1 => " + (astnode.toString().replaceAll(" ", "") == "{}").toString());
+      print("1 => " + astnode.runtimeType.toString());
       print("2 => " + astnode.parent.toString());
-      print("3 => " + astnode.parent.runtimeType.toString());
-      print("2 => " + astnode.parent!.childEntities.first.toString());
+      print("2 => " + astnode.parent.runtimeType.toString());
+      print("3 => " + astnode.parent!.parent.toString());
+      print("3 => " + astnode.parent!.parent.runtimeType.toString());
+      print("4 => " + astnode.parent!.parent!.parent.toString());
+      print("4 => " + astnode.parent!.parent!.parent.runtimeType.toString());
+      print("5 => " + astnode.parent!.parent!.parent!.parent.toString());
+      print("5 => " + astnode.parent!.parent!.parent!.parent.runtimeType.toString());
+      print("6 => " + astnode.parent!.parent!.parent!.parent!.childEntities.first.toString());
       // print("X => " + astnode.root.runtimeType.toString());
     }
 
