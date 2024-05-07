@@ -9,7 +9,7 @@ import 'package:dnose/detectors/TestSmell.dart';
 
 final Logger _logger = Logger('Main');
 
-class Vars{
+class Vars {
   static bool processando = false;
 }
 
@@ -75,6 +75,8 @@ void processar(String path_project) {
       "Foram encontrado " + lista_total.length.toString() + " Test Smells.");
 }
 
+var somatorio = Map<String, int>();
+
 void createCSV(List<TestSmell> lista_total) {
   var file = File('resultado.csv');
   var sink = file.openWrite();
@@ -85,6 +87,21 @@ void createCSV(List<TestSmell> lista_total) {
     _logger.info(
         "${ts.testClass?.project_name};${ts.testName};${ts.testClass?.module_atual};${ts.testClass?.path};${ts.name!};${ts.start};${ts.end}");
     _logger.info("Code: " + ts.code);
+
+    if (somatorio[ts.name!] == null) {
+      somatorio[ts.name!] = 1;
+    } else {
+      somatorio[ts.name!] = somatorio[ts.name!]! + 1;
+    }
   });
   sink.close();
+
+  var file2 = File('resultado2.csv');
+  var sink2 = file2.openWrite();
+  sink2.write("test_smell;qtd\n");
+  somatorio.forEach((key, value) {
+    sink2.write("${key};${value}\n");
+    _logger.info("${key};${value}");
+  });
+  sink2.close();
 }

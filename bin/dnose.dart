@@ -26,11 +26,13 @@ window.onload = (event) => {
   processando.innerHTML = "Processando: FALSE";
   
   document.getElementById("resultado").style.visibility = "hidden";
+  document.getElementById("resultado2").style.visibility = "hidden";
 };
       
       function processar(){
       
       document.getElementById("resultado").style.visibility = "hidden";
+      document.getElementById("resultado2").style.visibility = "hidden";
       
       const processando = document.getElementById("processando");
       processando.innerHTML = "Processando: TRUE";
@@ -43,8 +45,8 @@ window.onload = (event) => {
         processando.innerHTML = "Processando: FALSE";
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
+        document.getElementById("resultado2").style.visibility = "visible";
         document.getElementById("processando").style.backgroundColor = "green";
-        
         console.log("=> " + req.response);
       };
       req.open("GET", "http://localhost:8080/processar?path_project="+path.value, true);
@@ -59,12 +61,14 @@ Handler init() {
   var app = Router().plus;
 
   String current = Directory.current.path.toString() + "/resultado.csv";
+  String current2 = Directory.current.path.toString() + "/resultado2.csv";
 
   app.get('/processando', (Request request) {
     return Response.ok(Vars.processando.toString(), headers: headers);
   });
 
   app.get('/download', () => File(current));
+  app.get('/download2', () => File(current2));
 
   app.get('/processar', (Request request) async {
     Vars.processando = true;
@@ -96,7 +100,8 @@ Handler init() {
     <br>
     <div>
       <br>
-      <a id='resultado' href="/download">Download Result</a>
+      <a id='resultado' href="/download">Download Result 1</a>
+      <a id='resultado2' href="/download2">Download Result 2</a>
     </div>
     </body>
     </html>
