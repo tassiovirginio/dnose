@@ -7,7 +7,7 @@ class DetectorVerboseTest implements AbstractDetectorTestSmell{
   @override
   get testSmellName => "Verbose Test";
 
-  final VALUE_MAX_LINES_VERBOSE = 10;
+  final VALUE_MAX_LINES_VERBOSE = 30;
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
