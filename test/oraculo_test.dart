@@ -57,8 +57,12 @@ void main() {
   // //teste vazio - Empty Test
   // test("EmptyFixture", () => {});
   // test("EmptyFixture", () => {     });
-  test("EmptyFixture", () {});
-  test("EmptyFixture", () {print("teste");});
+  // test("EmptyFixture", () {});
+  // test("EmptyFixture", () {print("teste");});
+
+
+  test("DetectorUnknownTest", () {print("teste");});
+
   //
   // test("ConditionalFixture IF", () => {if (true) {}});
   // test("ConditionalFixture IF", () =>
