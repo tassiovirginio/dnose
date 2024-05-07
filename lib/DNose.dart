@@ -19,7 +19,7 @@ class DNose {
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
-        (e.beginToken.toString() == "test" ||
+        (e.beginToken.toString() == "test" || //Métodos de teste normal
             e.beginToken.toString() ==
                 "testWidgets"); //Métodos de teste do Flutter
   }
