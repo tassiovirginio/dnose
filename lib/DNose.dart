@@ -11,6 +11,7 @@ import 'package:dnose/detectors/DetectorTestWithoutDescription.dart';
 import 'package:dnose/detectors/DetectorMagicNumber.dart';
 import 'package:dnose/detectors/DetectorDuplicateAssert.dart';
 import 'package:dnose/detectors/DetectorResourceOptimism.dart';
+import 'package:dnose/detectors/DetectorAssertionRoulette.dart';
 
 class DNose {
   static final Logger _logger = Logger('DNose');
@@ -35,7 +36,8 @@ class DNose {
       DetectorMagicNumber(),
       DetectorSleepyFixture(),
       DetectorDuplicateAssert(),
-      DetectorResourceOptimism()
+      DetectorResourceOptimism(),
+      DetectorAssertionRoulette()
     ]);
 
     detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));

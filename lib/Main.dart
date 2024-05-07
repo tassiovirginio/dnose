@@ -16,8 +16,8 @@ class Vars {
 }
 
 void main(List<String> args) {
-  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
   // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 

@@ -22,17 +22,12 @@ void detectar01(AstNode astnode) {
     print(astnode.toSource());
 
     if (astnode is SimpleStringLiteral &&
-        astnode.parent is ArgumentList &&
-        astnode.parent!.parent is MethodInvocation &&
-        astnode.value.trim().isEmpty &&
-        astnode.parent!.parent!.toString().contains("test(")){
+        astnode.parent is NamedExpression &&
+        astnode.parent!.parent!.parent!.childEntities.firstOrNull!.toString() == "expect"){
       print("Teste....2");
-      print("=> " + astnode.value.trim().isEmpty.toString());
-      print("=> " + astnode.runtimeType.toString());
-      print("=> " + astnode.parent.runtimeType.toString());
+      print("vazio => " + astnode.value.trim().isEmpty.toString());
       print("=> " + astnode.parent.toString());
-      print("=> " + astnode.parent!.parent!.runtimeType.toString());
-      print("=> " + astnode.parent!.parent!.toString().contains("test(").toString());
+      print("=> " + astnode.parent!.parent!.parent!.childEntities.firstOrNull!.toString());
     }
 
     if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {
