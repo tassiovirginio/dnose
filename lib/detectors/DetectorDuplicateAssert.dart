@@ -26,7 +26,7 @@ class DetectorDuplicateAssert implements AbstractDetectorTestSmell{
           code_1 = e.toSource();
         }else if(cont == 1){
           cont++;
-          testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource() + "\n" + code_1, start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+          testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
         }
       }
     } else {

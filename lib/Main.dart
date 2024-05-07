@@ -10,9 +10,9 @@ import 'package:dnose/detectors/TestSmell.dart';
 final Logger _logger = Logger('Main');
 
 void main() {
-  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
+  String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
-  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 }
 
