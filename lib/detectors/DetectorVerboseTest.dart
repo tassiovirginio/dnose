@@ -40,6 +40,6 @@ class DetectorVerboseTest implements AbstractDetectorTestSmell{
   }
 
   int lineNumber(CompilationUnit cu ,int offset) {
-    return cu.lineInfo.getLocation(offset).lineNumber ?? 0;
+    return cu.lineInfo.getLocation(offset).lineNumber;
   }
 }

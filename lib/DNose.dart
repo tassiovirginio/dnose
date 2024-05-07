@@ -13,6 +13,7 @@ import 'package:dnose/detectors/DetectorDuplicateAssert.dart';
 import 'package:dnose/detectors/DetectorResourceOptimism.dart';
 import 'package:dnose/detectors/DetectorAssertionRoulette.dart';
 import 'package:dnose/detectors/DetectorVerboseTest.dart';
+import 'package:dnose/detectors/DetectorEmptyTest.dart';
 
 class DNose {
   static final Logger _logger = Logger('DNose');
@@ -39,7 +40,8 @@ class DNose {
       DetectorDuplicateAssert(),
       DetectorResourceOptimism(),
       DetectorAssertionRoulette(),
-      DetectorVerboseTest()
+      DetectorVerboseTest(),
+      DetectorEmptyTest()
     ]);
 
     detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));

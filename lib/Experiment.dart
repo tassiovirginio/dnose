@@ -25,20 +25,21 @@ void detectar01(AstNode astnode) {
     print(astnode.runtimeType);
     print(astnode.toSource());
 
-    if (astnode is SimpleIdentifier && astnode.toString() == "test" && astnode.parent is MethodInvocation){
+    if (astnode is SetOrMapLiteral && astnode.toString().replaceAll(" ", "") == "{}"){
 
-      int start = lineNumber(astnode.parent!.offset);
-      int end = lineNumber(astnode.parent!.end);
+      // int start = lineNumber(astnode.parent!.offset);
+      // int end = lineNumber(astnode.parent!.end);
 
 
       print("Linha start: " + lineNumber(astnode.parent!.offset).toString());
       print("Linha end: " + lineNumber(astnode.parent!.end).toString());
-      print("1 => " + astnode.toString());
+      print("1 => " + (astnode.toString() == '{}').toString());
+      print("1 => " + (astnode.toString().replaceAll(" ", "") == "{}").toString());
       print("3 => " + astnode.runtimeType.toString());
       print("2 => " + astnode.parent.toString());
       print("3 => " + astnode.parent.runtimeType.toString());
       print("2 => " + astnode.parent!.childEntities.first.toString());
-      print("X => " + astnode.root.runtimeType.toString());
+      // print("X => " + astnode.root.runtimeType.toString());
     }
 
     if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {
