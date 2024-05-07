@@ -2,14 +2,18 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/analysis/features.dart';
 
-void main(List<String> args) {
-  var ast = parseFile(
-          path:
-              '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
-          featureSet: FeatureSet.latestLanguageVersion())
-      .unit;
+CompilationUnit ast = parseFile(
+    path:
+    '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
+    featureSet: FeatureSet.latestLanguageVersion())
+    .unit;
 
+void main(List<String> args) {
   detectar01(ast);
+}
+
+int lineNumber(int offset) {
+  return ast.lineInfo.getLocation(offset).lineNumber ?? 0;
 }
 
 void detectar01(AstNode astnode) {
@@ -21,15 +25,20 @@ void detectar01(AstNode astnode) {
     print(astnode.runtimeType);
     print(astnode.toSource());
 
-    if (astnode is ArgumentList && astnode.parent is MethodInvocation
-        && !astnode.toString().contains("reason:")
-   && astnode.parent!.childEntities.first.toString() == "expect"){
-      print("Teste....2");
+    if (astnode is SimpleIdentifier && astnode.toString() == "test" && astnode.parent is MethodInvocation){
+
+      int start = lineNumber(astnode.parent!.offset);
+      int end = lineNumber(astnode.parent!.end);
+
+
+      print("Linha start: " + lineNumber(astnode.parent!.offset).toString());
+      print("Linha end: " + lineNumber(astnode.parent!.end).toString());
       print("1 => " + astnode.toString());
       print("3 => " + astnode.runtimeType.toString());
       print("2 => " + astnode.parent.toString());
       print("3 => " + astnode.parent.runtimeType.toString());
       print("2 => " + astnode.parent!.childEntities.first.toString());
+      print("X => " + astnode.root.runtimeType.toString());
     }
 
     if (code.contains(RegExp("\bexpect\b|\breason:|\"\""))) {

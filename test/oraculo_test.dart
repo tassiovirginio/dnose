@@ -91,10 +91,10 @@ void main() {
   //   expect(1 + 2, 3);
   // });
 
-  test("AssertionRoulet", () {
-    expect(1 + 2, 3, reason: "");
-    expect(1 + 2, 3);
-  });
+  // test("AssertionRoulet", () {
+  //   expect(1 + 2, 3, reason: "");
+  //   expect(1 + 2, 3);
+  // });
 
   // test("DetectorResourceOptimism", () {
   //   var file = File('file.txt');
@@ -104,42 +104,42 @@ void main() {
   //
   // test("SleepyFixture", () => {system.sleep(Duration(seconds: UM_SEGUNDO))});
 
-  // test(
-  //     "VerboseFixture",
-  //     () => {
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3),
-  //           expect(1 + 2, 3)
-  //         });
+  test(
+      "VerboseFixture",
+      () => {
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3)
+          });
 }
