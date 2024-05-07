@@ -19,13 +19,6 @@ var headers2 = {
   'Access-Control-Allow-Headers': 'Origin, Content-Type',
 };
 
-var css_base = """
-    .center {
-      text-align: center;
-    }
-
-    """;
-
 var js_base = """
 
 window.onload = (event) => {
@@ -56,7 +49,6 @@ window.onload = (event) => {
       };
       req.open("GET", "http://localhost:8080/processar?path_project="+path.value, true);
       req.send();
-        
       
       }  
     """;
@@ -86,9 +78,6 @@ Handler init() {
     var pagina = """
     <html>
     <head>
-      <style>
-        $css_base
-      </style>
       <script>
         $js_base
       </script>
@@ -115,11 +104,6 @@ Handler init() {
 
     return Response.ok(pagina, headers: headers2);
   });
-
-  // var handler = const Pipeline().addMiddleware(logRequests()).addHandler(app);
-  //
-  // var server = await io.serve(handler, 'localhost', 8080);
-  // print('Server listening on localhost:${server.port}');
 
   return app.call;
 }
