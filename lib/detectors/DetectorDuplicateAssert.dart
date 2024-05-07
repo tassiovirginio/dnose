@@ -9,15 +9,15 @@ class DetectorDuplicateAssert implements AbstractDetectorTestSmell{
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
-    _detect(e as AstNode, testClass);
+  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
+    _detect(e as AstNode, testClass, testName);
     return testSmells;
   }
 
   int cont = 0;
   String code_1 = "";
 
-  void _detect(AstNode e, TestClass testClass) {
+  void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is SimpleIdentifier) {
       if(e.toSource().trim() == "expect"){
@@ -26,13 +26,13 @@ class DetectorDuplicateAssert implements AbstractDetectorTestSmell{
           code_1 = e.toSource();
         }else if(cont == 1){
           cont++;
-          testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource() + "\n" + code_1, start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+          testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource() + "\n" + code_1, start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
         }
       }
     } else {
       e.childEntities.forEach((element) {
         if (element is AstNode) {
-          _detect(element, testClass);
+          _detect(element, testClass, testName);
         }
       });
     }

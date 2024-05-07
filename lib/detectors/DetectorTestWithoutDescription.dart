@@ -30,21 +30,21 @@ class DetectorTestWithoutDescription implements AbstractDetectorTestSmell{
   // }
 
   @override
-  List<TestSmell> detect(AstNode e, TestClass testClass) {
-    _detect(e, testClass);
+  List<TestSmell> detect(AstNode e, TestClass testClass, String testName) {
+    _detect(e, testClass, testName);
     return testSmells;
   }
 
-  void _detect(AstNode e, TestClass testClass) {
+  void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is SimpleStringLiteral &&
         e.parent is ArgumentList &&
         e.parent!.parent is MethodInvocation &&
         e.value.trim().isEmpty &&
         e.parent!.parent!.toString().contains("test(")) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: e.parent!.parent!.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+      testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.parent!.parent!.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((e) {
-        if (e is AstNode) _detect(e, testClass);
+        if (e is AstNode) _detect(e, testClass, testName);
       });
     }
   }

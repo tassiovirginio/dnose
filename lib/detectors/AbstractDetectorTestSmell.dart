@@ -5,5 +5,5 @@ import 'package:analyzer/dart/ast/ast.dart';
 abstract class AbstractDetectorTestSmell {
   String get testSmellName;
 
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass);
+  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName);
 }

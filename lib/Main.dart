@@ -7,6 +7,8 @@ import 'package:dnose/detectors/TestClass.dart';
 import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
 
+final Logger _logger = Logger('Main');
+
 void main() {
   // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose/test/";
@@ -14,10 +16,7 @@ void main() {
   processar(path_project);
 }
 
-
 void processar(String path_project) {
-  final Logger _logger = Logger('Main');
-
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
@@ -27,14 +26,12 @@ void processar(String path_project) {
   _logger.info("========= Dart Test Smells Detector ==========");
   _logger.info("==============================================");
 
-  Directory dir = Directory(path_project);
-
-  List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
-
   DNose dnose = DNose();
 
   List<TestSmell> lista_total = List.empty(growable: true);
 
+  Directory dir = Directory(path_project);
+  List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
   String project_name = path_project.split("/").last;
 
   String module_atual = "";
@@ -55,19 +52,22 @@ void processar(String path_project) {
     }
   });
 
-  var file = File('resultado.csv');
-  var sink = file.openWrite();
-  sink.write("project_name,module,path,testsmell,start,end\n");
-  lista_total.forEach((ts) {
-    sink.write("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!},${ts.start},${ts.end}\n");
-    _logger.info("${ts.testClass?.project_name},${ts.testClass?.module_atual},${ts.testClass?.path},${ts.name!},${ts.start},${ts.end}");
-    _logger.info("Code: " + ts.code);
-  });
-
-  // Close the IOSink to free system resources.
-  sink.close();
+  createCSV(lista_total);
 
   _logger.info("Foram encontrado " + lista_total.length.toString() + " Test Smells.");
+}
+
+
+void createCSV(List<TestSmell> lista_total){
+  var file = File('resultado.csv');
+  var sink = file.openWrite();
+  sink.write("project_name;test_name;module;path;testsmell;start;end\n");
+  lista_total.forEach((ts) {
+    sink.write("${ts.testClass?.project_name};${ts.testName};${ts.testClass?.module_atual};${ts.testClass?.path};${ts.name!};${ts.start};${ts.end}\n");
+    _logger.info("${ts.testClass?.project_name};${ts.testName};${ts.testClass?.module_atual};${ts.testClass?.path};${ts.name!};${ts.start};${ts.end}");
+    _logger.info("Code: " + ts.code);
+  });
+  sink.close();
 }
 
 

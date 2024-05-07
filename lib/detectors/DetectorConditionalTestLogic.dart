@@ -10,17 +10,17 @@ class DetectorConditionalTestLogic implements AbstractDetectorTestSmell {
   get testSmellName => "Conditional Test Logic";
 
   @override
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
-    _detect(e, testClass);
+  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
+    _detect(e, testClass, testName);
     return testSmells;
   }
 
-  void _detect(AstNode e, TestClass testClass) {
+  void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is ForElement || e is IfElement || e is WhileStatement) {
-      testSmells.add(TestSmell(testSmellName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+      testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((e) {
-        if (e is AstNode) _detect(e, testClass);
+        if (e is AstNode) _detect(e, testClass, testName);
       });
     }
   }

@@ -20,10 +20,11 @@ class DNose {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
         (e.beginToken.toString() == "test" ||
-            e.beginToken.toString() == "testWidgets"); //Métodos de teste do Flutter
+            e.beginToken.toString() ==
+                "testWidgets"); //Métodos de teste do Flutter
   }
 
-  List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass) {
+  List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
     List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
 
@@ -37,7 +38,7 @@ class DNose {
       DetectorResourceOptimism()
     ]);
 
-    detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass)));
+    detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));
 
     return testSmells;
   }
@@ -56,13 +57,37 @@ class DNose {
     n.childEntities.forEach((element) {
       if (element is AstNode) {
         if (isTest(element)) {
-          _logger.info("Test Detect: " + element.toSource());
+          String testName = getTestName(element);
+          _logger.info("Test Function Detect: " + testName + " - " + element.toSource());
           testSmells.addAll(
-              detectTestSmells(element as ExpressionStatement, testClass));
+              detectTestSmells(element as ExpressionStatement, testClass, testName));
         }
         testSmells.addAll(_scan(element, testClass));
       }
     });
     return testSmells;
+  }
+
+  String getTestName(AstNode e) {
+    String testName = "";
+    if (e is ExpressionStatement &&
+        e.beginToken.type == TokenType.IDENTIFIER &&
+        (e.beginToken.toString() == "test" ||
+            e.beginToken.toString() == "testWidgets")) {
+      e.childEntities.forEach((element) {
+        if (element is MethodInvocation) {
+          element.childEntities.forEach((element) {
+            if (element is ArgumentList) {
+              element.childEntities.forEach((element) {
+                if (element is SimpleStringLiteral) {
+                  testName = element.value;
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+    return testName;
   }
 }

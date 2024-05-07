@@ -7,22 +7,22 @@ class DetectorMagicNumber implements AbstractDetectorTestSmell {
   List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass) {
-    _magicNumber(e as AstNode, testClass);
+  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
+    _magicNumber(e as AstNode, testClass, testName);
     return testSmells;
   }
 
-  void _magicNumber(AstNode e, TestClass testClass) {
+  void _magicNumber(AstNode e, TestClass testClass, String testName) {
     if (e is ForElement || e is IfElement || e is WhileStatement) {
       return;
     }
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is IntegerLiteral || e is DoubleLiteral) {
-      testSmells.add(TestSmell("Magic Number", testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+      testSmells.add(TestSmell("Magic Number", testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
       e.childEntities.forEach((element) {
         if (element is AstNode) {
-          _magicNumber(element, testClass);
+          _magicNumber(element, testClass, testName);
         }
       });
     }
