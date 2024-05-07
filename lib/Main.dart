@@ -6,6 +6,8 @@ import "package:yaml/yaml.dart";
 import 'package:dnose/detectors/TestClass.dart';
 import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 final Logger _logger = Logger('Main');
 
@@ -104,4 +106,8 @@ void createCSV(List<TestSmell> lista_total) {
     _logger.info("${key};${value}");
   });
   sink2.close();
+}
+
+String generateMd5(String input) {
+  return md5.convert(utf8.encode(input)).toString();
 }
