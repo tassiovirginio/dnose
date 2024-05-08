@@ -1,27 +1,19 @@
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/analysis/features.dart';
-// import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/ast/ast.dart' show AstNode, CompilationUnit;
+import 'package:analyzer/dart/analysis/utilities.dart' show parseFile;
+import 'package:analyzer/dart/analysis/features.dart' show FeatureSet;
 
 class TestClass {
   CompilationUnit? ast;
   String path = "";
   AstNode? root;
-  String? module_atual;
-  String? project_name;
+  String? module_atual, project_name;
 
-  TestClass(String path, String module_atual, String project_name) {
-    this.path = path;
-    this.ast = parseFile(
-            path: path, featureSet: FeatureSet.latestLanguageVersion())
+  TestClass(this.path, this.module_atual, this.project_name) {
+    ast = parseFile(path: path, featureSet: FeatureSet.latestLanguageVersion())
         .unit;
-
-    this.module_atual = module_atual;
-    this.project_name = project_name;
     root = ast?.root;
   }
 
-  int lineNumber(int offset) {
-    return ast?.lineInfo?.getLocation(offset)?.lineNumber ?? 0;
-  }
+  int lineNumber(int offset) =>
+      ast?.lineInfo.getLocation(offset).lineNumber ?? 0;
 }

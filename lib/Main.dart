@@ -1,13 +1,11 @@
-import 'dart:convert';
-
-import 'package:logging/logging.dart';
 import 'dart:io';
-import "package:yaml/yaml.dart";
+import 'dart:convert';
+import 'package:logging/logging.dart';
+import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:dnose/detectors/TestClass.dart';
 import 'package:dnose/DNose.dart';
 import 'package:dnose/detectors/TestSmell.dart';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart' show md5;
 
 final Logger _logger = Logger('Main');
 
