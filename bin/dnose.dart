@@ -27,12 +27,14 @@ window.onload = (event) => {
   
   document.getElementById("resultado").style.visibility = "hidden";
   document.getElementById("resultado2").style.visibility = "hidden";
+  document.getElementById("loading").style.visibility = "hidden";
 };
       
       function processar(){
       
       document.getElementById("resultado").style.visibility = "hidden";
       document.getElementById("resultado2").style.visibility = "hidden";
+      document.getElementById("loading").style.visibility = "visible";
       
       const processando = document.getElementById("processando");
       processando.innerHTML = "Processando: TRUE";
@@ -46,6 +48,7 @@ window.onload = (event) => {
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";
+        document.getElementById("loading").style.visibility = "hidden";
         document.getElementById("processando").style.backgroundColor = "green";
         console.log("=> " + req.response);
       };
@@ -76,6 +79,26 @@ Handler init() {
     var pagina = """
     <html>
     <head>
+      <style>
+      .window{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 100px;
+            height: 100px;
+        }
+        .loading {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            }
+      </style>
       <script>
         $js_base
       </script>
@@ -87,7 +110,7 @@ Handler init() {
     <br>
     <form method='get' action='processar'>
       <label>Path Project:</label>
-      <input type="text" id='path_project' name="path_project" value='/home/tassio/Desenvolvimento/dart/flutter' style="width: 300px">
+      <input type="text" id='path_project' name="path_project" value='/home/tassio/Desenvolvimento/repo.git/dnose' style="width: 300px">
       <br>
     </form>
     <button onclick='processar();'>Process</button>
@@ -96,6 +119,11 @@ Handler init() {
       <br>
       <a id='resultado' href="/download">Download Result 1</a>
       <a id='resultado2' href="/download2">Download Result 2</a>
+    </div>
+    <div class="loading" id="loading">
+      <div class='window'>
+          Carregando...
+      </div>
     </div>
     </body>
     </html>
