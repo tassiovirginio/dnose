@@ -63,18 +63,12 @@ Handler init() {
   String current = Directory.current.path.toString() + "/resultado.csv";
   String current2 = Directory.current.path.toString() + "/resultado2.csv";
 
-  app.get('/processando', (Request request) {
-    return Response.ok(Vars.processando.toString(), headers: headers);
-  });
-
   app.get('/download', () => File(current));
   app.get('/download2', () => File(current2));
 
   app.get('/processar', (Request request) async {
-    Vars.processando = true;
     String? path_project = request.url.queryParameters['path_project'];
     processar(path_project!);
-    Vars.processando = false;
     return Response.ok("", headers: headers);
   });
 

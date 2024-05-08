@@ -11,13 +11,10 @@ import 'package:crypto/crypto.dart';
 
 final Logger _logger = Logger('Main');
 
-class Vars {
-  static bool processando = false;
-}
-
 void main(List<String> args) {
   // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
-  String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
+  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
+  String path_project = "/home/tassio/Desenvolvimento/repo.git/dnose";
   // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 
