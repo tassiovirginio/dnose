@@ -82,7 +82,7 @@
                 document.getElementById("processando").className = "tag is-primary is-light";
                 console.log("=> " + req.response);
             };
-            req.open("GET", "http://localhost:8080/processar?path_project=" + path.value, true);
+            req.open("GET", "/processar?path_project=" + path.value, true);
             req.send();
 
         }
