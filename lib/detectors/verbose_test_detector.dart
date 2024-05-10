@@ -7,7 +7,7 @@ class VerboseTestDetector implements AbstractDetector{
   @override
   get testSmellName => "Verbose Test";
 
-  final VALUE_MAX_LINES_VERBOSE = 30;
+  static const valueMaxLineVerbose = 30;
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
@@ -24,7 +24,7 @@ class VerboseTestDetector implements AbstractDetector{
       int start = lineNumber(e.root as CompilationUnit, e.parent!.offset);
       int end = lineNumber(e.root as CompilationUnit, e.parent!.end);
 
-      if(end - start > VALUE_MAX_LINES_VERBOSE){
+      if(end - start > valueMaxLineVerbose){
         testSmells.add(TestSmell(
             testSmellName, testName, testClass, code: e.toSource(),
             start: testClass.lineNumber(e.parent!.offset),

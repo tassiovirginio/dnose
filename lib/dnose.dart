@@ -17,7 +17,7 @@ import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 
 class DNose {
-  static final Logger _LOGGER = Logger('DNose');
+  static final Logger _logger = Logger('DNose');
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -55,8 +55,8 @@ class DNose {
   List<TestSmell> scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     AstNode n = testClass.root;
-    _LOGGER.info("Scanning...");
-    _LOGGER.info("Path: ${testClass.path}");
+    _logger.info("Scanning...");
+    _logger.info("Path: ${testClass.path}");
     testSmells.addAll(_scan(n, testClass));
     return testSmells;
   }
@@ -67,7 +67,7 @@ class DNose {
       if (element is AstNode) {
         if (isTest(element)) {
           String testName = getTestName(element);
-          _LOGGER.info(
+          _logger.info(
               "Test Function Detect: $testName - ${element.toSource()}");
           testSmells.addAll(detectTestSmells(
               element as ExpressionStatement, testClass, testName));
