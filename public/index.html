@@ -1,7 +1,7 @@
 <html>
 <head>
     <style>
-        .window{
+        .window {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -10,6 +10,7 @@
             width: 100px;
             height: 100px;
         }
+
         .loading {
             display: block;
             position: fixed;
@@ -30,7 +31,7 @@
             document.getElementById("loading").style.visibility = "hidden";
         };
 
-        function processar(){
+        function processar() {
 
             document.getElementById("resultado").style.visibility = "hidden";
             document.getElementById("resultado2").style.visibility = "hidden";
@@ -52,20 +53,23 @@
                 document.getElementById("processando").style.backgroundColor = "green";
                 console.log("=> " + req.response);
             };
-            req.open("GET", "http://localhost:8080/processar?path_project="+path.value, true);
+            req.open("GET", "http://localhost:8080/processar?path_project=" + path.value, true);
             req.send();
 
         }
     </script>
 </head>
 <body style='border-collapse: collapse;padding: 0;margin: 0;'>
-<div style='text-align: center;height: 30px; width: 100%; background-color: black; font-size: 22px; color: #eeeeee'>DNose - Dart Test Smell Detector</div>
+<div style='text-align: center;height: 30px; width: 100%; background-color: black; font-size: 22px; color: #eeeeee'>
+    DNose - Dart Test Smell Detector
+</div>
 <div id='processando' style='background-color: green; color: white;'>Processando: FALSE</div>
 <br>
 <br>
 <form method='get' action='processar'>
     <label>Path Project:</label>
-    <input type="text" id='path_project' name="path_project" value='/home/tassio/Desenvolvimento/dart/flutter' style="width: 300px">
+    <input type="text" id='path_project' name="path_project" value='/home/tassio/Desenvolvimento/dart/flutter'
+           style="width: 300px">
     <br>
 </form>
 <button onclick='processar();'>Process</button>
