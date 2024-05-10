@@ -11,6 +11,7 @@ class VerboseTestDetector implements AbstractDetector{
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
+  @override
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
     _detect(e as AstNode, testClass, testName);
     return testSmells;

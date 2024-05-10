@@ -9,6 +9,7 @@ class UnknownTestDetector implements AbstractDetector{
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
+  @override
   List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
     if(e.toSource().contains("expect") == false){
       testSmells.add(TestSmell(
