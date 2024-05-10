@@ -6,6 +6,7 @@
     <title>DNose</title>
     <link rel="stylesheet" href="/bulma.min.css">
     <link rel="icon" type="image/x-icon" href="/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         .window {
@@ -36,6 +37,27 @@
             document.getElementById("resultado").style.visibility = "hidden";
             document.getElementById("resultado2").style.visibility = "hidden";
             document.getElementById("loading").style.visibility = "hidden";
+
+            const ctx = document.getElementById('myChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         };
 
         function processar() {
@@ -64,6 +86,8 @@
             req.send();
 
         }
+
+
     </script>
 </head>
 <body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
@@ -113,7 +137,14 @@
                 <a class="button is-warning" id='resultado2' href="/download2">Download Result 2</a>
             </div>
         </article>
+        <article class="panel is-link block">
+            <p class="panel-heading">Charts</p>
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
+        </article>
     </div>
+
 </section>
 
 
