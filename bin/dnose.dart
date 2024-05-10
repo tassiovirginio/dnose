@@ -69,13 +69,15 @@ Handler init() {
   app.get('/download', () => File(current));
   app.get('/download2', () => File(current2));
 
+  app.get('/', () => File('public/index.html'));
+
   app.get('/processar', (Request request) async {
     String? path_project = request.url.queryParameters['path_project'];
     processar(path_project!);
     return Response.ok("", headers: headers);
   });
 
-  app.get('/', (Request request) {
+  app.get('/bkp', (Request request) {
     var pagina = """
     <html>
     <head>
