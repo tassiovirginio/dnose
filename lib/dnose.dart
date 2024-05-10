@@ -31,6 +31,7 @@ class DNose {
       ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
 
+    //se mudar de local essa lista a detecção fica lenta.
     List<AbstractDetector> detectors = [
       ConditionalTestLogicDetector(),
       PrintStatmentFixtureDetector(),
