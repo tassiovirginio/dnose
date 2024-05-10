@@ -28,7 +28,8 @@ class DNose {
                 "testWidgets"); //Métodos de teste do Flutter
   }
 
-  List<TestSmell> detectTestSmells(ExpressionStatement e, TestClass testClass, String testName) {
+  List<TestSmell> detectTestSmells(
+      ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
     List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
 
@@ -46,7 +47,8 @@ class DNose {
       DetectorUnknownTest()
     ]);
 
-    detectors.forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));
+    detectors
+        .forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));
 
     return testSmells;
   }
@@ -66,9 +68,10 @@ class DNose {
       if (element is AstNode) {
         if (isTest(element)) {
           String testName = getTestName(element);
-          _logger.info("Test Function Detect: " + testName + " - " + element.toSource());
-          testSmells.addAll(
-              detectTestSmells(element as ExpressionStatement, testClass, testName));
+          _logger.info(
+              "Test Function Detect: " + testName + " - " + element.toSource());
+          testSmells.addAll(detectTestSmells(
+              element as ExpressionStatement, testClass, testName));
         }
         testSmells.addAll(_scan(element, testClass));
       }

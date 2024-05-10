@@ -12,8 +12,8 @@ final Logger _logger = Logger('Main');
 void main(List<String> args) {
   // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
   // String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
-  String path_project = "/home/tassio/Desenvolvimento/repo.git/dnose";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
+  // String path_project = "/home/tassio/Desenvolvimento/repo.git/dnose";
+  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
   processar(path_project);
 
   // if(args.length == 1){
@@ -49,7 +49,7 @@ void processar(String path_project) {
       diretorio_atual = file.parent.path;
     } else if (diretorio_atual != file.parent.path) {
       diretorio_atual = file.parent.path;
-      File file2 = new File(diretorio_atual + "/pubspec.yaml");
+      File file2 = File("$diretorio_atual/pubspec.yaml");
 
       if (file2.existsSync()) {
         String yamlString = file2.readAsStringSync();
@@ -80,15 +80,15 @@ void createCSV(List<TestSmell> lista_total) {
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   lista_total.forEach((ts) {
     sink.write(
-        "${ts.testClass?.project_name};${ts.testName};${ts.testClass?.module_atual};${ts.testClass?.path};${ts.name!};${ts.start};${ts.end}\n");
+        "${ts.testClass.project_name};${ts.testName};${ts.testClass.module_atual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
     _logger.info(
-        "${ts.testClass?.project_name};${ts.testName};${ts.testClass?.module_atual};${ts.testClass?.path};${ts.name!};${ts.start};${ts.end}");
+        "${ts.testClass.project_name};${ts.testName};${ts.testClass.module_atual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
     _logger.info("Code: " + ts.code);
 
-    if (somatorio[ts.name!] == null) {
-      somatorio[ts.name!] = 1;
+    if (somatorio[ts.name] == null) {
+      somatorio[ts.name] = 1;
     } else {
-      somatorio[ts.name!] = somatorio[ts.name!]! + 1;
+      somatorio[ts.name] = somatorio[ts.name]! + 1;
     }
   });
   sink.close();
@@ -103,6 +103,5 @@ void createCSV(List<TestSmell> lista_total) {
   sink2.close();
 }
 
-String generateMd5(String input) {
-  return md5.convert(utf8.encode(input)).toString();
-}
+String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
+
