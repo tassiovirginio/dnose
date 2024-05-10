@@ -55,9 +55,9 @@ class DNose {
 
   List<TestSmell> scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
-    AstNode n = testClass.root as AstNode;
+    AstNode n = testClass.root;
     _logger.info("Scanning...");
-    _logger.info("Path: " + testClass.path);
+    _logger.info("Path: ${testClass.path}");
     testSmells.addAll(_scan(n, testClass));
     return testSmells;
   }
@@ -69,7 +69,7 @@ class DNose {
         if (isTest(element)) {
           String testName = getTestName(element);
           _logger.info(
-              "Test Function Detect: " + testName + " - " + element.toSource());
+              "Test Function Detect: $testName - ${element.toSource()}");
           testSmells.addAll(detectTestSmells(
               element as ExpressionStatement, testClass, testName));
         }
