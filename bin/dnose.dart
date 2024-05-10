@@ -16,8 +16,8 @@ Handler init() {
   app.get('/download2', () => File(resultado2));
 
   app.get('/', () => File('public/index.html'));
-
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
+  app.get('/logo.png', () => File('public/logo.png'));
 
   app.get('/processar', (Request request) async {
     String? path_project = request.url.queryParameters['path_project'];
