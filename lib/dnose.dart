@@ -30,9 +30,8 @@ class DNose {
   List<TestSmell> detectTestSmells(
       ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
-    List<AbstractDetector> detectors = List.empty(growable: true);
 
-    detectors.addAll([
+    List<AbstractDetector> detectors = [
       ConditionalTestLogicDetector(),
       PrintStatmentFixtureDetector(),
       TestWithoutDescriptionDetector(),
@@ -44,7 +43,7 @@ class DNose {
       VerboseTestDetector(),
       EmptyTestDetector(),
       UnknownTestDetector()
-    ]);
+    ];
 
     detectors
         .forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));
