@@ -2,9 +2,9 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
-import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/models/test_class.dart';
 import 'package:dnose/dnose.dart';
-import 'package:dnose/detectors/models/test_smell.dart';
+import 'package:dnose/models/test_smell.dart';
 import 'package:crypto/crypto.dart' show md5;
 
 final Logger _logger = Logger('Main');

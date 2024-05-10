@@ -1,6 +1,6 @@
-import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/models/test_class.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
-import 'package:dnose/detectors/models/test_smell.dart';
+import 'package:dnose/models/test_smell.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
 class EmptyTestDetector implements AbstractDetector{

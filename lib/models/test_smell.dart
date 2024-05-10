@@ -1,4 +1,4 @@
-import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/models/test_class.dart';
 
 class TestSmell{
   String name, testName, code;
