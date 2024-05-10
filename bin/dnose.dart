@@ -17,6 +17,8 @@ Handler init() {
 
   app.get('/', () => File('public/index.html'));
 
+  app.get('/bulma.min.css', () => File('public/bulma.min.css'));
+
   app.get('/processar', (Request request) async {
     String? path_project = request.url.queryParameters['path_project'];
     processar(path_project!);

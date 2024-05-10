@@ -1,13 +1,19 @@
-<html>
+<!doctype html>
+<html data-theme="light">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DNose</title>
+    <link rel="stylesheet" href="/bulma.min.css">
+
     <style>
         .window {
             position: absolute;
             top: 50%;
-            left: 50%;
+            left: 30%;
             margin-top: -50px;
             margin-left: -50px;
-            width: 100px;
+            width: 40%;
             height: 100px;
         }
 
@@ -39,7 +45,7 @@
 
             const processando = document.getElementById("processando");
             processando.innerHTML = "Processando: TRUE";
-            document.getElementById("processando").style.backgroundColor = "red";
+            document.getElementById("processando").className = "tag is-danger";
 
             const path = document.getElementById("path_project");
             console.log(path.value);
@@ -50,7 +56,7 @@
                 document.getElementById("resultado").style.visibility = "visible";
                 document.getElementById("resultado2").style.visibility = "visible";
                 document.getElementById("loading").style.visibility = "hidden";
-                document.getElementById("processando").style.backgroundColor = "green";
+                document.getElementById("processando").className = "tag is-primary is-light";
                 console.log("=> " + req.response);
             };
             req.open("GET", "http://localhost:8080/processar?path_project=" + path.value, true);
@@ -59,29 +65,62 @@
         }
     </script>
 </head>
-<body style='border-collapse: collapse;padding: 0;margin: 0;'>
-<div style='text-align: center;height: 30px; width: 100%; background-color: black; font-size: 22px; color: #eeeeee'>
-    DNose - Dart Test Smell Detector
-</div>
-<div id='processando' style='background-color: green; color: white;'>Processando: FALSE</div>
-<br>
-<br>
-<form method='get' action='processar'>
-    <label>Path Project:</label>
-    <input type="text" id='path_project' name="path_project" value='/home/tassio/Desenvolvimento/dart/flutter'
-           style="width: 300px">
-    <br>
-</form>
-<button onclick='processar();'>Process</button>
-<br>
-<div>
-    <br>
-    <a id='resultado' href="/download">Download Result 1</a>
-    <a id='resultado2' href="/download2">Download Result 2</a>
-</div>
+<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+
+<section class="hero">
+    <div class="hero-body">
+        <p class="title">DNose</p>
+        <p class="subtitle">Dart Test Smell Detector</p>
+    </div>
+</section>
+
+<section class="section is-medium">
+    <div class="container is-align-content-center">
+        <article class="panel is-link block">
+            <p class="panel-heading">Analyze Project</p>
+            <div class="panel-block">
+                <span id='processando' class="tag is-primary is-light"></span>
+            </div>
+            <div class="panel-block">
+                <label class="label">Path Project:</label>
+                <p class="control has-icons-left">
+                    <input class="input is-link" type="text" placeholder="Path" value='/home/tassio/Desenvolvimento/dart/flutter' id='path_project' name="path_project"/>
+                    <span class="icon is-left">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                      </span>
+                </p>
+            </div>
+            <div class="panel-block">
+                <div class="control">
+                    <button onclick='processar();' class="button is-primary">Process</button>
+                </div>
+            </div>
+            <div class="panel-block">
+                <a class="button is-warning" id='resultado' href="/download">Download Result 1</a>
+                <a class="button is-warning" id='resultado2' href="/download2">Download Result 2</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+<footer class="footer ">
+    <div class="content has-text-centered">
+        <p>
+            <strong>DNose</strong> by <a href="https://tassiovirginio.github.io">Tássio Virgínio</a>
+        </p>
+        <p>
+            <a href="https://github.com/tassiovirginio/dnose">DNose Site</a>
+        </p>
+    </div>
+</footer>
+
+
 <div class="loading" id="loading">
     <div class='window'>
-        Carregando...
+        <div class="box">Processing...
+            <progress class="progress is-large is-info" max="100">60%</progress>
+        </div>
     </div>
 </div>
 </body>
