@@ -4,7 +4,7 @@ import 'dart:io';
 // import 'package:shelf/shelf.dart';
 // import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_plus/shelf_plus.dart';
-import 'package:dnose/Main.dart';
+import 'package:dnose/main.dart';
 
 var headers = {
   'Access-Control-Allow-Origin': '*',
@@ -19,7 +19,7 @@ var headers2 = {
   'Access-Control-Allow-Headers': 'Origin, Content-Type',
 };
 
-var js_base = """
+var jsBase = """
 
 window.onload = (event) => {
   const processando = document.getElementById("processando");
@@ -100,7 +100,7 @@ Handler init() {
             }
       </style>
       <script>
-        $js_base
+        $jsBase
       </script>
     </head>
     <body style='border-collapse: collapse;padding: 0;margin: 0;'>

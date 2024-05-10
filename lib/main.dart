@@ -2,19 +2,21 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
-import 'package:dnose/detectors/TestClass.dart';
-import 'package:dnose/DNose.dart';
-import 'package:dnose/detectors/TestSmell.dart';
+import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/dnose.dart';
+import 'package:dnose/detectors/models/test_smell.dart';
 import 'package:crypto/crypto.dart' show md5;
 
 final Logger _logger = Logger('Main');
 
 void main(List<String> args) {
-  // String path_project = "/home/tassio/Desenvolvimento/dart/conduit";
-  // String path_project = "/home/tassio/Desenvolvimento/dart/dnose";
-  // String path_project = "/home/tassio/Desenvolvimento/repo.git/dnose";
-  String path_project = "/home/tassio/Desenvolvimento/dart/flutter";
-  processar(path_project);
+  var path_project = [
+    "/home/tassio/Desenvolvimento/dart/flutter",
+    "/home/tassio/Desenvolvimento/repo.git/dnose",
+    "/home/tassio/Desenvolvimento/dart/dnose",
+    "/home/tassio/Desenvolvimento/dart/conduit"
+  ];
+  processar(path_project[0]);
 
   // if(args.length == 1){
   //   processar(args[0]);
@@ -34,42 +36,44 @@ void processar(String path_project) {
 
   DNose dnose = DNose();
 
-  List<TestSmell> lista_total = List.empty(growable: true);
+  List<TestSmell> listaTotal = List.empty(growable: true);
 
   Directory dir = Directory(path_project);
+
   List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
-  String project_name = path_project.split("/").last;
 
-  String module_atual = "";
+  String projectName = path_project.split("/").last;
 
-  String diretorio_atual = "";
+  String moduleAtual = "";
+
+  String diretorioAtual = "";
 
   entries.forEach((file) {
-    if (diretorio_atual.isEmpty) {
-      diretorio_atual = file.parent.path;
-    } else if (diretorio_atual != file.parent.path) {
-      diretorio_atual = file.parent.path;
-      File file2 = File("$diretorio_atual/pubspec.yaml");
+    if (diretorioAtual.isEmpty) {
+      diretorioAtual = file.parent.path;
+    } else if (diretorioAtual != file.parent.path) {
+      diretorioAtual = file.parent.path;
+      File file2 = File("$diretorioAtual/pubspec.yaml");
 
       if (file2.existsSync()) {
         String yamlString = file2.readAsStringSync();
         Map yaml = loadYaml(yamlString);
-        module_atual = yaml['name'];
+        moduleAtual = yaml['name'];
       }
     }
 
     if (file.path.endsWith("_test.dart") == true) {
       _logger.info("Analyzing: " + file.path);
-      TestClass testClass = TestClass(file.path, module_atual, project_name);
+      TestClass testClass = TestClass(file.path, moduleAtual, projectName);
       var testSmells = dnose.scan(testClass);
-      lista_total.addAll(testSmells);
+      listaTotal.addAll(testSmells);
     }
   });
 
-  createCSV(lista_total);
+  createCSV(listaTotal);
 
   _logger.info(
-      "Foram encontrado " + lista_total.length.toString() + " Test Smells.");
+      "Foram encontrado " + listaTotal.length.toString() + " Test Smells.");
 }
 
 var somatorio = Map<String, int>();
@@ -80,9 +84,9 @@ void createCSV(List<TestSmell> lista_total) {
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   lista_total.forEach((ts) {
     sink.write(
-        "${ts.testClass.project_name};${ts.testName};${ts.testClass.module_atual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
+        "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
     _logger.info(
-        "${ts.testClass.project_name};${ts.testName};${ts.testClass.module_atual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
+        "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
     _logger.info("Code: " + ts.code);
 
     if (somatorio[ts.name] == null) {
@@ -104,4 +108,3 @@ void createCSV(List<TestSmell> lista_total) {
 }
 
 String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
-

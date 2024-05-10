@@ -1,24 +1,23 @@
 import 'package:logging/logging.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/token.dart';
-import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
-import 'package:dnose/detectors/TestClass.dart';
-import 'package:dnose/detectors/TestSmell.dart';
-import 'package:dnose/detectors/DetectorConditionalTestLogic.dart';
-import 'package:dnose/detectors/DetectorPrintStatmentFixture.dart';
-import 'package:dnose/detectors/DetectorSleepyFixture.dart';
-import 'package:dnose/detectors/DetectorTestWithoutDescription.dart';
-import 'package:dnose/detectors/DetectorMagicNumber.dart';
-import 'package:dnose/detectors/DetectorDuplicateAssert.dart';
-import 'package:dnose/detectors/DetectorResourceOptimism.dart';
-import 'package:dnose/detectors/DetectorAssertionRoulette.dart';
-import 'package:dnose/detectors/DetectorVerboseTest.dart';
-import 'package:dnose/detectors/DetectorEmptyTest.dart';
-import 'package:dnose/detectors/DetectorUnknownTest.dart';
+import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/detectors/models/test_smell.dart';
+import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/print_statment_fixture_detector.dart';
+import 'package:dnose/detectors/sleepy_fixture_detector.dart';
+import 'package:dnose/detectors/test_without_description_detector.dart';
+import 'package:dnose/detectors/magic_number_detector.dart';
+import 'package:dnose/detectors/duplicate_assert_detector.dart';
+import 'package:dnose/detectors/resource_optimism_detector.dart';
+import 'package:dnose/detectors/assertion_roulette_detector.dart';
+import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/detectors/empty_test_detector.dart';
+import 'package:dnose/detectors/unknown_test_detector.dart';
 
 class DNose {
-  static final Logger _logger = Logger('DNose');
-  static final String TESTE = "DNOSE";
+  static final Logger _LOGGER = Logger('DNose');
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -31,20 +30,20 @@ class DNose {
   List<TestSmell> detectTestSmells(
       ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
-    List<AbstractDetectorTestSmell> detectors = List.empty(growable: true);
+    List<AbstractDetector> detectors = List.empty(growable: true);
 
     detectors.addAll([
-      DetectorConditionalTestLogic(),
-      DetectorPrintStatmentFixture(),
-      DetectorTestWithoutDescription(),
-      DetectorMagicNumber(),
-      DetectorSleepyFixture(),
-      DetectorDuplicateAssert(),
-      DetectorResourceOptimism(),
-      DetectorAssertionRoulette(),
-      DetectorVerboseTest(),
-      DetectorEmptyTest(),
-      DetectorUnknownTest()
+      ConditionalTestLogicDetector(),
+      PrintStatmentFixtureDetector(),
+      TestWithoutDescriptionDetector(),
+      MagicNumberDetector(),
+      SleepyFixtureDetector(),
+      DuplicateAssertDetector(),
+      ResourceOptimismDetector(),
+      AssertionRouletteDetector(),
+      VerboseTestDetector(),
+      EmptyTestDetector(),
+      UnknownTestDetector()
     ]);
 
     detectors
@@ -56,8 +55,8 @@ class DNose {
   List<TestSmell> scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     AstNode n = testClass.root;
-    _logger.info("Scanning...");
-    _logger.info("Path: ${testClass.path}");
+    _LOGGER.info("Scanning...");
+    _LOGGER.info("Path: ${testClass.path}");
     testSmells.addAll(_scan(n, testClass));
     return testSmells;
   }
@@ -68,7 +67,7 @@ class DNose {
       if (element is AstNode) {
         if (isTest(element)) {
           String testName = getTestName(element);
-          _logger.info(
+          _LOGGER.info(
               "Test Function Detect: $testName - ${element.toSource()}");
           testSmells.addAll(detectTestSmells(
               element as ExpressionStatement, testClass, testName));

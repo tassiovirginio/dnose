@@ -1,11 +1,11 @@
-import 'package:dnose/detectors/TestClass.dart';
-import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
-import 'package:dnose/detectors/TestSmell.dart';
+import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/detectors/models/test_smell.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
-class DetectorEmptyTest implements AbstractDetectorTestSmell{
+class AssertionRouletteDetector implements AbstractDetector{
   @override
-  get testSmellName => "Empty Test";
+  get testSmellName => "Assertion Roulette";
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
@@ -19,12 +19,12 @@ class DetectorEmptyTest implements AbstractDetectorTestSmell{
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
-    if (e is Block
-        && e.parent is BlockFunctionBody
-        && e.parent!.parent is FunctionExpression
-        && e.parent!.parent!.parent!.parent is MethodInvocation
-        && e.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"
-        && e.toString().replaceAll(" ", "") == "{}") {
+    if (e is SimpleStringLiteral &&
+        e.parent is NamedExpression &&
+        e.parent!.parent!.parent!.childEntities.firstOrNull!.toString() == "expect"){
+      testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+    } else if (e is ArgumentList && e.parent is MethodInvocation && !e.toString().contains("reason:")
+    && e.parent!.childEntities.first.toString() == "expect") {
       testSmells.add(TestSmell(
           testSmellName, testName, testClass, code: e.toSource(),
           start: testClass.lineNumber(e.offset),

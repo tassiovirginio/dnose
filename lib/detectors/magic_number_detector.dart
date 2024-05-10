@@ -1,9 +1,9 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:dnose/detectors/TestClass.dart';
-import 'package:dnose/detectors/AbstractDetectorTestSmell.dart';
-import 'package:dnose/detectors/TestSmell.dart';
+import 'package:dnose/detectors/models/test_class.dart';
+import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/detectors/models/test_smell.dart';
 
-class DetectorMagicNumber implements AbstractDetectorTestSmell {
+class MagicNumberDetector implements AbstractDetector {
   List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
