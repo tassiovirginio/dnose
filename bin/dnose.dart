@@ -52,6 +52,7 @@ Handler init() {
   app.get('/download2', () => File(resultado2));
 
   app.get('/', () => File('public/index.html'));
+  app.get('/javascript.js', () => File('public/javascript.js'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
   app.get('/logo.png', () => File('public/logo.png'));
 
