@@ -24,8 +24,8 @@ function carregarNomesTestSmells(){
                 valores2.push(valorLog);
             }
         }
-        carregarChart('myChart', nomes, valores, '# of Test Smells (log)');
-        carregarChart('myChart2', nomes, valores2, '# of Test Smells)');
+        carregarChart('myChart', nomes, valores, '# of Test Smells');
+        carregarChart('myChart2', nomes, valores2, '# of Test Smells (log))');
     };
     req4.open("GET", "/charts_data", true);
     req4.send();
