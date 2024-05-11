@@ -53,7 +53,8 @@
                     var valor = linhas[i].split(";")[1];
                     if(nome != ""){
                         nomes.push(nome);
-                        valores.push(valor);
+                        var valorLog = Math.log(valor);
+                        valores.push(valorLog);
                         console.log(nome);
                     }
                 }
@@ -66,13 +67,6 @@
             return nomes;
         }
 
-        function teste(){
-            var teste = ["Assertion Roulette", 'Magic Number', 'Conditional Test Logic', 'Duplicate Assert',
-                'Unknown Test', 'Detector Resource Optimism', 'Verbose Test', 'Print Statment Fixture', 'Empty Test', 'Sleepy Fixture'];
-            console.log(teste);
-            return teste;
-        }
-
         function carregarChart(nomes, valores){
             const ctx = document.getElementById('myChart');
 
@@ -81,7 +75,7 @@
                 data: {
                     labels: nomes,
                     datasets: [{
-                        label: '# of Test Smells',
+                        label: '# of Test Smells (log)',
                         data: valores,
                         borderWidth: 1
                     }]
