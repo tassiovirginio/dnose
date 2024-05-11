@@ -58,6 +58,27 @@
                     }
                 }
             });
+
+            const req = new XMLHttpRequest();
+            req.onload = (e) => {
+                console.log("=> " + req.response);
+
+                var lista_projetos = JSON.parse(req.response);
+                console.log(lista_projetos);
+
+                var select_projects = document.getElementById("select_project");
+
+                for (var i = 0; i < lista_projetos.length; i++) {
+                    var option = document.createElement("option");
+                    option.value = lista_projetos[i];
+                    option.text = lista_projetos[i];
+                    select_projects.appendChild(option);
+                }
+
+
+            };
+            req.open("GET", "/projects", true);
+            req.send();
         };
 
         function processar() {
@@ -70,7 +91,8 @@
             processando.innerHTML = "Processando: TRUE";
             document.getElementById("processando").className = "tag is-danger";
 
-            const path = document.getElementById("path_project");
+            const path = document.getElementById("select_project");
+
             console.log(path.value);
             const req = new XMLHttpRequest();
             req.onload = (e) => {
@@ -98,7 +120,7 @@
             <tr>
                 <td>
                     <figure class="image is-64x64">
-                        <img src="/logo.png" />
+                        <img src="/logo.png"/>
                     </figure>
                 </td>
                 <td>&nbsp;&nbsp;&nbsp;</td>
@@ -121,10 +143,10 @@
             <div class="panel-block">
                 <label class="label">Path Project:</label>
                 <p class="control has-icons-left">
-                    <input class="input is-link" type="text" placeholder="Path" value='/home/tassio/Desenvolvimento/dart/flutter' id='path_project' name="path_project"/>
+                    <select class="input is-link" id="select_project"></select>
                     <span class="icon is-left">
                         <i class="fas fa-search" aria-hidden="true"></i>
-                      </span>
+                    </span>
                 </p>
             </div>
             <div class="panel-block">

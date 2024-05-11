@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:io' show Platform, stdout;
 
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
@@ -9,8 +10,28 @@ void main() => shelfRun(init);
 Handler init() {
   var app = Router().plus;
 
+  var folderHome = getFolderUser() + "/dnose_projects";
+  var existFolder = Directory(folderHome).existsSync();
+  print("existeFolder: $existFolder");
+  if(existFolder == false){
+    Directory(folderHome).createSync();
+  }
+
+  List<String> listaProjetos = List.empty(growable: true);
+  Directory(folderHome).listSync().forEach((element) {
+    listaProjetos.add(element.path);
+  });
+
+  app.get('/projects', () => listaProjetos);
+
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
+
+  bool result1exists = File(resultado).existsSync();
+  bool result2exists = File(resultado2).existsSync();
+
+  app.get('/result1exists', () => result1exists);
+  app.get('/result2exists', () => result2exists);
 
   app.get('/download', () => File(resultado));
   app.get('/download2', () => File(resultado2));
@@ -26,4 +47,18 @@ Handler init() {
   });
 
   return corsHeaders() >> app.call;
+}
+
+String getFolderUser(){
+  String os = Platform.operatingSystem;
+  String? home = "";
+  Map<String, String> envVars = Platform.environment;
+  if (Platform.isMacOS) {
+    home = envVars['HOME'];
+  } else if (Platform.isLinux) {
+    home = envVars['HOME'];
+  } else if (Platform.isWindows) {
+    home = envVars['UserProfile'];
+  }
+  return home!;
 }
