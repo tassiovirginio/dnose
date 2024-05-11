@@ -28,10 +28,7 @@ Handler init() {
   String resultado2 = "${Directory.current.path}/resultado2.csv";
 
   bool result1exists = File(resultado).existsSync();
-  bool result2exists = File(resultado2).existsSync();
-
-  app.get('/result1exists', () => result1exists);
-  app.get('/result2exists', () => result2exists);
+  app.get('/result1exists', () => result1exists.toString());
 
   app.get('/download', () => File(resultado));
   app.get('/download2', () => File(resultado2));
