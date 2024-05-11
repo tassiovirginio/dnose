@@ -30,13 +30,16 @@ Handler init() {
   bool result1exists = File(resultado).existsSync();
   app.get('/result1exists', () => result1exists.toString());
 
-  var projectNameAtual = "";
-  if(result1exists){
-    var file = File(resultado);
-    projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
+  String projectnameatual(){
+    var projectNameAtual = "";
+    if(result1exists){
+      var file = File(resultado);
+      projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
+    }
+    return projectNameAtual;
   }
 
-  app.get('/projectnameatual', () => projectNameAtual);
+  app.get('/projectnameatual', projectnameatual);
 
   app.get('/download', () => File(resultado));
   app.get('/download2', () => File(resultado2));

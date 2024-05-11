@@ -30,10 +30,8 @@
         }
     </style>
     <script>
-        window.onload = (event) => {
-            const processando = document.getElementById("processando");
-            processando.innerHTML = "Processando: FALSE";
 
+        function carregarNomeProjeto(){
             const req3 = new XMLHttpRequest();
             req3.onload = (e) => {
                 console.log("=> " + req3.response);
@@ -42,6 +40,13 @@
             };
             req3.open("GET", "/projectnameatual", true);
             req3.send();
+        }
+
+        window.onload = (event) => {
+            const processando = document.getElementById("processando");
+            processando.innerHTML = "Processando: FALSE";
+
+            carregarNomeProjeto();
 
             const req2 = new XMLHttpRequest();
             req2.onload = (e) => {
@@ -65,10 +70,11 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    labels: ['Assertion Roulette', 'Magic Number', 'Conditional Test Logic', 'Duplicate Assert',
+                        'Unknown Test', 'Detector Resource Optimism', 'Verbose Test', 'Print Statment Fixture', 'Empty Test', 'Sleepy Fixture'],
                     datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
+                        label: '# of Test Smells',
+                        data: [67176, 100382, 145, 10368, 637, 648, 705, 7, 4, 1],
                         borderWidth: 1
                     }]
                 },
@@ -124,6 +130,9 @@
                 document.getElementById("resultado2").style.visibility = "visible";
                 document.getElementById("loading").style.visibility = "hidden";
                 document.getElementById("processando").className = "tag is-primary is-light";
+
+                carregarNomeProjeto();
+
                 console.log("=> " + req.response);
             };
             req.open("GET", "/processar?path_project=" + path.value, true);
