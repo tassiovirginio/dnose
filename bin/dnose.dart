@@ -39,7 +39,14 @@ Handler init() {
     return projectNameAtual;
   }
 
+  String chartData(){
+    var file = File(resultado2);
+    return file.readAsStringSync();
+  }
+
   app.get('/projectnameatual', projectnameatual);
+
+  app.get('/charts_data', chartData);
 
   app.get('/download', () => File(resultado));
   app.get('/download2', () => File(resultado2));

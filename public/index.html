@@ -42,11 +42,66 @@
             req3.send();
         }
 
+        function carregarNomesTestSmells(){
+            const req4 = new XMLHttpRequest();
+            var nomes = new Array();
+            var valores = new Array();
+            req4.onload = (e) => {
+                var linhas = req4.response.split("\n");
+                for (let i = 1; i < linhas.length; i++) {
+                    var nome = linhas[i].split(";")[0];
+                    var valor = linhas[i].split(";")[1];
+                    if(nome != ""){
+                        nomes.push(nome);
+                        valores.push(valor);
+                        console.log(nome);
+                    }
+                }
+
+                carregarChart(nomes, valores);
+            };
+            req4.open("GET", "/charts_data", true);
+            req4.send();
+            console.log(nomes);
+            return nomes;
+        }
+
+        function teste(){
+            var teste = ["Assertion Roulette", 'Magic Number', 'Conditional Test Logic', 'Duplicate Assert',
+                'Unknown Test', 'Detector Resource Optimism', 'Verbose Test', 'Print Statment Fixture', 'Empty Test', 'Sleepy Fixture'];
+            console.log(teste);
+            return teste;
+        }
+
+        function carregarChart(nomes, valores){
+            const ctx = document.getElementById('myChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: nomes,
+                    datasets: [{
+                        label: '# of Test Smells',
+                        data: valores,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
         window.onload = (event) => {
             const processando = document.getElementById("processando");
             processando.innerHTML = "Processando: FALSE";
 
             carregarNomeProjeto();
+            var nomes = carregarNomesTestSmells();
 
             const req2 = new XMLHttpRequest();
             req2.onload = (e) => {
@@ -65,27 +120,7 @@
 
             document.getElementById("loading").style.visibility = "hidden";
 
-            const ctx = document.getElementById('myChart');
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Assertion Roulette', 'Magic Number', 'Conditional Test Logic', 'Duplicate Assert',
-                        'Unknown Test', 'Detector Resource Optimism', 'Verbose Test', 'Print Statment Fixture', 'Empty Test', 'Sleepy Fixture'],
-                    datasets: [{
-                        label: '# of Test Smells',
-                        data: [67176, 100382, 145, 10368, 637, 648, 705, 7, 4, 1],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
 
             const req = new XMLHttpRequest();
             req.onload = (e) => {
