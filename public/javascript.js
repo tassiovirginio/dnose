@@ -9,17 +9,17 @@ function carregarNomeProjeto(){
 
 function carregarNomesTestSmells(){
     const req4 = new XMLHttpRequest();
-    var nomes = new Array();
-    var valores = new Array();
-    var valores2 = new Array();
+    const nomes = new Array();
+    const valores = new Array();
+    const valores2 = new Array();
     req4.onload = (e) => {
-        var linhas = req4.response.split("\n");
+        const linhas = req4.response.split("\n");
         for (let i = 1; i < linhas.length; i++) {
-            var nome = linhas[i].split(";")[0];
-            var valor = linhas[i].split(";")[1];
-            if(nome != ""){
+            const nome = linhas[i].split(";")[0];
+            const valor = linhas[i].split(";")[1];
+            if(nome !== ""){
                 nomes.push(nome);
-                var valorLog = Math.log(valor);
+                const valorLog = Math.log(valor);
                 valores.push(valor);
                 valores2.push(valorLog);
             }
@@ -83,11 +83,11 @@ function carregarResultados(){
 function carregarSelectProjects(){
     const req = new XMLHttpRequest();
     req.onload = (e) => {
-        var lista_projetos = JSON.parse(req.response);
-        var select_projects = document.getElementById("select_project");
+        const lista_projetos = JSON.parse(req.response);
+        const select_projects = document.getElementById("select_project");
 
-        for (var i = 0; i < lista_projetos.length; i++) {
-            var option = document.createElement("option");
+        for (const i = 0; i < lista_projetos.length; i++) {
+            const option = document.createElement("option");
             option.value = lista_projetos[i];
             option.text = lista_projetos[i];
             select_projects.appendChild(option);
@@ -112,7 +112,7 @@ function processar() {
     const req = new XMLHttpRequest();
 
     req.onload = (e) => {
-        processando.innerHTML = "Processando: FALSE";
+        processando.innerHTML = "Processando: False";
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";

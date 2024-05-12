@@ -12,7 +12,7 @@ Handler init() {
 
   var folderHome = getFolderUser() + "/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
-  print("existeFolder: $existFolder");
+
   if(existFolder == false){
     Directory(folderHome).createSync();
   }
