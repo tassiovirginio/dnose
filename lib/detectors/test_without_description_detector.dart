@@ -3,7 +3,7 @@ import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
-class TestWithoutDescriptionDetector implements AbstractDetector{
+class TestWithoutDescriptionDetector implements AbstractDetector {
   @override
   get testSmellName => "Test Without Description";
 
@@ -21,12 +21,14 @@ class TestWithoutDescriptionDetector implements AbstractDetector{
         e.parent!.parent is MethodInvocation &&
         e.value.trim().isEmpty &&
         e.parent!.parent!.toString().contains("test(")) {
-      testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.parent!.parent!.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+      testSmells.add(TestSmell(testSmellName, testName, testClass,
+          code: e.parent!.parent!.toSource(),
+          start: testClass.lineNumber(e.offset),
+          end: testClass.lineNumber(e.end)));
     } else {
-      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
-      // e.childEntities.forEach((e) {
-      //   if (e is AstNode) _detect(e, testClass, testName);
-      // });
+      e.childEntities
+          .whereType<AstNode>()
+          .forEach((e) => _detect(e, testClass, testName));
     }
   }
 }

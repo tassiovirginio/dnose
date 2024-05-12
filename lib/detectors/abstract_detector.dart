@@ -4,5 +4,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 
 mixin AbstractDetector {
   String get testSmellName;
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName);
+
+  List<TestSmell> detect(
+      ExpressionStatement e, TestClass testClass, String testName);
 }

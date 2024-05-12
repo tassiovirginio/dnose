@@ -10,7 +10,8 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
   String get testSmellName => "Print Statment Fixture";
 
   @override
-  List<TestSmell> detect(ExpressionStatement e, TestClass testClass, String testName) {
+  List<TestSmell> detect(
+      ExpressionStatement e, TestClass testClass, String testName) {
     _detect(e as AstNode, testClass, testName);
     return testSmells;
   }
@@ -19,12 +20,14 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
     if (e is SimpleIdentifier &&
         e.name == "print" &&
         e.parent is MethodInvocation) {
-      testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.parent!.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
+      testSmells.add(TestSmell(testSmellName, testName, testClass,
+          code: e.parent!.toSource(),
+          start: testClass.lineNumber(e.offset),
+          end: testClass.lineNumber(e.end)));
     } else {
-      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
-      // e.childEntities.forEach((e) {
-      //   if (e is AstNode) _detect(e, testClass, testName);
-      // });
+      e.childEntities
+          .whereType<AstNode>()
+          .forEach((e) => _detect(e, testClass, testName));
     }
   }
 }

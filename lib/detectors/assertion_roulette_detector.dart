@@ -19,7 +19,6 @@ class AssertionRouletteDetector implements AbstractDetector{
   String code_1 = "";
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    //Melhorar - encontrar somente quando setado em uma variável
     if (e is SimpleStringLiteral &&
         e.parent is NamedExpression &&
         e.parent!.parent!.parent!.childEntities.firstOrNull!.toString() == "expect"){
@@ -31,7 +30,9 @@ class AssertionRouletteDetector implements AbstractDetector{
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
     }else {
-      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
+      e.childEntities
+          .whereType<AstNode>()
+          .forEach((e) => _detect(e, testClass, testName));
     }
   }
 }
