@@ -31,14 +31,7 @@ class AssertionRouletteDetector implements AbstractDetector{
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
     }else {
-      // e.childEntities.forEach((element) {
-      //   if (element is AstNode) {
-      //     _detect(element, testClass, testName);
-      //   }
-      // });
-
       e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
-
     }
   }
 }

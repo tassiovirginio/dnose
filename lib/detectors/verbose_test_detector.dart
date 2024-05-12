@@ -32,15 +32,14 @@ class VerboseTestDetector implements AbstractDetector{
       }
 
     }else {
-      e.childEntities.forEach((element) {
-        if (element is AstNode) {
-          _detect(element, testClass, testName);
-        }
-      });
+      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
+      // e.childEntities.forEach((element) {
+      //   if (element is AstNode) {
+      //     _detect(element, testClass, testName);
+      //   }
+      // });
     }
   }
 
-  int lineNumber(CompilationUnit cu ,int offset) {
-    return cu.lineInfo.getLocation(offset).lineNumber;
-  }
+  int lineNumber(CompilationUnit cu ,int offset) => cu.lineInfo.getLocation(offset).lineNumber;
 }

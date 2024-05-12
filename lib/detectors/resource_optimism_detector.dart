@@ -19,9 +19,10 @@ class ResourceOptimismDetector implements AbstractDetector{
     if (e is MethodInvocation && e.toSource().contains("File")) {
       testSmells.add(TestSmell(testSmellName, testName, testClass, code: e.toSource(), start: testClass.lineNumber(e.offset), end: testClass.lineNumber(e.end)));
     } else {
-      e.childEntities.forEach((e) {
-        if (e is AstNode) _detect(e, testClass, testName);
-      });
+      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
+      // e.childEntities.forEach((e) {
+      //   if (e is AstNode) _detect(e, testClass, testName);
+      // });
     }
   }
 }

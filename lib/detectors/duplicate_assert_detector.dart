@@ -31,11 +31,12 @@ class DuplicateAssertDetector implements AbstractDetector{
         }
       }
     } else {
-      e.childEntities.forEach((element) {
-        if (element is AstNode) {
-          _detect(element, testClass, testName);
-        }
-      });
+      e.childEntities.whereType<AstNode>().forEach((e) => _detect(e, testClass, testName));
+      // e.childEntities.forEach((element) {
+      //   if (element is AstNode) {
+      //     _detect(element, testClass, testName);
+      //   }
+      // });
     }
   }
 }
