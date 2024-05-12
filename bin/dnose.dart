@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:dnose/main.dart';
+import 'package:git_clone/git_clone.dart' as git;
 
 void main() => shelfRun(init);
 
@@ -16,12 +17,21 @@ Handler init() {
     Directory(folderHome).createSync();
   }
 
-  List<String> listaProjetos = List.empty(growable: true);
-  Directory(folderHome).listSync().forEach((element) {
-    listaProjetos.add(element.path);
-  });
 
-  app.get('/projects', () => listaProjetos);
+  List<String> listaProjetos(){
+    List<String> listaProjetos = List.empty(growable: true);
+    Directory(folderHome).listSync().forEach((element) {
+      listaProjetos.add(element.path);
+    });
+    return listaProjetos;
+  }
+
+  // List<String> listaProjetos = List.empty(growable: true);
+  // Directory(folderHome).listSync().forEach((element) {
+  //   listaProjetos.add(element.path);
+  // });
+
+  app.get('/projects', listaProjetos);
 
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
@@ -67,6 +77,9 @@ Handler init() {
 
   app.get('/clonar', (Request request) async {
     String? url = request.url.queryParameters['url'];
+    var projectName = url!.split("/").last.replaceAll(".git", "");
+    String caminhoCompleto = folderHome + "/" + projectName;
+    await git.gitClone(repo: url, directory:caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });
 

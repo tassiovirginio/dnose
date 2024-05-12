@@ -5,10 +5,12 @@ window.onload = (event) => {
 };
 
 function carregarListaProjetos(){
+    const lista_projetos = document.getElementById("lista_projetos");
+    lista_projetos.innerHTML = "";
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
-        const lista_projetos = document.getElementById("lista_projetos");
+
 
         for (var i = 0; i < lista.length; i++) {
             const li = document.createElement("li");
@@ -23,11 +25,14 @@ function carregarListaProjetos(){
 }
 
 function clonar(){
+    const url = document.getElementById("url").value;
+
     document.getElementById("loading").style.visibility = "visible";
     const req = new XMLHttpRequest();
     req.onload = (e) => {
+        carregarListaProjetos();
         document.getElementById("loading").style.visibility = "hidden";
     };
-    req.open("GET", "/clonar", true);
+    req.open("GET", "/clonar?url=" + url, true);
     req.send();
 }
