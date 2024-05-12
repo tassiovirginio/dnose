@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:io' show Platform, stdout;
 
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
@@ -67,7 +66,7 @@ Handler init() {
 }
 
 String getFolderUser(){
-  String os = Platform.operatingSystem;
+  // String os = Platform.operatingSystem;
   String? home = "";
   Map<String, String> envVars = Platform.environment;
   if (Platform.isMacOS) {

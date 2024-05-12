@@ -10,13 +10,13 @@ import 'package:crypto/crypto.dart' show md5;
 final Logger _logger = Logger('Main');
 
 void main(List<String> args) {
-  var path_project = [
+  var pathProject = [
     "/home/tassio/Desenvolvimento/dart/flutter",
     "/home/tassio/Desenvolvimento/repo.git/dnose",
     "/home/tassio/Desenvolvimento/dart/dnose",
     "/home/tassio/Desenvolvimento/dart/conduit"
   ];
-  processar(path_project[0]);
+  processar(pathProject[0]);
 
   // if(args.length == 1){
   //   processar(args[0]);
@@ -24,7 +24,7 @@ void main(List<String> args) {
   // }
 }
 
-void processar(String path_project) {
+void processar(String pathProject) {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
@@ -38,11 +38,11 @@ void processar(String path_project) {
 
   List<TestSmell> listaTotal = List.empty(growable: true);
 
-  Directory dir = Directory(path_project);
+  Directory dir = Directory(pathProject);
 
   List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
 
-  String projectName = path_project.split("/").last;
+  String projectName = pathProject.split("/").last;
 
   String moduleAtual = "";
 
@@ -63,7 +63,7 @@ void processar(String path_project) {
     }
 
     if (file.path.endsWith("_test.dart") == true) {
-      _logger.info("Analyzing: " + file.path);
+      _logger.info("Analyzing: ${file.path}");
       TestClass testClass = TestClass(file.path, moduleAtual, projectName);
       var testSmells = dnose.scan(testClass);
       listaTotal.addAll(testSmells);
@@ -73,21 +73,21 @@ void processar(String path_project) {
   createCSV(listaTotal);
 
   _logger.info(
-      "Foram encontrado " + listaTotal.length.toString() + " Test Smells.");
+      "Foram encontrado ${listaTotal.length} Test Smells.");
 }
 
 var somatorio = Map<String, int>();
 
-void createCSV(List<TestSmell> lista_total) {
+void createCSV(List<TestSmell> listaTotal) {
   var file = File('resultado.csv');
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
-  lista_total.forEach((ts) {
+  listaTotal.forEach((ts) {
     sink.write(
         "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
     _logger.info(
         "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
-    _logger.info("Code: " + ts.code);
+    _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
       somatorio[ts.name] = 1;
@@ -101,8 +101,8 @@ void createCSV(List<TestSmell> lista_total) {
   var sink2 = file2.openWrite();
   sink2.write("test_smell;qtd\n");
   somatorio.forEach((key, value) {
-    sink2.write("${key};${value}\n");
-    _logger.info("${key};${value}");
+    sink2.write("$key;$value\n");
+    _logger.info("$key;$value");
   });
   sink2.close();
 }

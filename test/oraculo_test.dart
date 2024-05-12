@@ -1,11 +1,9 @@
 import 'package:test/test.dart';
-import 'dart:io';
-import 'dart:io' as system;
 
 void main() {
   // const valorSemDesconto = 150.0;
 
-  const UM_SEGUNDO = 1;
+  // const UM_SEGUNDO = 1;
 
   // setUpAll(() {
   // });
