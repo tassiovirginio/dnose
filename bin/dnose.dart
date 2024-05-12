@@ -10,7 +10,7 @@ void main() => shelfRun(init);
 Handler init() {
   var app = Router().plus;
 
-  var folderHome = getFolderUser() + "/dnose_projects";
+  var folderHome = "${getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
 
   if(existFolder == false){
@@ -55,10 +55,11 @@ Handler init() {
   app.get('/javascript.js', () => File('public/javascript.js'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
   app.get('/logo.png', () => File('public/logo.png'));
+  app.get('/chart.js', () => File('public/chart.js'));
 
   app.get('/processar', (Request request) async {
-    String? path_project = request.url.queryParameters['path_project'];
-    processar(path_project!);
+    String? pathProject = request.url.queryParameters['path_project'];
+    processar(pathProject!);
     return Response.ok("Processamento concluído");
   });
 

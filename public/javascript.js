@@ -14,7 +14,7 @@ function carregarNomesTestSmells(){
     const valores2 = new Array();
     req4.onload = (e) => {
         const linhas = req4.response.split("\n");
-        for (let i = 1; i < linhas.length; i++) {
+        for (var i = 1; i < linhas.length; i++) {
             const nome = linhas[i].split(";")[0];
             const valor = linhas[i].split(";")[1];
             if(nome !== ""){
@@ -86,7 +86,7 @@ function carregarSelectProjects(){
         const lista_projetos = JSON.parse(req.response);
         const select_projects = document.getElementById("select_project");
 
-        for (const i = 0; i < lista_projetos.length; i++) {
+        for (var i = 0; i < lista_projetos.length; i++) {
             const option = document.createElement("option");
             option.value = lista_projetos[i];
             option.text = lista_projetos[i];

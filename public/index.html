@@ -7,7 +7,7 @@
     <title>DNose</title>
     <link rel="stylesheet" href="/bulma.min.css">
     <link rel="icon" type="image/x-icon" href="/logo.png">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/chart.js"></script>
 
     <style>
         .window {
@@ -62,9 +62,11 @@
             </div>
             <div class="panel-block">
                 <label class="label">Path Project:</label>
-                <p class="control has-icons-left">
+                <div class="select" style="width: 100%;">
                     <select class="input is-link" id="select_project"></select>
-                    <span class="icon is-left">
+                </div>
+
+                <span class="icon is-left">
                         <i class="fas fa-search" aria-hidden="true"></i>
                     </span>
                 </p>
