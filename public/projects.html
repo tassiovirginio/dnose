@@ -7,7 +7,6 @@
     <title>DNose</title>
     <link rel="stylesheet" href="/bulma.min.css">
     <link rel="icon" type="image/x-icon" href="/logo.png">
-    <script src="/chart.js"></script>
 
     <style>
         .window {
@@ -30,9 +29,11 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
     </style>
-    <script src="/javascript.js"></script>
+    <script src="/javascript2.js"></script>
 </head>
 <body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+
+
 
 <nav class="navbar is-light">
     <div class="navbar-brand">
@@ -51,7 +52,7 @@
         </div>
 
         <div class="navbar-end">
-                <a class="navbar-item" href="/about"> About </a>
+            <a class="navbar-item" href="/about"> About </a>
         </div>
     </div>
 </nav>
@@ -59,44 +60,28 @@
 <section class="section is-medium" >
     <div class="container is-align-content-center">
         <article class="panel is-link block">
-            <p class="panel-heading">Analyze Project</p>
+            <p class="panel-heading">Clone Project</p>
             <div class="panel-block">
                 <span id='processando' class="tag is-primary is-light"></span>
             </div>
             <div class="panel-block">
-                <label class="label">Path Project:</label>
-                <div class="select" style="width: 100%;">
-                    <select class="input is-link" id="select_project"></select>
+                <label class="label">github url:</label>
+                <div style="width: 100%;">
+                    <input type="text" class="input is-link" id="github_url" placeholder="" />
                 </div>
-
-                <span class="icon is-left">
-                        <i class="fas fa-search" aria-hidden="true"></i>
-                    </span>
-                </p>
             </div>
             <div class="panel-block">
                 <div class="control">
-                    <button onclick='processar();' class="button is-primary">Process</button>
-                </div>
-            </div>
-            <div class="panel-block">
-                <div class="buttons">
-                    Project: <span id="projectname">TESTE</span>
-                    <a class="button is-warning" id='resultado' href="/download">CSV 1</a>
-                    <a class="button is-warning" id='resultado2' href="/download2">CSV 2</a>
+                    <button onclick='clonar();' class="button is-primary">clone</button>
                 </div>
             </div>
         </article>
         <article class="panel is-link block">
-            <p class="panel-heading">Charts</p>
+            <p class="panel-heading">Projetos</p>
             <div>
-                <canvas id="myChart"></canvas>
-            </div>
-        </article>
-        <article class="panel is-link block">
-            <p class="panel-heading">Charts</p>
-            <div>
-                <canvas id="myChart2"></canvas>
+                <ul id="lista_projetos">
+                    <li></li>
+                </ul>
             </div>
         </article>
     </div>
@@ -118,7 +103,7 @@
 
 <div class="loading" id="loading">
     <div class='window'>
-        <div class="box">Processing...
+        <div class="box">Clonning...
             <progress class="progress is-large is-info" max="100">60%</progress>
         </div>
     </div>

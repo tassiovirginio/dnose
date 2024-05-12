@@ -52,6 +52,9 @@ Handler init() {
 
   app.get('/', () => File('public/index.html'));
   app.get('/javascript.js', () => File('public/javascript.js'));
+  app.get('/projects.html', () => File('public/projects.html'));
+  app.get('/javascript2.js', () => File('public/javascript2.js'));
+  app.get('/about', () => File('public/about.html'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
   app.get('/logo.png', () => File('public/logo.png'));
   app.get('/chart.js', () => File('public/chart.js'));
@@ -60,6 +63,11 @@ Handler init() {
     String? pathProject = request.url.queryParameters['path_project'];
     processar(pathProject!);
     return Response.ok("Processamento concluído");
+  });
+
+  app.get('/clonar', (Request request) async {
+    String? url = request.url.queryParameters['url'];
+    return Response.ok("Clonagem concluída");
   });
 
   return corsHeaders() >> app.call;
