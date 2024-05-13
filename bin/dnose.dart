@@ -12,11 +12,7 @@ Handler init() {
 
   var folderHome = "${getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
-
-  if(existFolder == false){
-    Directory(folderHome).createSync();
-  }
-
+  if(existFolder == false)Directory(folderHome).createSync();
 
   List<String> listaProjetos(){
     List<String> listaProjetos = List.empty(growable: true);
