@@ -52,8 +52,16 @@ Handler init() {
 
   app.get('/charts_data', chartData);
 
-  app.get('/download', () => File(resultado));
-  app.get('/download2', () => File(resultado2));
+  File getFile1(){
+    return File(resultado);
+  }
+
+  File getFile2(){
+    return File(resultado2);
+  }
+
+  app.get('/download', getFile1);
+  app.get('/download2', getFile2);
 
   app.get('/', () => File('public/index.html'));
   app.get('/javascript.js', () => File('public/javascript.js'));
