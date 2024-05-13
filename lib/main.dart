@@ -80,6 +80,13 @@ var somatorio = Map<String, int>();
 
 void createCSV(List<TestSmell> listaTotal) {
   var file = File('resultado.csv');
+
+  if(file.existsSync()){
+    file.deleteSync();
+  }
+
+  file.createSync();
+
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   listaTotal.forEach((ts) {
@@ -98,6 +105,13 @@ void createCSV(List<TestSmell> listaTotal) {
   sink.close();
 
   var file2 = File('resultado2.csv');
+
+  if(file2.existsSync()){
+    file2.deleteSync();
+  }
+
+  file2.createSync();
+
   var sink2 = file2.openWrite();
   sink2.write("test_smell;qtd\n");
   somatorio.forEach((key, value) {

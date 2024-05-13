@@ -26,11 +26,6 @@ Handler init() {
     return listaProjetos;
   }
 
-  // List<String> listaProjetos = List.empty(growable: true);
-  // Directory(folderHome).listSync().forEach((element) {
-  //   listaProjetos.add(element.path);
-  // });
-
   app.get('/projects', listaProjetos);
 
   String resultado = "${Directory.current.path}/resultado.csv";
