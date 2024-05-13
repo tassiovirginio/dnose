@@ -31,12 +31,12 @@ Handler init() {
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
 
-  bool result1exists = File(resultado).existsSync();
+  bool result1exists() => File(resultado).existsSync();
   app.get('/result1exists', () => result1exists.toString());
 
   String projectnameatual(){
     var projectNameAtual = "";
-    if(result1exists){
+    if(result1exists()){
       var file = File(resultado);
       projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
     }
