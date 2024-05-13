@@ -76,9 +76,12 @@ void processar(String pathProject) {
       "Foram encontrado ${listaTotal.length} Test Smells.");
 }
 
-var somatorio = Map<String, int>();
+
 
 void createCSV(List<TestSmell> listaTotal) {
+
+  var somatorio = Map<String, int>();
+
   var file = File('resultado.csv');
 
   if(file.existsSync()){

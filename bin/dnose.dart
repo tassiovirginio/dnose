@@ -31,12 +31,12 @@ Handler init() {
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
 
-  bool result1exists() => File(resultado).existsSync();
-  app.get('/result1exists', () => result1exists.toString());
+  String result1exists() => File(resultado).existsSync().toString();
+  app.get('/result1exists', result1exists);
 
   String projectnameatual(){
     var projectNameAtual = "";
-    if(result1exists()){
+    if(result1exists() == "true"){
       var file = File(resultado);
       projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
     }
@@ -81,7 +81,7 @@ Handler init() {
   app.get('/clonar', (Request request) async {
     String? url = request.url.queryParameters['url'];
     var projectName = url!.split("/").last.replaceAll(".git", "");
-    String caminhoCompleto = folderHome + "/" + projectName;
+    String caminhoCompleto = "$folderHome/$projectName";
     await git.gitClone(repo: url, directory:caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });

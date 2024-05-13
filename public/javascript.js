@@ -55,16 +55,6 @@ function carregarChart(id, nomes, valores, msg){
     });
 }
 
-window.onload = (event) => {
-    const processando = document.getElementById("processando");
-    processando.innerHTML = "Processando: False";
-    document.getElementById("loading").style.visibility = "hidden";
-    carregarNomeProjeto();
-    carregarNomesTestSmells();
-    carregarResultados();
-    carregarSelectProjects();
-};
-
 function carregarResultados(){
     const req2 = new XMLHttpRequest();
     req2.onload = (e) => {
@@ -103,21 +93,15 @@ function processar() {
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("loading").style.visibility = "visible";
 
-    const processando = document.getElementById("processando");
-    processando.innerHTML = "Processando: True";
-    document.getElementById("processando").className = "tag is-danger";
-
     const path = document.getElementById("select_project");
 
     const req = new XMLHttpRequest();
 
     req.onload = (e) => {
-        processando.innerHTML = "Processando: False";
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
-        document.getElementById("processando").className = "tag is-primary is-light";
 
         carregarNomeProjeto();
     };
@@ -125,3 +109,12 @@ function processar() {
     req.send();
 
 }
+
+
+window.onload = (event) => {
+    document.getElementById("loading").style.visibility = "hidden";
+    carregarNomeProjeto();
+    carregarNomesTestSmells();
+    carregarResultados();
+    carregarSelectProjects();
+};
