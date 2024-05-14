@@ -77,3 +77,12 @@
 //   }
 // }
 // //     astnode.childEntities.forEach((element) {
+
+import 'dart:io';
+
+void main(){
+  List<String> listaProjetos2 = Directory("/home/tassio/Desenvolvimento/repo.git/dnose/").listSync().map<String>((_) => _.path).toList();
+  print(listaProjetos2);
+}
+
+String parseTest(FileSystemEntity fse) => fse.path;

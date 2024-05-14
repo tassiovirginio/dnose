@@ -14,13 +14,7 @@ Handler init() {
   var existFolder = Directory(folderHome).existsSync();
   if(existFolder == false)Directory(folderHome).createSync();
 
-  List<String> listaProjetos(){
-    List<String> listaProjetos = List.empty(growable: true);
-    Directory(folderHome).listSync().forEach((element) {
-      listaProjetos.add(element.path);
-    });
-    return listaProjetos;
-  }
+  List<String> listaProjetos() => Directory(folderHome).listSync().map((_) => _.path).toList();
 
   app.get('/projects', listaProjetos);
 
