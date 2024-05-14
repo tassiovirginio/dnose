@@ -12,9 +12,10 @@ Handler init() {
 
   var folderHome = "${getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
-  if(existFolder == false)Directory(folderHome).createSync();
+  if (existFolder == false) Directory(folderHome).createSync();
 
-  List<String> listaProjetos() => Directory(folderHome).listSync().map((_) => _.path).toList();
+  List<String> listaProjetos() =>
+      Directory(folderHome).listSync().map((_) => _.path).toList();
 
   app.get('/projects', listaProjetos);
 
@@ -24,34 +25,26 @@ Handler init() {
   String result1exists() => File(resultado).existsSync().toString();
   app.get('/result1exists', result1exists);
 
-  String projectnameatual(){
+  String projectnameatual() {
     var projectNameAtual = "";
-    if(result1exists() == "true"){
+    if (result1exists() == "true") {
       var file = File(resultado);
       projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
     }
     return projectNameAtual;
   }
 
-  String chartData(){
-    var file = File(resultado2);
-    return file.readAsStringSync();
-  }
+  String chartData() => File(resultado2).readAsStringSync();
 
   app.get('/projectnameatual', projectnameatual);
 
   app.get('/charts_data', chartData);
 
-  File getFile1(){
-    return File(resultado);
-  }
+  File getResultado1() => File(resultado);
+  File getResultado2() => File(resultado2);
 
-  File getFile2(){
-    return File(resultado2);
-  }
-
-  app.get('/download', getFile1);
-  app.get('/download2', getFile2);
+  app.get('/download', getResultado1);
+  app.get('/download2', getResultado2);
 
   app.get('/', () => File('public/index.html'));
   app.get('/javascript.js', () => File('public/javascript.js'));
@@ -72,23 +65,13 @@ Handler init() {
     String? url = request.url.queryParameters['url'];
     var projectName = url!.split("/").last.replaceAll(".git", "");
     String caminhoCompleto = "$folderHome/$projectName";
-    await git.gitClone(repo: url, directory:caminhoCompleto);
+    await git.gitClone(repo: url, directory: caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });
 
   return corsHeaders() >> app.call;
 }
 
-String getFolderUser(){
-  // String os = Platform.operatingSystem;
-  String? home = "";
-  Map<String, String> envVars = Platform.environment;
-  if (Platform.isMacOS) {
-    home = envVars['HOME'];
-  } else if (Platform.isLinux) {
-    home = envVars['HOME'];
-  } else if (Platform.isWindows) {
-    home = envVars['UserProfile'];
-  }
-  return home!;
-}
+String getFolderUser() => (Platform.isMacOS || Platform.isLinux)
+    ? Platform.environment['HOME']!
+    : Platform.environment['UserProfile']!;
