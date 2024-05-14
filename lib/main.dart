@@ -83,11 +83,7 @@ void createCSV(List<TestSmell> listaTotal) {
   var somatorio = Map<String, int>();
 
   var file = File('resultado.csv');
-
-  if(file.existsSync()){
-    file.deleteSync();
-  }
-
+  if(file.existsSync()) file.deleteSync();
   file.createSync();
 
   var sink = file.openWrite();
@@ -108,11 +104,7 @@ void createCSV(List<TestSmell> listaTotal) {
   sink.close();
 
   var file2 = File('resultado2.csv');
-
-  if(file2.existsSync()){
-    file2.deleteSync();
-  }
-
+  if(file2.existsSync())file2.deleteSync();
   file2.createSync();
 
   var sink2 = file2.openWrite();
