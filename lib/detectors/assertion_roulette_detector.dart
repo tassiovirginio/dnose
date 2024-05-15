@@ -16,9 +16,6 @@ class AssertionRouletteDetector implements AbstractDetector {
     return testSmells;
   }
 
-  int cont = 0;
-  String code_1 = "";
-
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is SimpleStringLiteral &&
         e.parent is NamedExpression &&
