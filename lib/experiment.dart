@@ -81,7 +81,7 @@
 import 'dart:io';
 
 void main(){
-  List<String> listaProjetos2 = Directory("/home/tassio/Desenvolvimento/repo.git/dnose/").listSync().map<String>((_) => _.path).toList();
+  List<String> listaProjetos2 = Directory("/home/tassio/Desenvolvimento/repo.git/dnose/").listSync().map<String>((d) => d.path).toList();
   print(listaProjetos2);
 }
 

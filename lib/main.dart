@@ -48,7 +48,7 @@ void processar(String pathProject) {
 
   String diretorioAtual = "";
 
-  entries.forEach((file) {
+  for (var file in entries) {
     if (diretorioAtual.isEmpty) {
       diretorioAtual = file.parent.path;
     } else if (diretorioAtual != file.parent.path) {
@@ -68,7 +68,7 @@ void processar(String pathProject) {
       var testSmells = dnose.scan(testClass);
       listaTotal.addAll(testSmells);
     }
-  });
+  }
 
   createCSV(listaTotal);
 
@@ -80,7 +80,7 @@ void processar(String pathProject) {
 
 void createCSV(List<TestSmell> listaTotal) {
 
-  var somatorio = Map<String, int>();
+  var somatorio = <String, int>{};
 
   var file = File('resultado.csv');
   if(file.existsSync()) file.deleteSync();
@@ -88,7 +88,7 @@ void createCSV(List<TestSmell> listaTotal) {
 
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
-  listaTotal.forEach((ts) {
+  for (var ts in listaTotal) {
     sink.write(
         "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
     _logger.info(
@@ -100,7 +100,7 @@ void createCSV(List<TestSmell> listaTotal) {
     } else {
       somatorio[ts.name] = somatorio[ts.name]! + 1;
     }
-  });
+  }
   sink.close();
 
   var file2 = File('resultado2.csv');

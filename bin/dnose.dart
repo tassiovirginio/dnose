@@ -15,7 +15,7 @@ Handler init() {
   if (existFolder == false) Directory(folderHome).createSync();
 
   List<String> listaProjetos() =>
-      Directory(folderHome).listSync().map((_) => _.path).toList();
+      Directory(folderHome).listSync().map((d) => d.path).toList();
 
   app.get('/projects', listaProjetos);
 

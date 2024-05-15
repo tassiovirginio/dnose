@@ -46,8 +46,9 @@ class DNose {
       UnknownTestDetector()
     ];
 
-    detectors
-        .forEach((d) => testSmells.addAll(d.detect(e, testClass, testName)));
+    for (var d in detectors) {
+      testSmells.addAll(d.detect(e, testClass, testName));
+    }
 
     return testSmells;
   }
@@ -63,17 +64,14 @@ class DNose {
 
   List<TestSmell> _scan(AstNode n, TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
-    n.childEntities.forEach((element) {
-      if (element is AstNode) {
-        if (isTest(element)) {
-          String testName = getTestName(element);
-          _logger.info(
-              "Test Function Detect: $testName - ${element.toSource()}");
-          testSmells.addAll(detectTestSmells(
-              element as ExpressionStatement, testClass, testName));
-        }
-        testSmells.addAll(_scan(element, testClass));
+    n.childEntities.whereType<AstNode>().forEach((element) {
+      if (isTest(element)) {
+        String testName = getTestName(element);
+        _logger.info("Test Function Detect: $testName - ${element.toSource()}");
+        testSmells.addAll(detectTestSmells(
+            element as ExpressionStatement, testClass, testName));
       }
+      testSmells.addAll(_scan(element, testClass));
     });
     return testSmells;
   }
@@ -84,18 +82,14 @@ class DNose {
         e.beginToken.type == TokenType.IDENTIFIER &&
         (e.beginToken.toString() == "test" ||
             e.beginToken.toString() == "testWidgets")) {
-      e.childEntities.forEach((element) {
-        if (element is MethodInvocation) {
-          element.childEntities.forEach((element) {
-            if (element is ArgumentList) {
-              element.childEntities.forEach((element) {
-                if (element is SimpleStringLiteral) {
-                  testName = element.value;
-                }
-              });
-            }
+      e.childEntities.whereType<MethodInvocation>().forEach((element) {
+        element.childEntities.whereType<ArgumentList>().forEach((element) {
+          element.childEntities
+              .whereType<SimpleStringLiteral>()
+              .forEach((element) {
+            testName = element.value;
           });
-        }
+        });
       });
     }
     return testName;
