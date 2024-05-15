@@ -7,7 +7,7 @@ class TestClass {
   late AstNode root;
   final String path, moduleAtual, projectName;
 
-  TestClass(this.path, this.moduleAtual, this.projectName) {
+  TestClass({required this.path, required this.moduleAtual, required this.projectName}) {
     ast = parseFile(path: path, featureSet: FeatureSet.latestLanguageVersion())
         .unit;
     root = ast.root;

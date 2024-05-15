@@ -26,7 +26,10 @@ class VerboseTestDetector implements AbstractDetector {
       int end = lineNumber(e.root as CompilationUnit, e.parent!.end);
 
       if (end - start > valueMaxLineVerbose) {
-        testSmells.add(TestSmell(testSmellName, testName, testClass,
+        testSmells.add(TestSmell(
+            name: testSmellName,
+            testName: testName,
+            testClass: testClass,
             code: e.toSource(),
             start: testClass.lineNumber(e.parent!.offset),
             end: testClass.lineNumber(e.parent!.end)));

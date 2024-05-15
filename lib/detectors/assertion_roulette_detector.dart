@@ -24,7 +24,10 @@ class AssertionRouletteDetector implements AbstractDetector {
         e.parent is NamedExpression &&
         e.parent!.parent!.parent!.childEntities.firstOrNull!.toString() ==
             "expect") {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
@@ -32,7 +35,10 @@ class AssertionRouletteDetector implements AbstractDetector {
         e.parent is MethodInvocation &&
         !e.toString().contains("reason:") &&
         e.parent!.childEntities.first.toString() == "expect") {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));

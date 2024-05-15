@@ -13,7 +13,10 @@ class UnknownTestDetector implements AbstractDetector {
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName) {
     if (e.toSource().contains("expect") == false) {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));

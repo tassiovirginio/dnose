@@ -1,8 +1,15 @@
 import 'package:dnose/models/test_class.dart';
 
-class TestSmell{
+class TestSmell {
   String name, testName, code;
   TestClass testClass;
   int start, end;
-  TestSmell(this.name,this.testName, this.testClass, {this.code = "", this.start=0, this.end=0});
+
+  TestSmell(
+      {required this.name,
+      required this.testName,
+      required this.testClass,
+      required this.code,
+      required this.start,
+      required this.end});
 }

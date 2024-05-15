@@ -21,7 +21,10 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
         e.parent!.parent is MethodInvocation &&
         e.value.trim().isEmpty &&
         e.parent!.parent!.toString().contains("test(")) {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.parent!.parent!.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));

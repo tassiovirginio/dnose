@@ -64,7 +64,7 @@ void processar(String pathProject) {
 
     if (file.path.endsWith("_test.dart") == true) {
       _logger.info("Analyzing: ${file.path}");
-      TestClass testClass = TestClass(file.path, moduleAtual, projectName);
+      TestClass testClass = TestClass(path:file.path, moduleAtual: moduleAtual, projectName: projectName);
       var testSmells = dnose.scan(testClass);
       listaTotal.addAll(testSmells);
     }

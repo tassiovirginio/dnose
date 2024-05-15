@@ -18,7 +18,10 @@ class ConditionalTestLogicDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is ForElement || e is IfElement || e is WhileStatement) {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));

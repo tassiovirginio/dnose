@@ -28,7 +28,10 @@ class EmptyTestDetector implements AbstractDetector {
         e.parent!.parent!.parent!.parent!.childEntities.first.toString() ==
             "test" &&
         e.toString().replaceAll(" ", "") == "{}") {
-      testSmells.add(TestSmell(testSmellName, testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));

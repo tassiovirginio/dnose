@@ -17,7 +17,10 @@ class MagicNumberDetector implements AbstractDetector {
     if (e is ForElement || e is IfElement || e is WhileStatement) return;
 
     if (e is IntegerLiteral || e is DoubleLiteral) {
-      testSmells.add(TestSmell("Magic Number", testName, testClass,
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
