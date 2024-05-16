@@ -6,6 +6,7 @@ import 'package:dnose/main.dart';
 import 'package:dnose/dnose.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
+import 'package:dart_style/dart_style.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
@@ -58,6 +59,18 @@ Handler init() {
     return lista;
   }
   app.get('/getlines100', get100lines);
+
+  app.get('/getfiletext', (Request request) async {
+    String? pathFile = request.url.queryParameters['path'];
+    // List<String> listFile = List<String>.empty(growable: true);
+    String texto = "";
+    var file = File(pathFile!);
+    if(file.existsSync()){
+      texto = file.readAsStringSync();
+    }
+    //DartFormatter().format();
+    return Response.ok(texto);
+  });
 
   String chartData() => File(resultado2).readAsStringSync();
 

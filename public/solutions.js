@@ -28,15 +28,18 @@ function carrregarLista() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
-        //"flutter;
-        // "    ";
-        // flutter_localizations;
-        // /home/tassio/dnose_projects/flutter/packages/flutter_localizations/test/cupertino/translations_test.dart;
-        // Magic Number;
-        // 30;
-        // 30"
+        //0 - "flutter;
+        //1 -  "    ";
+        //2 -  flutter_localizations;
+        //3 -  /home/tassio/dnose_projects/flutter/packages/flutter_localizations/test/cupertino/translations_test.dart;
+        //4 - Magic Number;
+        //5 - 30;
+        //6 - 30"
         for (var i = 0; i < lista.length; i++) {
             var linha = lista[i].split(";");
+
+            var path = linha[3];
+
             const tr = document.createElement("tr");
 
             const td1 = document.createElement("td");
@@ -50,7 +53,7 @@ function carrregarLista() {
             const button = document.createElement("button");
             button.innerHTML = "solution";
             button.className = "button";
-            button.onclick = (e) => {};
+            button.onclick = () => {carregarFile(path)};
             const td3 = document.createElement("td");
             td3.appendChild(button);
             tr.appendChild(td3);
@@ -59,6 +62,16 @@ function carrregarLista() {
         }
     };
     req.open("GET", "/getlines100", true);
+    req.send();
+}
+
+function carregarFile(path) {
+    var code = document.getElementById("code");
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        code.innerHTML = req.response;
+    };
+    req.open("GET", "/getfiletext?path="+path, true);
     req.send();
 }
 
