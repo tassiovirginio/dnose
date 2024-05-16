@@ -60,6 +60,10 @@ function carrregarLista() {
             button.innerHTML = "solution";
             button.className = "button";
             button.onclick = () => {
+                const solutionDiv = document.getElementById("solution");
+                solutionDiv.innerHTML = "";
+                var code = document.getElementById("code");
+                code.innerHTML = "";
                 carregarFile(path, testDescripcion, testSmellName)
             };
             const td3 = document.createElement("td");
