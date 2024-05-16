@@ -19,7 +19,6 @@ import 'package:dnose/detectors/unknown_test_detector.dart';
 class DNose {
   static final Logger _logger = Logger('DNose');
 
-
   static final List<String> listTestSmellsNames = [
     ConditionalTestLogicDetector().testSmellName,
     PrintStatmentFixtureDetector().testSmellName,
@@ -33,7 +32,6 @@ class DNose {
     EmptyTestDetector().testSmellName,
     UnknownTestDetector().testSmellName,
   ];
-
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -88,6 +86,25 @@ class DNose {
             element as ExpressionStatement, testClass, testName));
       }
       testSmells.addAll(_scan(element, testClass));
+    });
+    return testSmells;
+  }
+
+  String getCodeTestByDescription(String path, String description) {
+    TestClass testClass = TestClass(path: path, moduleAtual: "", projectName: "");
+    var root = testClass.root;
+    List<String> code = _scan2(root, testClass, description);
+    return code.first;
+  }
+  List<String> _scan2(AstNode n, TestClass testClass, String description) {
+    List<String> testSmells = List.empty(growable: true);
+    n.childEntities.whereType<AstNode>().forEach((element) {
+      if (isTest(element)) {
+        if(element.toSource().contains(description)) {
+          testSmells.add(element.toSource());
+        }
+      }
+      testSmells.addAll(_scan2(element, testClass, description));
     });
     return testSmells;
   }

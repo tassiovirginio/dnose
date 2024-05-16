@@ -54,7 +54,7 @@ Handler init() {
     List<String> lista = List<String>.empty(growable: true);
     if (result1exists() == "true") {
       var file = File(resultado);
-      return file.readAsLinesSync().sublist(1,100);
+      return file.readAsLinesSync().sublist(200,220);
     }
     return lista;
   }
@@ -62,14 +62,11 @@ Handler init() {
 
   app.get('/getfiletext', (Request request) async {
     String? pathFile = request.url.queryParameters['path'];
-    // List<String> listFile = List<String>.empty(growable: true);
-    String texto = "";
-    var file = File(pathFile!);
-    if(file.existsSync()){
-      texto = file.readAsStringSync();
-    }
-    //DartFormatter().format();
-    return Response.ok(texto);
+    String? testDescription = request.url.queryParameters['test'];
+    DNose dnose = DNose();
+    String code = await dnose.getCodeTestByDescription(pathFile!,testDescription!);
+    code = code.replaceAll(";", ";\n");
+    return Response.ok(code);
   });
 
   String chartData() => File(resultado2).readAsStringSync();

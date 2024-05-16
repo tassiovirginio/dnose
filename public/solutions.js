@@ -38,7 +38,12 @@ function carrregarLista() {
         for (var i = 0; i < lista.length; i++) {
             var linha = lista[i].split(";");
 
+            if(linha[1].trim() === "")continue;
+
             var path = linha[3];
+            var testDescripcion = linha[1];
+            console.log(linha);
+            console.log(linha[1]);
 
             const tr = document.createElement("tr");
 
@@ -53,7 +58,7 @@ function carrregarLista() {
             const button = document.createElement("button");
             button.innerHTML = "solution";
             button.className = "button";
-            button.onclick = () => {carregarFile(path)};
+            button.onclick = () => {carregarFile(path,testDescripcion)};
             const td3 = document.createElement("td");
             td3.appendChild(button);
             tr.appendChild(td3);
@@ -65,13 +70,17 @@ function carrregarLista() {
     req.send();
 }
 
-function carregarFile(path) {
+function carregarFile(path, testDescripcion) {
+    console.log("path: " + path + " - " + testDescripcion);
     var code = document.getElementById("code");
     const req = new XMLHttpRequest();
     req.onload = (e) => {
-        code.innerHTML = req.response;
+        console.log(req.response);
+        var code_full = req.response;
+        console.log("code_full: " + code_full)
+        code.innerHTML = code_full;
     };
-    req.open("GET", "/getfiletext?path="+path, true);
+    req.open("GET", "/getfiletext?path="+path+"&test='"+testDescripcion+"'", true);
     req.send();
 }
 
