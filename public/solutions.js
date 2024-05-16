@@ -38,10 +38,11 @@ function carrregarLista() {
         for (var i = 0; i < lista.length; i++) {
             var linha = lista[i].split(";");
 
-            if(linha[1].trim() === "")continue;
+            if (linha[1].trim() === "") continue;
 
             var path = linha[3];
             var testDescripcion = linha[1];
+            var testSmellName = linha[4];
             console.log(linha);
             console.log(linha[1]);
 
@@ -58,7 +59,9 @@ function carrregarLista() {
             const button = document.createElement("button");
             button.innerHTML = "solution";
             button.className = "button";
-            button.onclick = () => {carregarFile(path,testDescripcion)};
+            button.onclick = () => {
+                carregarFile(path, testDescripcion, testSmellName)
+            };
             const td3 = document.createElement("td");
             td3.appendChild(button);
             tr.appendChild(td3);
@@ -70,18 +73,40 @@ function carrregarLista() {
     req.send();
 }
 
-function carregarFile(path, testDescripcion) {
+function carregarFile(path, testDescripcion, testSmellName) {
     console.log("path: " + path + " - " + testDescripcion);
     var code = document.getElementById("code");
     const req = new XMLHttpRequest();
-    req.onload = (e) => {
+    req.onload = async (e) => {
         console.log(req.response);
         var code_full = req.response;
-        console.log("code_full: " + code_full)
         code.innerHTML = code_full;
+        var prompt = "O código abaixo tem um Test Smell (" + testSmellName + ") gostaria que me desse soluções para a resolução do test smells. Código: " + code_full;
+        await carregarSolution(prompt);
     };
-    req.open("GET", "/getfiletext?path="+path+"&test='"+testDescripcion+"'", true);
+    req.open("GET", "/getfiletext?path=" + path + "&test='" + testDescripcion + "'", true);
     req.send();
+}
+
+async function carregarSolution(prompt) {
+    console.log(prompt);
+
+    const solutionDiv = document.getElementById("solution");
+    const req = new XMLHttpRequest();
+    req.open("POST", "/solution", true);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    prompt = prompt.replaceAll(" ","_");
+    console.log(prompt);
+
+    req.onreadystatechange = () => {
+        if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+            solutionDiv.innerHTML = req.response;
+            console.log(req.response);
+        }
+    };
+    req.send(prompt);
+
 }
 
 

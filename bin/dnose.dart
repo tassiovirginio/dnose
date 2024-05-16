@@ -28,11 +28,16 @@ Handler init() {
 
   app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
 
-  app.get('/solution', (Request request) async {
-    String prompt = request.url.queryParameters['prompt'] ?? "";
+  app.post('/solution', (Request request) async {
+    String prompt = await request.readAsString();
+    print(prompt);
+    prompt = prompt.replaceAll("_", " ");
+    print(prompt);
     var content = [ai.Content.text(prompt)];
     final response = await model.generateContent(content);
-    return Response.ok(response.text);
+    String? r = response.text;
+    print(r);
+    return Response.ok(r);
   });
 
   String resultado = "${Directory.current.path}/resultado.csv";
