@@ -49,6 +49,16 @@ Handler init() {
     return projectNameAtual;
   }
 
+  List<String> get100lines() {
+    List<String> lista = List<String>.empty(growable: true);
+    if (result1exists() == "true") {
+      var file = File(resultado);
+      return file.readAsLinesSync().sublist(1,100);
+    }
+    return lista;
+  }
+  app.get('/getlines100', get100lines);
+
   String chartData() => File(resultado2).readAsStringSync();
 
   app.get('/projectnameatual', projectnameatual);
