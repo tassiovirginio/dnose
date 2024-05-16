@@ -3,12 +3,18 @@ import 'dart:io';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:dnose/main.dart';
+import 'package:dnose/dnose.dart';
 import 'package:git_clone/git_clone.dart' as git;
+import 'package:google_generative_ai/google_generative_ai.dart' as ai;
+
+const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
 void main() => shelfRun(init);
 
 Handler init() {
   var app = Router().plus;
+
+  final model = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
   var folderHome = "${getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
@@ -18,6 +24,15 @@ Handler init() {
       Directory(folderHome).listSync().map((d) => d.path).toList();
 
   app.get('/projects', listaProjetos);
+
+  app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
+
+  app.get('/solution', (Request request) async {
+    String prompt = request.url.queryParameters['prompt'] ?? "";
+    var content = [ai.Content.text(prompt)];
+    final response = await model.generateContent(content);
+    return Response.ok(response.text);
+  });
 
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
@@ -47,9 +62,11 @@ Handler init() {
   app.get('/download2', getResultado2);
 
   app.get('/', () => File('public/index.html'));
-  app.get('/javascript.js', () => File('public/javascript.js'));
+  app.get('/index.js', () => File('public/index.js'));
   app.get('/projects.html', () => File('public/projects.html'));
-  app.get('/javascript2.js', () => File('public/javascript2.js'));
+  app.get('/projects.js', () => File('public/projects.js'));
+  app.get('/solutions.html', () => File('public/solutions.html'));
+  app.get('/solutions.js', () => File('public/solutions.js'));
   app.get('/about', () => File('public/about.html'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
   app.get('/logo.png', () => File('public/logo.png'));

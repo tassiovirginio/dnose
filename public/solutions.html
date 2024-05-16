@@ -1,0 +1,157 @@
+<!doctype html>
+<!--light or dark-->
+<html data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DNose</title>
+    <link rel="stylesheet" href="/bulma.min.css">
+    <link rel="icon" type="image/x-icon" href="/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+
+    <style>
+        .window {
+            position: absolute;
+            top: 50%;
+            left: 30%;
+            margin-top: -50px;
+            margin-left: -50px;
+            width: 40%;
+            height: 100px;
+        }
+
+        .loading {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+    </style>
+    <script src="/solutions.js"></script>
+</head>
+<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+
+
+<nav class="navbar is-light">
+    <div class="navbar-brand">
+        <div class="navbar-item">
+            <img style="width: 35px; height: 40px;" src="/logo.png" alt="logo"/>
+        </div>
+        <div class="navbar-item" style="font-weight: bold;">
+            DNose
+        </div>
+    </div>
+
+    <div id="navMenuColorlight-example" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/"> Home </a>
+            <a class="navbar-item" href="/projects.html"> Projects </a>
+            <a class="navbar-item" href="/solutions.html"> Solutions </a>
+        </div>
+
+        <div class="navbar-end">
+            <a class="navbar-item" href="/about"> About </a>
+        </div>
+    </div>
+</nav>
+
+<section class="section is-medium">
+    <div class="container is-align-content-center">
+        <article class="panel is-link block">
+            <p class="panel-heading">Solutions</p>
+            <div style="align-content: center;">
+                <div class="box">
+                    <div class="content">
+                        Filter: <select id="testSmells">
+                        <option></option>
+                    </select>
+                        <table style="width: 100%;">
+                            <tr>
+                                <th style="width: 30%;">Test Smell</th>
+                                <th style="width: 50%;">File</th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </table>
+                        <div style="height: 100px; overflow: auto">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 30%;">Assertion Roulette</td>
+                                    <td style="width: 50%;">/home/tassio/teste/teste.dart</td>
+                                    <td style="width: 10%;"><a href="#">solution</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Assertion Roulette</td>
+                                    <td>/home/tassio/teste/teste.dart</td>
+                                    <td><a href="#">solution</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Assertion Roulette</td>
+                                    <td>/home/tassio/teste/teste.dart</td>
+                                    <td><a href="#">solution</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Assertion Roulette</td>
+                                    <td>/home/tassio/teste/teste.dart</td>
+                                    <td><a href="#">solution</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Assertion Roulette</td>
+                                    <td>/home/tassio/teste/teste.dart</td>
+                                    <td><a href="#">solution</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Assertion Roulette</td>
+                                    <td>/home/tassio/teste/teste.dart</td>
+                                    <td><a href="#">solution</a></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="width: 50%;">
+                                    <pre><code class="language-dart">
+
+void main(){
+print('Hello world');
+}
+
+                                    </code></pre>
+                                </td>
+                                <td>Teste</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+</section>
+
+
+<footer class="footer" style="background-color: #f0f0f0;">
+    <div class="content has-text-centered">
+        <p>
+            <strong>DNose</strong> by <a target="_blank" href="https://tassiovirginio.github.io">Tássio Virgínio</a>
+        </p>
+        <p>
+            <a target="_blank" href="https://github.com/tassiovirginio/dnose">DNose Site</a>
+        </p>
+    </div>
+</footer>
+
+
+<div class="loading" id="loading">
+    <div class='window'>
+        <div class="box">Clonning...
+            <progress class="progress is-large is-info" max="100">60%</progress>
+        </div>
+    </div>
+</div>
+</body>
+</html>
