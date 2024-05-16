@@ -59,7 +59,7 @@ Handler init() {
     List<String> lista = List<String>.empty(growable: true);
     if (result1exists() == "true") {
       var file = File(resultado);
-      return file.readAsLinesSync().sublist(200,220);
+      return file.readAsLinesSync().sublist(1,220);
     }
     return lista;
   }
