@@ -92,6 +92,7 @@ async function carregarSolution(prompt) {
     console.log(prompt);
 
     const solutionDiv = document.getElementById("solution");
+    solutionDiv.innerHTML = "Analyzing...";
     const req = new XMLHttpRequest();
     req.open("POST", "/solution", true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
