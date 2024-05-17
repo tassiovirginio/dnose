@@ -86,6 +86,7 @@ function carregarFile(path, testDescripcion, testSmellName) {
         code.innerHTML = code_full;
         var prompt = "O código abaixo tem um Test Smell (" + testSmellName + ") gostaria que me desse soluções para a resolução do test smells. Código: " + code_full;
         await carregarSolution(prompt);
+        await carregarSolution2(prompt);
     };
     req.open("GET", "/getfiletext?path=" + path + "&test='" + testDescripcion + "'", true);
     req.send();
@@ -100,16 +101,47 @@ async function carregarSolution(prompt) {
     req.open("POST", "/solution", true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    prompt = prompt.replaceAll(" ","_");
-    console.log(prompt);
+    prompt = prompt.replaceAll(" ", "_");
 
     req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
             solutionDiv.innerHTML = req.response;
-            console.log(req.response);
         }
     };
     req.send(prompt);
+}
+
+async function carregarSolution2(prompt) {
+    console.log(prompt);
+
+    const solutionDiv = document.getElementById("solution2");
+    solutionDiv.innerHTML = "Analyzing...";
+    const req = new XMLHttpRequest();
+    req.open("POST", "/solution2", true);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    prompt = prompt.replaceAll(" ", "_");
+
+    req.onreadystatechange = () => {
+        if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+            solutionDiv.innerHTML = req.response;
+        }
+    };
+    req.send(prompt);
+}
+
+function tabs(atual) {
+    if (atual == "0") {
+        document.getElementById("lkGemini").className="is-active";
+        document.getElementById("lkchatGPT").className="";
+        document.getElementById("solution").style.display = 'block';
+        document.getElementById("solution2").style.display = 'none';
+    } else {
+        document.getElementById("lkGemini").className="";
+        document.getElementById("lkchatGPT").className="is-active";
+        document.getElementById("solution").style.display = 'none';
+        document.getElementById("solution2").style.display = 'block';
+    }
 
 }
 

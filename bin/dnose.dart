@@ -10,21 +10,22 @@ import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
-const apitKeyChatGPT = "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
+const apitKeyChatGPT =
+    "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 // var pipeline = Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
-void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip, );
-
-enum IA { gemini, chatGPT }
+void main() => shelfRun(
+      init,
+      defaultBindPort: port,
+      defaultBindAddress: ip,
+    );
 
 Handler init() {
 
-  var iaAtual = IA.chatGPT;
-
   var app = Router().plus;
-  app.use(logRequests());// liga o log
+  app.use(logRequests()); // liga o log
 
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
@@ -45,14 +46,20 @@ Handler init() {
     prompt = prompt.replaceAll("_", " ");
     print(prompt);
     String? resp;
-    if(iaAtual == IA.gemini){
-      var content = [ai.Content.text(prompt)];
-      final response = await gemini.generateContent(content);
-      resp = response.text;
-    }else if(iaAtual == IA.chatGPT){
-      String response = await getChatGptResponse(prompt);
-      resp = response;
-    }
+    var content = [ai.Content.text(prompt)];
+    final response = await gemini.generateContent(content);
+    resp = response.text;
+    return Response.ok(resp);
+  });
+
+  app.post('/solution2', (Request request) async {
+    String prompt = await request.readAsString();
+    print(prompt);
+    prompt = prompt.replaceAll("_", " ");
+    print(prompt);
+    String? resp;
+    String response = await getChatGptResponse(prompt);
+    resp = response;
     return Response.ok(resp);
   });
 
@@ -75,17 +82,22 @@ Handler init() {
     List<String> lista = List<String>.empty(growable: true);
     if (result1exists() == "true") {
       var file = File(resultado);
-      return file.readAsLinesSync().sublist(1,file.readAsLinesSync().length < 300 ? file.readAsLinesSync().length: 300);
+      return file.readAsLinesSync().sublist(
+          1,
+          file.readAsLinesSync().length < 300
+              ? file.readAsLinesSync().length
+              : 300);
     }
     return lista;
   }
+
   app.get('/getlines100', get100lines);
 
   app.get('/getfiletext', (Request request) async {
     String? pathFile = request.url.queryParameters['path'];
     String? testDescription = request.url.queryParameters['test'];
     DNose dnose = DNose();
-    String code = dnose.getCodeTestByDescription(pathFile!,testDescription!);
+    String code = dnose.getCodeTestByDescription(pathFile!, testDescription!);
     code = code.replaceAll(";", ";\n");
     return Response.ok(code);
   });
@@ -126,7 +138,6 @@ Handler init() {
     await git.gitClone(repo: url, directory: caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });
-
 
   return corsHeaders() >> app.call;
 }
