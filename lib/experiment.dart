@@ -80,9 +80,23 @@
 
 import 'dart:io';
 
-void main(){
-  List<String> listaProjetos2 = Directory("/home/tassio/Desenvolvimento/repo.git/dnose/").listSync().map<String>((d) => d.path).toList();
-  print(listaProjetos2);
+import 'package:langchain/langchain.dart';
+import 'package:langchain_openai/langchain_openai.dart';
+
+void main() async {
+  await _example1();
 }
+
+Future<void> _example1() async {
+  final llm = OpenAI(
+    apiKey: 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa',
+    defaultOptions: const OpenAIOptions(temperature: 0.9),
+  );
+  final LLMResult res = await llm.invoke(
+    PromptValue.string('Tell me a joke'),
+  );
+  print(res);
+}
+
 
 String parseTest(FileSystemEntity fse) => fse.path;

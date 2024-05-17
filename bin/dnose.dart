@@ -6,36 +6,25 @@ import 'package:dnose/main.dart';
 import 'package:dnose/dnose.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
-import 'package:chat_gpt_api/chat_gpt.dart';
+import 'package:langchain/langchain.dart';
+import 'package:langchain_openai/langchain_openai.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
+const apitKeyChatGPT = "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 // var pipeline = Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
 void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip, );
 
+enum IA { gemini, chatGPT }
+
 Handler init() {
 
-  String ia = "gemini";
+  var iaAtual = IA.chatGPT;
 
   var app = Router().plus;
   app.use(logRequests());// liga o log
-
-  final chatGpt = ChatGPT.builder(
-    token:
-    '<TOKEN>', // generate token from https://beta.openai.com/account/api-keys
-  );
-
-  Future<String?> chatGPT(String prompt) async{
-    Completion? completion = await chatGpt.textCompletion(
-      request: CompletionRequest(
-        prompt: prompt,
-        maxTokens: 256,
-      ),
-    );
-    return completion?.choices.toString();
-  }
 
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
@@ -56,12 +45,13 @@ Handler init() {
     prompt = prompt.replaceAll("_", " ");
     print(prompt);
     String? resp;
-    if(ia == "gemini"){
+    if(iaAtual == IA.gemini){
       var content = [ai.Content.text(prompt)];
       final response = await gemini.generateContent(content);
       resp = response.text;
-    }else if(ia == "chatgpt"){
-      resp = await chatGPT(prompt);
+    }else if(iaAtual == IA.chatGPT){
+      String response = await getChatGptResponse(prompt);
+      resp = response;
     }
     return Response.ok(resp);
   });
@@ -139,6 +129,17 @@ Handler init() {
 
 
   return corsHeaders() >> app.call;
+}
+
+Future<String> getChatGptResponse(String prompt) async {
+  final llm = OpenAI(
+    apiKey: apitKeyChatGPT,
+    defaultOptions: const OpenAIOptions(temperature: 0.9),
+  );
+  final LLMResult res = await llm.invoke(
+    PromptValue.string(prompt),
+  );
+  return res.output;
 }
 
 String _getFolderUser() => (Platform.isMacOS || Platform.isLinux)
