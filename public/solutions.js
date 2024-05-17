@@ -40,11 +40,9 @@ function carrregarLista() {
 
             if (linha[1].trim() === "") continue;
 
-            var path = linha[3];
-            var testDescripcion = linha[1];
-            var testSmellName = linha[4];
-            console.log(linha);
-            console.log(linha[1]);
+            const path = linha[3];
+            const testDescripcion = linha[1];
+            const testSmellName = linha[4];
 
             const tr = document.createElement("tr");
 
@@ -64,6 +62,7 @@ function carrregarLista() {
                 solutionDiv.innerHTML = "";
                 var code = document.getElementById("code");
                 code.innerHTML = "";
+                console.log(path + " - " + testDescripcion + " - " + testSmellName);
                 carregarFile(path, testDescripcion, testSmellName)
             };
             const td3 = document.createElement("td");
