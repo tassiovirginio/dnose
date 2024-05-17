@@ -16,6 +16,9 @@ void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip);
 Handler init() {
   var app = Router().plus;
 
+  Pipeline().addMiddleware(logRequests());
+  Pipeline().addMiddleware(rejectBadRequests());
+
   final model = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
   var folderHome = "${getFolderUser()}/dnose_projects";
@@ -118,3 +121,14 @@ Handler init() {
 String getFolderUser() => (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
+
+Middleware rejectBadRequests() {
+  return (innerHandler) {
+    return (request) {
+      if (request.method != 'GET') {
+        return Response(405, body: 'Method Not Allowed');
+      }
+      return innerHandler(request);
+    };
+  };
+}
