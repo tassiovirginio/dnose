@@ -4,6 +4,7 @@ window.onload = (event) => {
     hljs.highlightAll();
     carrregarSelect();
     carrregarLista();
+    carregarStruturaSolution();
 };
 
 
@@ -130,19 +131,42 @@ async function carregarSolution2(prompt) {
     req.send(prompt);
 }
 
+function carregarStruturaSolution(){
+    document.getElementById("lkGemini").className="is-active";
+    document.getElementById("lkchatGPT").className="";
+    document.getElementById("solution").style.display = 'block';
+    document.getElementById("solution2").style.display = 'none';
+    document.getElementById("btCopy1").style.display = 'block';
+    document.getElementById("btCopy2").style.display = 'none';
+}
+
 function tabs(atual) {
     if (atual == "0") {
         document.getElementById("lkGemini").className="is-active";
         document.getElementById("lkchatGPT").className="";
         document.getElementById("solution").style.display = 'block';
         document.getElementById("solution2").style.display = 'none';
+        document.getElementById("btCopy1").style.display = 'block';
+        document.getElementById("btCopy2").style.display = 'none';
     } else {
         document.getElementById("lkGemini").className="";
         document.getElementById("lkchatGPT").className="is-active";
         document.getElementById("solution").style.display = 'none';
         document.getElementById("solution2").style.display = 'block';
+        document.getElementById("btCopy1").style.display = 'none';
+        document.getElementById("btCopy2").style.display = 'block';
     }
+}
 
+function copy1(){
+    var texto = document.getElementById("solution").innerHTML;
+    navigator.clipboard.writeText(texto);
+    window.alert("copied solution");
+}
+function copy2(){
+    var texto = document.getElementById("solution2").innerHTML;
+    navigator.clipboard.writeText(texto);
+    window.alert("copied solution");
 }
 
 
