@@ -11,18 +11,17 @@ const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
-void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip);
+// var pipeline = Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
+void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip, );
 
 Handler init() {
 
   var app = Router().plus;
-
-  Pipeline().addMiddleware(logRequests());
-  Pipeline().addMiddleware(rejectBadRequests());
+  app.use(logRequests());// liga o log
 
   final model = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
-  var folderHome = "${getFolderUser()}/dnose_projects";
+  var folderHome = "${_getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
   if (existFolder == false) Directory(folderHome).createSync();
 
@@ -116,20 +115,13 @@ Handler init() {
     return Response.ok("Clonagem concluída");
   });
 
+
   return corsHeaders() >> app.call;
 }
 
-String getFolderUser() => (Platform.isMacOS || Platform.isLinux)
+String _getFolderUser() => (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
 
-Middleware rejectBadRequests() {
-  return (innerHandler) {
-    return (request) {
-      if (request.method != 'GET') {
-        return Response(405, body: 'Method Not Allowed');
-      }
-      return innerHandler(request);
-    };
-  };
-}
+Response _echoRequest(Request request) =>
+    Response.ok('Request for "${request.url}"... worked!');
