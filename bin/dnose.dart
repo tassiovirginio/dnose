@@ -6,7 +6,6 @@ import 'package:dnose/main.dart';
 import 'package:dnose/dnose.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
-import 'package:dart_style/dart_style.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
@@ -59,7 +58,7 @@ Handler init() {
     List<String> lista = List<String>.empty(growable: true);
     if (result1exists() == "true") {
       var file = File(resultado);
-      return file.readAsLinesSync().sublist(1,220);
+      return file.readAsLinesSync().sublist(1,file.readAsLinesSync().length < 300 ? file.readAsLinesSync().length: 300);
     }
     return lista;
   }
@@ -69,7 +68,7 @@ Handler init() {
     String? pathFile = request.url.queryParameters['path'];
     String? testDescription = request.url.queryParameters['test'];
     DNose dnose = DNose();
-    String code = await dnose.getCodeTestByDescription(pathFile!,testDescription!);
+    String code = dnose.getCodeTestByDescription(pathFile!,testDescription!);
     code = code.replaceAll(";", ";\n");
     return Response.ok(code);
   });

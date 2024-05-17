@@ -58,7 +58,7 @@ function carrregarLista() {
 
             const button = document.createElement("button");
             button.innerHTML = "solution";
-            button.className = "button";
+            button.className = "button is-info is-light";
             button.onclick = () => {
                 const solutionDiv = document.getElementById("solution");
                 solutionDiv.innerHTML = "";
