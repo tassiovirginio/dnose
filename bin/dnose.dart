@@ -6,6 +6,7 @@ import 'package:dnose/main.dart';
 import 'package:dnose/dnose.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
+import 'package:chat_gpt_api/chat_gpt.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
@@ -16,10 +17,27 @@ void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip, );
 
 Handler init() {
 
+  String ia = "gemini";
+
   var app = Router().plus;
   app.use(logRequests());// liga o log
 
-  final model = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+  final chatGpt = ChatGPT.builder(
+    token:
+    '<TOKEN>', // generate token from https://beta.openai.com/account/api-keys
+  );
+
+  Future<String?> chatGPT(String prompt) async{
+    Completion? completion = await chatGpt.textCompletion(
+      request: CompletionRequest(
+        prompt: prompt,
+        maxTokens: 256,
+      ),
+    );
+    return completion?.choices.toString();
+  }
+
+  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
   var folderHome = "${_getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
@@ -37,11 +55,15 @@ Handler init() {
     print(prompt);
     prompt = prompt.replaceAll("_", " ");
     print(prompt);
-    var content = [ai.Content.text(prompt)];
-    final response = await model.generateContent(content);
-    String? r = response.text;
-    print(r);
-    return Response.ok(r);
+    String? resp;
+    if(ia == "gemini"){
+      var content = [ai.Content.text(prompt)];
+      final response = await gemini.generateContent(content);
+      resp = response.text;
+    }else if(ia == "chatgpt"){
+      resp = await chatGPT(prompt);
+    }
+    return Response.ok(resp);
   });
 
   String resultado = "${Directory.current.path}/resultado.csv";
@@ -122,6 +144,3 @@ Handler init() {
 String _getFolderUser() => (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
-
-Response _echoRequest(Request request) =>
-    Response.ok('Request for "${request.url}"... worked!');
