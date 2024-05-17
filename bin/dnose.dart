@@ -9,7 +9,9 @@ import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 
-void main() => shelfRun(init);
+final ip = InternetAddress.anyIPv4;
+final port = int.parse(Platform.environment['PORT'] ?? '8080');
+void main() => shelfRun(init, defaultBindPort: port, defaultBindAddress: ip);
 
 Handler init() {
   var app = Router().plus;
