@@ -20,7 +20,7 @@ function carregarListaProjetos(){
 
         console.log(lista);
     };
-    req.open("GET", "/projects", true);
+    req.open("GET", "/list_projects", true);
     req.send();
 }
 
