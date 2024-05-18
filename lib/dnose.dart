@@ -19,19 +19,7 @@ import 'package:dnose/detectors/unknown_test_detector.dart';
 class DNose {
   static final Logger _logger = Logger('DNose');
 
-  static final List<String> listTestSmellsNames = [
-    ConditionalTestLogicDetector().testSmellName,
-    PrintStatmentFixtureDetector().testSmellName,
-    TestWithoutDescriptionDetector().testSmellName,
-    MagicNumberDetector().testSmellName,
-    SleepyFixtureDetector().testSmellName,
-    DuplicateAssertDetector().testSmellName,
-    ResourceOptimismDetector().testSmellName,
-    AssertionRouletteDetector().testSmellName,
-    VerboseTestDetector().testSmellName,
-    EmptyTestDetector().testSmellName,
-    UnknownTestDetector().testSmellName,
-  ];
+  static late final List<String> listTestSmellsNames;
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -59,6 +47,9 @@ class DNose {
       EmptyTestDetector(),
       UnknownTestDetector()
     ];
+
+    listTestSmellsNames =
+        detectors.map<String>((e) => e.testSmellName).toList();
 
     for (var d in detectors) {
       testSmells.addAll(d.detect(e, testClass, testName));
@@ -91,16 +82,18 @@ class DNose {
   }
 
   String getCodeTestByDescription(String path, String description) {
-    TestClass testClass = TestClass(path: path, moduleAtual: "", projectName: "");
+    TestClass testClass =
+        TestClass(path: path, moduleAtual: "", projectName: "");
     var root = testClass.root;
     List<String> code = _scan2(root, testClass, description);
     return code.first;
   }
+
   List<String> _scan2(AstNode n, TestClass testClass, String description) {
     List<String> testSmells = List.empty(growable: true);
     n.childEntities.whereType<AstNode>().forEach((element) {
       if (isTest(element)) {
-        if(element.toSource().contains(description)) {
+        if (element.toSource().contains(description)) {
           testSmells.add(element.toSource());
         }
       }
