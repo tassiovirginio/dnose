@@ -116,9 +116,9 @@ Handler init() {
 
   app.get('/', () => File('public/index.html'));
   app.get('/index.js', () => File('public/index.js'));
-  app.get('/projects.html', () => File('public/projects.html'));
+  app.get('/projects', () => File('public/projects.html'));
   app.get('/projects.js', () => File('public/projects.js'));
-  app.get('/solutions.html', () => File('public/solutions.html'));
+  app.get('/solutions', () => File('public/solutions.html'));
   app.get('/solutions.js', () => File('public/solutions.js'));
   app.get('/about', () => File('public/about.html'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
