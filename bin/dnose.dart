@@ -15,7 +15,7 @@ const apitKeyChatGPT =
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
-// var pipeline = Pipeline().addMiddleware(logRequests()).addHandler(_echoRequest);
+
 void main() => shelfRun(
       init,
       defaultBindPort: port,
