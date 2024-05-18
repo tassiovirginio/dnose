@@ -83,7 +83,7 @@ function carregarSelectProjects(){
             select_projects.appendChild(option);
         }
     };
-    req.open("GET", "/projects", true);
+    req.open("GET", "/list_projects", true);
     req.send();
 }
 

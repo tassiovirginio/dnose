@@ -36,7 +36,7 @@ Handler init() {
   List<String> listaProjetos() =>
       Directory(folderHome).listSync().map((d) => d.path).toList();
 
-  app.get('/projects', listaProjetos);
+  app.get('/list_projects', listaProjetos);
 
   app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
 
