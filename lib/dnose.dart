@@ -19,7 +19,19 @@ import 'package:dnose/detectors/unknown_test_detector.dart';
 class DNose {
   static final Logger _logger = Logger('DNose');
 
-  static late final List<String> listTestSmellsNames;
+  static final List<String> listTestSmellsNames = [
+      ConditionalTestLogicDetector().testSmellName,
+      PrintStatmentFixtureDetector().testSmellName,
+      TestWithoutDescriptionDetector().testSmellName,
+      MagicNumberDetector().testSmellName,
+      SleepyFixtureDetector().testSmellName,
+      DuplicateAssertDetector().testSmellName,
+      ResourceOptimismDetector().testSmellName,
+      AssertionRouletteDetector().testSmellName,
+      VerboseTestDetector().testSmellName,
+      EmptyTestDetector().testSmellName,
+      UnknownTestDetector().testSmellName
+    ];
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -47,9 +59,6 @@ class DNose {
       EmptyTestDetector(),
       UnknownTestDetector()
     ];
-
-    listTestSmellsNames =
-        detectors.map<String>((e) => e.testSmellName).toList();
 
     for (var d in detectors) {
       testSmells.addAll(d.detect(e, testClass, testName));
