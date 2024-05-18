@@ -106,7 +106,7 @@ async function carregarSolution(prompt) {
 
     req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
-            solutionDiv.innerHTML = req.response;
+            solutionDiv.innerHTML = marked.parse(req.response);
         }
     };
     req.send(prompt);
