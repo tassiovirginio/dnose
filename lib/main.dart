@@ -13,22 +13,14 @@ import 'package:process_run/shell.dart';
 final Logger _logger = Logger('Main');
 
 void main(List<String> args) {
-  var pathProject = [
-    "/home/tassio/Desenvolvimento/dart/flutter",
-    "/home/tassio/Desenvolvimento/repo.git/dnose",
-    "/home/tassio/Desenvolvimento/dart/dnose",
-    "/home/tassio/Desenvolvimento/dart/conduit"
-  ];
-  processar(pathProject[0]);
-
-  // if(args.length == 1){
-  //   processar(args[0]);
-  //   return;
-  // }
+  if(args.length == 1){
+    processar(args[0]);
+    return;
+  }
 }
 
 void processar(String pathProject) {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.level = Level.OFF; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
@@ -76,10 +68,8 @@ void processar(String pathProject) {
 
   createCSV(listaTotal).then((value) {
     _logger.info("CSV criado com sucesso.");
-    // createSqlite();
+    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
   });
-
-  // createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 }
@@ -186,20 +176,7 @@ String getStatists() {
     retorno +=
         "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
 
-    // print("Test Smell: $key");
-    // print("Media: $media");
-    // print("Desvio Padrão: $desvioPadrao");
-    // print("Mediana: $mediana");
-    // print("squareMean: $squareMean");
-    // print("Max: $max");
-    // print("Min: $min");
-    // print("Sum: $sum");
-    // print("Center: $center");
-    // print("Squares Sum: $squaresSum");
   }
-  print(retorno);
-
-  //resultSet.toList().map((e) => e.toString()).toList();
 
   return retorno;
 }
