@@ -70,6 +70,15 @@ function carregarResultados(){
     req2.send();
 }
 
+function gerardb(){
+    const req2 = new XMLHttpRequest();
+    req2.onload = (e) => {
+        console.log(req2.response);
+    };
+    req2.open("GET", "/gerardb", true);
+    req2.send();
+}
+
 function carregarSelectProjects(){
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -104,11 +113,15 @@ function processar() {
         document.getElementById("loading").style.visibility = "hidden";
 
         carregarNomeProjeto();
+        sleep(5000).then(r => gerardb());
+
     };
     req.open("GET", "/processar?path_project=" + path.value, true);
     req.send();
 
 }
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 
 window.onload = (event) => {
