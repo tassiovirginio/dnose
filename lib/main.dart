@@ -178,7 +178,6 @@ String getStatists() {
     var mediana = statistics?.median;
     var squareMean = statistics?.squaresMean;
     var sum = statistics?.sumBigInt;
-    var sum2 = listaValores?.sum;
     var max = statistics?.max;
     var min = statistics?.min;
     var center = statistics?.center;
