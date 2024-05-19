@@ -157,5 +157,5 @@ window.onload = (event) => {
     carregarNomesTestSmells();
     carregarResultados();
     carregarSelectProjects();
-    // carregarQtdTestSmells();
+    carregarQtdTestSmells();
 };
