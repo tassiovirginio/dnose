@@ -131,7 +131,7 @@ Future<bool> createSqlite() async {
   String csvFilePath = 'resultado.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
-  shell.runSync(command);
+  shell.run(command);
   return true;
 }
 
@@ -177,7 +177,8 @@ String getStatists() {
     var desvioPadrao = statistics?.standardDeviation;
     var mediana = statistics?.median;
     var squareMean = statistics?.squaresMean;
-    var sum = statistics?.sum;
+    var sum = statistics?.sumBigInt;
+    var sum2 = listaValores?.sum;
     var max = statistics?.max;
     var min = statistics?.min;
     var center = statistics?.center;
