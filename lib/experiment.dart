@@ -80,8 +80,8 @@
 
 import 'dart:io';
 
-import 'package:langchain/langchain.dart';
-import 'package:langchain_openai/langchain_openai.dart';
+// import 'package:langchain/langchain.dart';
+// import 'package:langchain_openai/langchain_openai.dart';
 import 'package:statistics/statistics.dart';
 
 void main() async {
@@ -126,16 +126,16 @@ void main() async {
   print(csv);
 }
 
-Future<void> _example1() async {
-  final llm = OpenAI(
-    apiKey: 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa',
-    defaultOptions: const OpenAIOptions(temperature: 0.9),
-  );
-  final LLMResult res = await llm.invoke(
-    PromptValue.string('Tell me a joke'),
-  );
-  print(res);
-}
+// Future<void> _example1() async {
+//   final llm = OpenAI(
+//     apiKey: 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa',
+//     defaultOptions: const OpenAIOptions(temperature: 0.9),
+//   );
+//   final LLMResult res = await llm.invoke(
+//     PromptValue.string('Tell me a joke'),
+//   );
+//   print(res);
+// }
 
 
 String parseTest(FileSystemEntity fse) => fse.path;

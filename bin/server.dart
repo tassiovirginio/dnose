@@ -8,7 +8,7 @@ import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
-import 'package:statistics/statistics.dart';
+// import 'package:statistics/statistics.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 const apitKeyChatGPT =
@@ -25,8 +25,8 @@ void main() => shelfRun(
 
 Handler init() {
   var app = Router().plus;
-  app.use(logRequests()); // liga o log
-
+  // app.use(logRequests()); // liga o log
+  app.use(corsHeaders()); // liga o cors
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
   var folderHome = "${_getFolderUser()}/dnose_projects";

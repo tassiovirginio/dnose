@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:async';
+// import 'dart:async';
 
 void readFile(SendPort sendPort) async {
   // Cria um ReceivePort para receber a mensagem do isolate principal
