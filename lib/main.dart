@@ -45,9 +45,7 @@ void processar(String pathProject) {
 
   List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
 
-  String projectName = pathProject
-      .split("/")
-      .last;
+  String projectName = pathProject.split("/").last;
 
   String moduleAtual = "";
 
@@ -83,11 +81,8 @@ void processar(String pathProject) {
 
   // createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
 
-  _logger.info(
-  "Foram encontrado ${listaTotal.length} Test Smells."
-  );
+  _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 }
-
 
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var somatorio = <String, int>{};
@@ -100,13 +95,9 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   for (var ts in listaTotal) {
     sink.write(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass
-            .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
-            .end}\n");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass
-            .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
-            .end}");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
     _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
@@ -138,44 +129,46 @@ Future<bool> createSqlite() async {
   var shell = Shell();
   String dbPath = 'resultado.sqlite';
   String csvFilePath = 'resultado.csv';
-  String command = 'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
+  String command =
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
   shell.runSync(command);
   return true;
 }
 
-
-List<String> getQtdTestSmellsByType(){
+List<String> getQtdTestSmellsByType() {
   final db = sqlite3.open('resultado.sqlite');
-  final ResultSet resultSet =
-  db.select('select testsmell, count(testsmell) as qtd from dataset group by testsmell;');
+  final ResultSet resultSet = db.select(
+      'select testsmell, count(testsmell) as qtd from dataset group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
-String getStatists(){
+String getStatists() {
   final db = sqlite3.open('resultado.sqlite');
-  final ResultSet resultSet =
-  db.select('select path, testsmell, count(testsmell) as qtd from dataset group by testsmell, path;');
+  final ResultSet resultSet = db.select(
+      'select path, testsmell, count(testsmell) as qtd from dataset group by testsmell, path;');
   var lista = resultSet.toList();
 
   var mapa = <String, List<int>>{};
 
-  for(var item in lista){
-    var testeSmell = item.getStringKeyValue("testsmell");
-    if(mapa.containsValue(testeSmell)){
-      var listaValores = mapa[testeSmell];
-      listaValores!.add(int.parse(item.getStringKeyValue("qtd")));
-    }else{
-      mapa[testeSmell] = List.empty(growable: true);
-      var listaValores = mapa[testeSmell];
-      listaValores!.add(item["qtd"]);
+  for (var item in lista) {
+    var testeSmell = item["testsmell"];
+    if (!mapa.containsValue(testeSmell)) {
+      mapa[testeSmell] = List<int>.empty(growable: true);
     }
+  }
+
+  for (var item in lista) {
+    var testeSmell = item["testsmell"];
+    var listaValores = mapa[testeSmell];
+    listaValores!.add(item["qtd"]);
   }
 
   String retorno = "";
 
-  retorno += "Test Smell;Media;Desvio Padrão;Mediana;squareMean;Max;Min;Sum;Center;Squares Sum\n";
+  retorno +=
+      "Test Smell;Media;Desvio Padrão;Mediana;squareMean;Max;Min;Sum;Center;Squares Sum\n";
 
-  for(var key in mapa.keys){
+  for (var key in mapa.keys) {
     var listaValores = mapa[key];
 
     var statistics = listaValores?.statistics;
@@ -190,7 +183,8 @@ String getStatists(){
     var center = statistics?.center;
     var squaresSum = statistics?.squaresSum;
 
-    retorno += "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
+    retorno +=
+        "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
 
     // print("Test Smell: $key");
     // print("Media: $media");
@@ -209,6 +203,5 @@ String getStatists(){
 
   return retorno;
 }
-
 
 String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
