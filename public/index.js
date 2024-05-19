@@ -113,12 +113,39 @@ function processar() {
         document.getElementById("loading").style.visibility = "hidden";
 
         carregarNomeProjeto();
-        sleep(5000).then(r => gerardb());
+        sleep(5000).then(r => {
+            gerardb();
+            carregarQtdTestSmells();
+        });
 
     };
     req.open("GET", "/processar?path_project=" + path.value, true);
     req.send();
 
+}
+
+function carregarQtdTestSmells() {
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        // var lista = req.response.replaceAll("[","").replaceAll("]","").split(",");
+        // console.log(lista[0]);
+        // var saida = "";
+        // console.log(lista);
+
+        var saida = "";
+        var lista = JSON.parse(req.response);
+
+        for (let i = 0; i < lista.length; i++) {
+            var linha = lista[i].replaceAll("{testsmell:","").replaceAll("}","").split(",");
+            var path = linha[0];
+            var qtd = linha[1];
+            saida += path + " - " + qtd + "<br>";
+        }
+
+        document.getElementById("qtdbytestsmellbytype").innerHTML = saida;
+    };
+    req.open("GET", "/qtdbytestsmellbytype", true);
+    req.send();
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -130,4 +157,5 @@ window.onload = (event) => {
     carregarNomesTestSmells();
     carregarResultados();
     carregarSelectProjects();
+    // carregarQtdTestSmells();
 };

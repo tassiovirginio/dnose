@@ -140,6 +140,9 @@ Handler init() {
     return Response.ok("Banco de dados gerado com sucesso!");
   });
 
+  app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
+
+
 
   String statistics() {
     var file = File(resultado);

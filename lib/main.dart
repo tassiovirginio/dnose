@@ -99,11 +99,11 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   for (var ts in listaTotal) {
     sink.write(
-        "${ts.testClass.projectName};${ts.testName};${ts.testClass
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass
             .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
             .end}\n");
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName};${ts.testClass
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass
             .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
             .end}");
     _logger.info("Code: ${ts.code}");
@@ -140,6 +140,14 @@ Future<bool> createSqlite() async {
   String command = 'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
   shell.runSync(command);
   return true;
+}
+
+
+List<String> getQtdTestSmellsByType(){
+  final db = sqlite3.open('resultado.sqlite');
+  final ResultSet resultSet =
+  db.select('select testsmell, count(testsmell) as qtd from dataset group by testsmell;');
+  return resultSet.toList().map((e) => e.toString()).toList();
 }
 
 
