@@ -150,6 +150,20 @@ function carregarQtdTestSmells() {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+function carregarBotaoDownloadDb(){
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        if(req.response == "true"){
+            document.getElementById("resultado_db").style.visibility = "visible";
+        }else{
+            document.getElementById("resultado_db").style.visibility = "hidden";
+        }
+
+    };
+    req.open("GET", "/download.db.existe", true);
+    req.send();
+
+}
 
 window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
@@ -158,4 +172,5 @@ window.onload = (event) => {
     carregarResultados();
     carregarSelectProjects();
     carregarQtdTestSmells();
+    carregarBotaoDownloadDb();
 };

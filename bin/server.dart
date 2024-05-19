@@ -116,9 +116,16 @@ Handler init() {
     return file;
   }
 
+  String resultDbExist() {
+    var file = File(resultadoDbFile);
+    return "${(file.existsSync() && file.lengthSync() > 0)}";
+  }
+
   app.get('/download', getResultado1, use: download());
   app.get('/download2', getResultado2, use: download());
   app.get('/download.db', getResultadoDbFile, use: download());
+
+  app.get('/download.db.existe', resultDbExist);
 
 
   app.get('/', () => File('public/index.html'));
