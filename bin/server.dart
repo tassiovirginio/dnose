@@ -61,6 +61,7 @@ Handler init() {
 
   String resultado = "${Directory.current.path}/resultado.csv";
   String resultado2 = "${Directory.current.path}/resultado2.csv";
+  String resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
 
   String result1exists() => File(resultado).existsSync().toString();
   app.get('/result1exists', result1exists);
@@ -107,8 +108,18 @@ Handler init() {
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
 
-  app.get('/download', getResultado1);
-  app.get('/download2', getResultado2);
+  File getResultadoDbFile() {
+    var file = File(resultadoDbFile);
+    if(file.existsSync() && file.lengthSync() > 0){
+        return file;
+    }
+    return file;
+  }
+
+  app.get('/download', getResultado1, use: download());
+  app.get('/download2', getResultado2, use: download());
+  app.get('/download.db', getResultadoDbFile, use: download());
+
 
   app.get('/', () => File('public/index.html'));
   app.get('/index.js', () => File('public/index.js'));
