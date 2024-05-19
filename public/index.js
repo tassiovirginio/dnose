@@ -1,4 +1,4 @@
-function carregarNomeProjeto(){
+function carregarNomeProjeto() {
     const req3 = new XMLHttpRequest();
     req3.onload = (e) => {
         document.getElementById("projectname").innerHTML = req3.response;
@@ -7,7 +7,7 @@ function carregarNomeProjeto(){
     req3.send();
 }
 
-function carregarNomesTestSmells(){
+function carregarNomesTestSmells() {
     const req4 = new XMLHttpRequest();
     const nomes = new Array();
     const valores = new Array();
@@ -17,7 +17,7 @@ function carregarNomesTestSmells(){
         for (var i = 1; i < linhas.length; i++) {
             const nome = linhas[i].split(";")[0];
             const valor = linhas[i].split(";")[1];
-            if(nome !== ""){
+            if (nome !== "") {
                 nomes.push(nome);
                 const valorLog = Math.log(valor);
                 valores.push(valor);
@@ -32,7 +32,7 @@ function carregarNomesTestSmells(){
     return nomes;
 }
 
-function carregarChart(id, nomes, valores, msg){
+function carregarChart(id, nomes, valores, msg) {
     const ctx = document.getElementById(id);
 
     new Chart(ctx, {
@@ -55,7 +55,7 @@ function carregarChart(id, nomes, valores, msg){
     });
 }
 
-function carregarResultados(){
+function carregarResultados() {
     const req2 = new XMLHttpRequest();
     req2.onload = (e) => {
         if (req2.response === "true") {
@@ -70,7 +70,7 @@ function carregarResultados(){
     req2.send();
 }
 
-function gerardb(){
+function gerardb() {
     const req2 = new XMLHttpRequest();
     req2.onload = (e) => {
         console.log(req2.response);
@@ -79,7 +79,7 @@ function gerardb(){
     req2.send();
 }
 
-function carregarSelectProjects(){
+function carregarSelectProjects() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista_projetos = JSON.parse(req.response);
@@ -127,35 +127,45 @@ function processar() {
 function carregarQtdTestSmells() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
-        // var lista = req.response.replaceAll("[","").replaceAll("]","").split(",");
-        // console.log(lista[0]);
-        // var saida = "";
-        // console.log(lista);
 
-        var saida = "";
-        var lista = JSON.parse(req.response);
+        var table = document.createElement("table");
 
-        for (let i = 0; i < lista.length; i++) {
-            var linha = lista[i].replaceAll("{testsmell:","").replaceAll("}","").split(",");
-            var path = linha[0];
-            var qtd = linha[1];
-            saida += path + " - " + qtd + "<br>";
+        table.className = "table is-fullwidth";
+
+        var linhas = req.response.split("\n");
+
+        var linha1 = 0;
+
+        for (var i = 0; i < linhas.length; i++) {
+            var linha = linhas[i].split(";");
+            var tr = document.createElement("tr");
+            for (var j = 0; j < linha.length; j++) {
+                if(linha1 == 0){
+                    var td = document.createElement("th");
+                }else{
+                    var td = document.createElement("td");
+                }
+                td.innerHTML = linha[j];
+                tr.appendChild(td);
+            }
+            linha1 = 1;
+            table.appendChild(tr);
         }
 
-        document.getElementById("qtdbytestsmellbytype").innerHTML = saida;
+        document.getElementById("qtdbytestsmellbytype").appendChild(table);
     };
-    req.open("GET", "/qtdbytestsmellbytype", true);
+    req.open("GET", "/getstatistics", true);
     req.send();
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function carregarBotaoDownloadDb(){
+function carregarBotaoDownloadDb() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
-        if(req.response == "true"){
+        if (req.response == "true") {
             document.getElementById("resultado_db").style.visibility = "visible";
-        }else{
+        } else {
             document.getElementById("resultado_db").style.visibility = "hidden";
         }
 
