@@ -38,6 +38,8 @@ Handler init() {
 
   app.get('/list_projects', listaProjetos);
 
+  app.get('/getstatistics', () => getStatists());
+
   app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
 
   app.post('/solution', (Request request) async {

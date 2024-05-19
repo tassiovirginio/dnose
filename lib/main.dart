@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:logging/logging.dart';
+import 'package:statistics/statistics.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/dnose.dart';
@@ -148,6 +149,65 @@ List<String> getQtdTestSmellsByType(){
   final ResultSet resultSet =
   db.select('select testsmell, count(testsmell) as qtd from dataset group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
+}
+
+String getStatists(){
+  final db = sqlite3.open('resultado.sqlite');
+  final ResultSet resultSet =
+  db.select('select path, testsmell, count(testsmell) as qtd from dataset group by testsmell, path;');
+  var lista = resultSet.toList();
+
+  var mapa = <String, List<int>>{};
+
+  for(var item in lista){
+    var testeSmell = item.getStringKeyValue("testsmell");
+    if(mapa.containsValue(testeSmell)){
+      var listaValores = mapa[testeSmell];
+      listaValores!.add(int.parse(item.getStringKeyValue("qtd")));
+    }else{
+      mapa[testeSmell] = List.empty(growable: true);
+      var listaValores = mapa[testeSmell];
+      listaValores!.add(item["qtd"]);
+    }
+  }
+
+  String retorno = "";
+
+  retorno += "Test Smell;Media;Desvio Padrão;Mediana;squareMean;Max;Min;Sum;Center;Squares Sum\n";
+
+  for(var key in mapa.keys){
+    var listaValores = mapa[key];
+
+    var statistics = listaValores?.statistics;
+
+    var media = statistics?.mean;
+    var desvioPadrao = statistics?.standardDeviation;
+    var mediana = statistics?.median;
+    var squareMean = statistics?.squaresMean;
+    var sum = statistics?.sum;
+    var max = statistics?.max;
+    var min = statistics?.min;
+    var center = statistics?.center;
+    var squaresSum = statistics?.squaresSum;
+
+    retorno += "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
+
+    // print("Test Smell: $key");
+    // print("Media: $media");
+    // print("Desvio Padrão: $desvioPadrao");
+    // print("Mediana: $mediana");
+    // print("squareMean: $squareMean");
+    // print("Max: $max");
+    // print("Min: $min");
+    // print("Sum: $sum");
+    // print("Center: $center");
+    // print("Squares Sum: $squaresSum");
+  }
+  print(retorno);
+
+  //resultSet.toList().map((e) => e.toString()).toList();
+
+  return retorno;
 }
 
 
