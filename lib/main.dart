@@ -75,14 +75,20 @@ void processar(String pathProject) {
     }
   }
 
-  createCSV(listaTotal);
+  createCSV(listaTotal).then((value) {
+    _logger.info("CSV criado com sucesso.");
+    // createSqlite();
+  });
+
+  // createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
 
   _logger.info(
-      "Foram encontrado ${listaTotal.length} Test Smells.");
+  "Foram encontrado ${listaTotal.length} Test Smells."
+  );
 }
 
 
-void createCSV(List<TestSmell> listaTotal) {
+Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var somatorio = <String, int>{};
 
   var file = File('resultado.csv');
@@ -121,55 +127,19 @@ void createCSV(List<TestSmell> listaTotal) {
     _logger.info("$key;$value");
   });
   sink2.close();
+
+  return true;
 }
 
-void createSqlite_(List<TestSmell> listaTotal) {
-  print('Using sqlite3 ${sqlite3.version}');
-
-  var file = File('resultado.sqlite');
-  if (file.existsSync()) file.deleteSync();
-
-  final db = sqlite3.open("resultado.sqlite");
-
-  //project_name;test_name;module;path;testsmell;start;end
-
-  db.execute('''
-    CREATE TABLE dataset (
-      project_name TEXT,
-      test_name TEXT,
-      module TEXT,
-      path TEXT,
-      testsmell TEXT,
-      start INTEGER,
-      end INTEGER
-    );
-  ''');
-
-  for (var ts in listaTotal) {
-    db.execute('''
-      INSERT INTO dataset (project_name, test_name, module, path, testsmell, start, end)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', [
-      ts.testClass.projectName,
-      ts.testName,
-      ts.testClass.moduleAtual,
-      ts.testClass.path,
-      ts.name,
-      ts.start,
-      ts.end
-    ]);
-  }
-
-  db.dispose();
-}
-
-
-void createSqlite() async {
+Future<bool> createSqlite() async {
+  var file2 = File('resultado.sqlite');
+  if (file2.existsSync()) file2.deleteSync();
   var shell = Shell();
   String dbPath = 'resultado.sqlite';
   String csvFilePath = 'resultado.csv';
   String command = 'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
   shell.runSync(command);
+  return true;
 }
 
 
