@@ -17,6 +17,9 @@ dependencies:
   google_generative_ai: ^0.4.0
   langchain: ^0.7.1
   langchain_openai: ^0.6.1
+  statistics: ^1.1.0
+  sqlite3: ^2.4.3
+  process_run: ^0.14.2
 
 dev_dependencies:
   lints: ^4.0.0

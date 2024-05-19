@@ -5,3 +5,5 @@
 *.csv
 *.csv#
 *.exe
+*.db
+*.sqlite

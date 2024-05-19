@@ -8,6 +8,7 @@ import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
+import 'package:statistics/statistics.dart';
 
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 const apitKeyChatGPT =
@@ -23,7 +24,6 @@ void main() => shelfRun(
     );
 
 Handler init() {
-
   var app = Router().plus;
   app.use(logRequests()); // liga o log
 
@@ -54,13 +54,9 @@ Handler init() {
 
   app.post('/solution2', (Request request) async {
     String prompt = await request.readAsString();
-    print(prompt);
     prompt = prompt.replaceAll("_", " ");
-    print(prompt);
-    String? resp;
     String response = await getChatGptResponse(prompt);
-    resp = response;
-    return Response.ok(resp);
+    return Response.ok(response);
   });
 
   String resultado = "${Directory.current.path}/resultado.csv";
@@ -138,6 +134,34 @@ Handler init() {
     await git.gitClone(repo: url, directory: caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });
+
+  app.get('/gerardb', (Request request) async {
+    createSqlite();
+    return Response.ok("Banco de dados gerado com sucesso!");
+  });
+
+
+  String statistics() {
+    var file = File(resultado);
+    var lines = file.readAsLinesSync();
+    var list = lines.map((e) => e.split(";")[4]).toList();
+
+    print(list[0]);
+
+    print(list[1]);
+    print(list[2]);
+
+    // var listInt = list.map((e) => int.parse(e)).toList();
+    // var mean = mean(listInt);
+    // var median = median(listInt);
+    // var mode = mode(listInt);
+    // var variance = variance(listInt);
+    // var stdDev = standardDeviation(listInt);
+    // return "Média: $mean\nMediana: $median\nModa: $mode\nVariância: $variance\nDesvio Padrão: $stdDev";
+    return "Teste...";
+  }
+
+  app.get('/statistics', statistics);
 
   return corsHeaders() >> app.call;
 }

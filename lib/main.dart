@@ -6,6 +6,8 @@ import 'package:dnose/models/test_class.dart';
 import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:crypto/crypto.dart' show md5;
+import 'package:sqlite3/sqlite3.dart';
+import 'package:process_run/shell.dart';
 
 final Logger _logger = Logger('Main');
 
@@ -42,7 +44,9 @@ void processar(String pathProject) {
 
   List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
 
-  String projectName = pathProject.split("/").last;
+  String projectName = pathProject
+      .split("/")
+      .last;
 
   String moduleAtual = "";
 
@@ -64,7 +68,8 @@ void processar(String pathProject) {
 
     if (file.path.endsWith("_test.dart") == true) {
       _logger.info("Analyzing: ${file.path}");
-      TestClass testClass = TestClass(path:file.path, moduleAtual: moduleAtual, projectName: projectName);
+      TestClass testClass = TestClass(
+          path: file.path, moduleAtual: moduleAtual, projectName: projectName);
       var testSmells = dnose.scan(testClass);
       listaTotal.addAll(testSmells);
     }
@@ -77,22 +82,24 @@ void processar(String pathProject) {
 }
 
 
-
 void createCSV(List<TestSmell> listaTotal) {
-
   var somatorio = <String, int>{};
 
   var file = File('resultado.csv');
-  if(file.existsSync()) file.deleteSync();
+  if (file.existsSync()) file.deleteSync();
   file.createSync();
 
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end\n");
   for (var ts in listaTotal) {
     sink.write(
-        "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
+        "${ts.testClass.projectName};${ts.testName};${ts.testClass
+            .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
+            .end}\n");
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
+        "${ts.testClass.projectName};${ts.testName};${ts.testClass
+            .moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts
+            .end}");
     _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
@@ -104,7 +111,7 @@ void createCSV(List<TestSmell> listaTotal) {
   sink.close();
 
   var file2 = File('resultado2.csv');
-  if(file2.existsSync())file2.deleteSync();
+  if (file2.existsSync()) file2.deleteSync();
   file2.createSync();
 
   var sink2 = file2.openWrite();
@@ -115,5 +122,55 @@ void createCSV(List<TestSmell> listaTotal) {
   });
   sink2.close();
 }
+
+void createSqlite_(List<TestSmell> listaTotal) {
+  print('Using sqlite3 ${sqlite3.version}');
+
+  var file = File('resultado.sqlite');
+  if (file.existsSync()) file.deleteSync();
+
+  final db = sqlite3.open("resultado.sqlite");
+
+  //project_name;test_name;module;path;testsmell;start;end
+
+  db.execute('''
+    CREATE TABLE dataset (
+      project_name TEXT,
+      test_name TEXT,
+      module TEXT,
+      path TEXT,
+      testsmell TEXT,
+      start INTEGER,
+      end INTEGER
+    );
+  ''');
+
+  for (var ts in listaTotal) {
+    db.execute('''
+      INSERT INTO dataset (project_name, test_name, module, path, testsmell, start, end)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', [
+      ts.testClass.projectName,
+      ts.testName,
+      ts.testClass.moduleAtual,
+      ts.testClass.path,
+      ts.name,
+      ts.start,
+      ts.end
+    ]);
+  }
+
+  db.dispose();
+}
+
+
+void createSqlite() async {
+  var shell = Shell();
+  String dbPath = 'resultado.sqlite';
+  String csvFilePath = 'resultado.csv';
+  String command = 'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
+  shell.runSync(command);
+}
+
 
 String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();

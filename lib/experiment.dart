@@ -82,9 +82,48 @@ import 'dart:io';
 
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
+import 'package:statistics/statistics.dart';
 
 void main() async {
-  await _example1();
+  var ns = [10, 20.0, 25, 30];
+  print('ns: $ns');
+
+  var mean = ns.mean;
+  print('mean: $mean');
+
+  var sdv = ns.standardDeviation;
+  print('sdv: $sdv');
+
+  var squares = ns.square;
+  print('squares: $squares');
+
+  // Statistics:
+
+  var statistics = ns.statistics;
+
+  print('Statistics.max: ${statistics.max}');
+  print('Statistics.min: ${statistics.min}');
+  print('Statistics.mean: ${statistics.mean}');
+  print('Statistics.standardDeviation: ${statistics.standardDeviation}');
+  print('Statistics.sum: ${statistics.sum}');
+  print('Statistics.center: ${statistics.center}');
+  print(
+      'Statistics.median: ${statistics.median} -> ${statistics.medianLow} , ${statistics.medianHigh}');
+  print('Statistics.squaresSum: ${statistics.squaresSum}');
+
+  print('Statistics: $statistics');
+
+  // CSV:
+
+  var categories = <String, List<double?>>{
+    'a': [10.0, 20.0, null],
+    'b': [100.0, 200.0, 300.0]
+  };
+
+  var csv = categories.generateCSV();
+  print('---');
+  print('CSV:');
+  print(csv);
 }
 
 Future<void> _example1() async {
