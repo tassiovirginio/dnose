@@ -20,7 +20,7 @@ void main(List<String> args) {
 }
 
 void processar(String pathProject) {
-  Logger.root.level = Level.OFF; // defaults to Level.INFO
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
