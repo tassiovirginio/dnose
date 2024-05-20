@@ -26,3 +26,10 @@ dev_dependencies:
   test: ^1.25.5
   build_runner: ^2.4.9
   build_web_compilers: ^4.0.10
+
+
+linter:
+  rules:
+    - camel_case_types
+    - empty_constructor_bodies
+    - always_use_package_imports

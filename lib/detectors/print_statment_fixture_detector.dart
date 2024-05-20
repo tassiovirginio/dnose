@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:dnose/models/test_class.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 
 class PrintStatmentFixtureDetector implements AbstractDetector {

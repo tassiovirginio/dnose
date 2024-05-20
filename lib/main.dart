@@ -1,22 +1,25 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:crypto/crypto.dart' show md5;
+import 'package:dnose/dnose.dart';
+import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_smell.dart';
 import 'package:logging/logging.dart';
+import 'package:process_run/shell.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:statistics/statistics.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
-import 'package:dnose/models/test_class.dart';
-import 'package:dnose/dnose.dart';
-import 'package:dnose/models/test_smell.dart';
-import 'package:crypto/crypto.dart' show md5;
-import 'package:sqlite3/sqlite3.dart';
-import 'package:process_run/shell.dart';
 
 final Logger _logger = Logger('Main');
 
 void main(List<String> args) {
-  if(args.length == 1){
-    processar(args[0]);
-    return;
-  }
+  // if(args.length == 1){
+  //   processar(args[0]);
+  //   return;
+  // }
+
+  processar("/home/tassio/dnose_projects/devtools");
 }
 
 void processar(String pathProject) {
@@ -59,10 +62,16 @@ void processar(String pathProject) {
 
     if (file.path.endsWith("_test.dart") == true) {
       _logger.info("Analyzing: ${file.path}");
-      TestClass testClass = TestClass(
-          path: file.path, moduleAtual: moduleAtual, projectName: projectName);
-      var testSmells = dnose.scan(testClass);
-      listaTotal.addAll(testSmells);
+      try {
+        TestClass testClass = TestClass(
+            path: file.path,
+            moduleAtual: moduleAtual,
+            projectName: projectName);
+        var testSmells = dnose.scan(testClass);
+        listaTotal.addAll(testSmells);
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -134,7 +143,7 @@ List<String> getQtdTestSmellsByType() {
 
 String getStatists() {
   var file = File('resultado.sqlite');
-  if(!file.existsSync()) return "";
+  if (!file.existsSync()) return "";
 
   final db = sqlite3.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
@@ -178,7 +187,6 @@ String getStatists() {
 
     retorno +=
         "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
-
   }
 
   return retorno;

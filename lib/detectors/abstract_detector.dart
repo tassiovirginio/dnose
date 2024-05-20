@@ -1,6 +1,6 @@
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
-import 'package:analyzer/dart/ast/ast.dart';
 
 mixin AbstractDetector {
   String get testSmellName;

@@ -1,20 +1,20 @@
-import 'package:logging/logging.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
-import 'package:dnose/models/test_class.dart';
-import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/detectors/assertion_roulette_detector.dart';
 import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/duplicate_assert_detector.dart';
+import 'package:dnose/detectors/empty_test_detector.dart';
+import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
+import 'package:dnose/detectors/resource_optimism_detector.dart';
 import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
-import 'package:dnose/detectors/magic_number_detector.dart';
-import 'package:dnose/detectors/duplicate_assert_detector.dart';
-import 'package:dnose/detectors/resource_optimism_detector.dart';
-import 'package:dnose/detectors/assertion_roulette_detector.dart';
-import 'package:dnose/detectors/verbose_test_detector.dart';
-import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
+import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_smell.dart';
+import 'package:logging/logging.dart';
 
 class DNose {
   static final Logger _logger = Logger('DNose');
