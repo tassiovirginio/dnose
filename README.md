@@ -16,3 +16,8 @@
 - [x] **Test Without Description**
 - [x] **Unknow Test**
 - [x] **Verbose Test**
+
+
+### Pré-requisito
+
+- sudo apt-get -y install sqlite3 libsqlite3-dev
