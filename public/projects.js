@@ -20,6 +20,12 @@ function carregarListaProjetos(){
             const tr = document.createElement("tr");
             const td = document.createElement("td");
             tr.appendChild(td);
+            const td2 = document.createElement("td");
+            tr.appendChild(td2);
+            var button = document.createElement("button");
+            button.innerHTML = "deletar";
+            button.className = "button is-danger is-small";
+            td2.appendChild(button);
             html.appendChild(tr);
             td.innerHTML = lista[i];
         }
