@@ -5,20 +5,26 @@ window.onload = (event) => {
 };
 
 function carregarListaProjetos(){
-    const lista_projetos = document.getElementById("lista_projetos");
-    lista_projetos.innerHTML = "";
+
     const req = new XMLHttpRequest();
+
+    const lista_projetos2 = document.getElementById("lista_projetos2");
+    lista_projetos2.innerHTML = "";
+
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
+        const html = document.createElement("html");
+        html.className = "table is-fullwidth";
 
-
-        for (var i = 0; i < lista.length; i++) {
-            const li = document.createElement("li");
-            li.innerHTML = lista[i];
-            lista_projetos.appendChild(li);
+        for (let i = 0; i < lista.length; i++) {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            tr.appendChild(td);
+            html.appendChild(tr);
+            td.innerHTML = lista[i];
         }
 
-        console.log(lista);
+        lista_projetos2.appendChild(html);
     };
     req.open("GET", "/list_projects", true);
     req.send();
