@@ -133,6 +133,9 @@ List<String> getQtdTestSmellsByType() {
 }
 
 String getStatists() {
+  var file = File('resultado.sqlite');
+  if(!file.existsSync()) return "";
+
   final db = sqlite3.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from dataset group by testsmell, path;');
