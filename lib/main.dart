@@ -156,7 +156,7 @@ String getStatists() {
   String retorno = "";
 
   retorno +=
-      "Test Smell;Media;Desvio Padrão;Mediana;squareMean;Max;Min;Sum;Center;Squares Sum\n";
+      "Test Smell;Media;Desvio Padrão;Mediana;Square Mean;Max;Min;Sum;Center;Squares Sum\n";
 
   for (var key in mapa.keys) {
     var listaValores = mapa[key];
