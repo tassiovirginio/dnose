@@ -24,6 +24,7 @@ function carregarListaProjetos(){
             tr.appendChild(td2);
             var button = document.createElement("button");
             button.innerHTML = "deletar";
+            button.onclick = () => console.log("deletar" + lista[i]);
             button.className = "button is-danger is-small";
             td2.appendChild(button);
             html.appendChild(tr);
