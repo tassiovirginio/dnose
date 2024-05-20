@@ -13,7 +13,7 @@ function carregarListaProjetos(){
 
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
-        const html = document.createElement("html");
+        const html = document.createElement("table");
         html.className = "table is-fullwidth";
 
         for (let i = 0; i < lista.length; i++) {
