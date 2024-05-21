@@ -64,13 +64,23 @@ Handler init() {
   String result1exists() => File(resultado).existsSync().toString();
   app.get('/result1exists', result1exists);
 
-  String projectnameatual() {
-    var projectNameAtual = "";
-    if (result1exists() == "true") {
-      var file = File(resultado);
-      projectNameAtual = file.readAsLinesSync()[2].split(";")[0];
+  String currentprojectname() {
+    sleep(Duration(seconds:1));
+    var currentprojectname = "NONE";
+    var file = File(resultado);
+    if (file.existsSync()) {
+      if(file.lengthSync() > 0){
+        var linhas = file.readAsLinesSync();
+        print(linhas.length);
+        print(linhas);
+        if(linhas.length > 1){
+          print(linhas[0]);
+          print(linhas[1]);
+          currentprojectname = linhas[1].split(";")[0];
+        }
+      }
     }
-    return projectNameAtual;
+    return currentprojectname;
   }
 
   List<String> getLines() {
@@ -99,7 +109,7 @@ Handler init() {
 
   String chartData() => File(resultado2).readAsStringSync();
 
-  app.get('/projectnameatual', projectnameatual);
+  app.get('/projectnameatual', currentprojectname);
   app.get('/charts_data', chartData);
 
   File getResultado1() => File(resultado);
