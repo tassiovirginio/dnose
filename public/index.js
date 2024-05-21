@@ -14,7 +14,7 @@ function carregarNomesTestSmells() {
     const valores2 = [];
     req4.onload = (e) => {
         const linhas = req4.response.split("\n");
-        for (var i = 1; i < linhas.length; i++) {
+        for (let i = 1; i < linhas.length; i++) {
             const nome = linhas[i].split(";")[0];
             const valor = linhas[i].split(";")[1];
             if (nome !== "") {
@@ -85,7 +85,7 @@ function carregarSelectProjects() {
         const lista_projetos = JSON.parse(req.response);
         const select_projects = document.getElementById("select_project");
 
-        for (var i = 0; i < lista_projetos.length; i++) {
+        for (let i = 0; i < lista_projetos.length; i++) {
             const option = document.createElement("option");
             option.value = lista_projetos[i];
             option.text = lista_projetos[i];
@@ -97,53 +97,43 @@ function carregarSelectProjects() {
 }
 
 function processar() {
-
     document.getElementById("resultado").style.visibility = "hidden";
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("loading").style.visibility = "visible";
-
     const path = document.getElementById("select_project");
-
     const req = new XMLHttpRequest();
-
     req.onload = (e) => {
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
-
         carregarNomeProjeto();
         sleep(5000).then(r => {
             gerardb();
             carregarStatitics();
         });
-
     };
     req.open("GET", "/processar?path_project=" + path.value, true);
     req.send();
-
 }
 
 function carregarStatitics() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
-
         var table = document.createElement("table");
-
         table.className = "table is-fullwidth";
+        let linhas = req.response.split("\n");
+        let linha1 = 0;
 
-        var linhas = req.response.split("\n");
-
-        var linha1 = 0;
-
-        for (var i = 0; i < linhas.length; i++) {
-            var linha = linhas[i].split(";");
-            var tr = document.createElement("tr");
-            for (var j = 0; j < linha.length; j++) {
-                if(linha1 == 0){
-                    var td = document.createElement("th");
-                }else{
-                    var td = document.createElement("td");
+        for (let i = 0; i < linhas.length; i++) {
+            let linha = linhas[i].split(";");
+            let tr = document.createElement("tr");
+            for (let j = 0; j < linha.length; j++) {
+                let td;
+                if (linha1 == 0) {
+                    td = document.createElement("th");
+                } else {
+                    td = document.createElement("td");
                 }
                 td.innerHTML = linha[j];
                 tr.appendChild(td);

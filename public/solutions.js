@@ -1,19 +1,9 @@
-window.onload = (event) => {
-    console.log("Carregando...");
-    document.getElementById("loading").style.visibility = "hidden";
-    hljs.highlightAll();
-    carrregarSelect();
-    carrregarLista();
-    carregarStruturaSolution();
-};
-
-
 function carrregarSelect() {
-    var select = document.getElementById("testSmells");
+    let select = document.getElementById("testSmells");
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
-        for (var i = 0; i < lista.length; i++) {
+        for (let i = 0; i < lista.length; i++) {
             const option = document.createElement("option");
             option.value = lista[i];
             option.text = lista[i];
@@ -25,19 +15,13 @@ function carrregarSelect() {
 }
 
 function carrregarLista() {
-    var listaFiles = document.getElementById("listaFiles");
+    let listaFiles = document.getElementById("listaFiles");
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
-        //0 - "flutter;
-        //1 -  "    ";
-        //2 -  flutter_localizations;
-        //3 -  /home/tassio/dnose_projects/flutter/packages/flutter_localizations/test/cupertino/translations_test.dart;
-        //4 - Magic Number;
-        //5 - 30;
-        //6 - 30"
-        for (var i = 0; i < lista.length; i++) {
-            var linha = lista[i].split(";");
+
+        for (let i = 0; i < lista.length; i++) {
+            let linha = lista[i].split(";");
 
             if (linha[1].trim() === "") continue;
 
@@ -61,7 +45,7 @@ function carrregarLista() {
             button.onclick = () => {
                 const solutionDiv = document.getElementById("solution");
                 solutionDiv.innerHTML = "";
-                var code = document.getElementById("code");
+                let code = document.getElementById("code");
                 code.innerHTML = "";
                 console.log(path + " - " + testDescripcion + " - " + testSmellName);
                 carregarFile(path, testDescripcion, testSmellName)
@@ -79,7 +63,7 @@ function carrregarLista() {
 
 function carregarFile(path, testDescripcion, testSmellName) {
     console.log("path: " + path + " - " + testDescripcion);
-    var code = document.getElementById("code");
+    let code = document.getElementById("code");
     const req = new XMLHttpRequest();
     req.onload = async (e) => {
         console.log(req.response);
@@ -95,15 +79,12 @@ function carregarFile(path, testDescripcion, testSmellName) {
 
 async function carregarSolution(prompt) {
     console.log(prompt);
-
     const solutionDiv = document.getElementById("solution");
     solutionDiv.innerHTML = "Analyzing...";
     const req = new XMLHttpRequest();
     req.open("POST", "/solution", true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
     prompt = prompt.replaceAll(" ", "_");
-
     req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
             solutionDiv.innerHTML = marked.parse(req.response);
@@ -114,15 +95,12 @@ async function carregarSolution(prompt) {
 
 async function carregarSolution2(prompt) {
     console.log(prompt);
-
     const solutionDiv = document.getElementById("solution2");
     solutionDiv.innerHTML = "Analyzing...";
     const req = new XMLHttpRequest();
     req.open("POST", "/solution2", true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
     prompt = prompt.replaceAll(" ", "_");
-
     req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
             solutionDiv.innerHTML = req.response;
@@ -131,9 +109,9 @@ async function carregarSolution2(prompt) {
     req.send(prompt);
 }
 
-function carregarStruturaSolution(){
-    document.getElementById("lkGemini").className="is-active";
-    document.getElementById("lkchatGPT").className="";
+function carregarStruturaSolution() {
+    document.getElementById("lkGemini").className = "is-active";
+    document.getElementById("lkchatGPT").className = "";
     document.getElementById("solution").style.display = 'block';
     document.getElementById("solution2").style.display = 'none';
     document.getElementById("btCopy1").style.display = 'block';
@@ -142,15 +120,15 @@ function carregarStruturaSolution(){
 
 function tabs(atual) {
     if (atual == "0") {
-        document.getElementById("lkGemini").className="is-active";
-        document.getElementById("lkchatGPT").className="";
+        document.getElementById("lkGemini").className = "is-active";
+        document.getElementById("lkchatGPT").className = "";
         document.getElementById("solution").style.display = 'block';
         document.getElementById("solution2").style.display = 'none';
         document.getElementById("btCopy1").style.display = 'block';
         document.getElementById("btCopy2").style.display = 'none';
     } else {
-        document.getElementById("lkGemini").className="";
-        document.getElementById("lkchatGPT").className="is-active";
+        document.getElementById("lkGemini").className = "";
+        document.getElementById("lkchatGPT").className = "is-active";
         document.getElementById("solution").style.display = 'none';
         document.getElementById("solution2").style.display = 'block';
         document.getElementById("btCopy1").style.display = 'none';
@@ -158,15 +136,20 @@ function tabs(atual) {
     }
 }
 
-function copy1(){
-    var texto = document.getElementById("solution").innerHTML;
-    navigator.clipboard.writeText(texto);
-    window.alert("copied solution");
-}
-function copy2(){
-    var texto = document.getElementById("solution2").innerHTML;
-    navigator.clipboard.writeText(texto);
-    window.alert("copied solution");
-}
+copy1 = () =>
+    navigator.clipboard.writeText(document.getElementById("solution").innerHTML)
+        .then(r => console.log("copied"));
+
+copy2 = () => navigator.clipboard.writeText(document.getElementById("solution2").innerHTML)
+    .then(r => console.log("copied"));
+
+window.onload = (event) => {
+    console.log("loading...");
+    document.getElementById("loading").style.visibility = "hidden";
+    hljs.highlightAll();
+    carrregarSelect();
+    carrregarLista();
+    carregarStruturaSolution();
+};
 
 

@@ -1,16 +1,7 @@
-window.onload = (event) => {
-    console.log("Carregando...");
-    document.getElementById("loading").style.visibility = "hidden";
-    carregarListaProjetos();
-};
-
 function carregarListaProjetos(){
-
     const req = new XMLHttpRequest();
-
     const lista_projetos2 = document.getElementById("lista_projetos2");
     lista_projetos2.innerHTML = "";
-
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
         const html = document.createElement("table");
@@ -22,7 +13,7 @@ function carregarListaProjetos(){
             tr.appendChild(td);
             const td2 = document.createElement("td");
             tr.appendChild(td2);
-            var button = document.createElement("button");
+            let button = document.createElement("button");
             button.innerHTML = "deletar";
             button.onclick = () => console.log("deletar" + lista[i]);
             button.className = "button is-danger is-small";
@@ -30,7 +21,6 @@ function carregarListaProjetos(){
             html.appendChild(tr);
             td.innerHTML = lista[i];
         }
-
         lista_projetos2.appendChild(html);
     };
     req.open("GET", "/list_projects", true);
@@ -39,7 +29,6 @@ function carregarListaProjetos(){
 
 function clonar(){
     const url = document.getElementById("url").value;
-
     document.getElementById("loading").style.visibility = "visible";
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -49,3 +38,9 @@ function clonar(){
     req.open("GET", "/clonar?url=" + url, true);
     req.send();
 }
+
+window.onload = (event) => {
+    console.log("Carregando...");
+    document.getElementById("loading").style.visibility = "hidden";
+    carregarListaProjetos();
+};
