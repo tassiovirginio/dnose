@@ -71,11 +71,7 @@ Handler init() {
     if (file.existsSync()) {
       if(file.lengthSync() > 0){
         var linhas = file.readAsLinesSync();
-        print(linhas.length);
-        print(linhas);
         if(linhas.length > 1){
-          print(linhas[0]);
-          print(linhas[1]);
           currentprojectname = linhas[1].split(";")[0];
         }
       }
