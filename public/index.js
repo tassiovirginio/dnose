@@ -115,7 +115,7 @@ function processar() {
         carregarNomeProjeto();
         sleep(5000).then(r => {
             gerardb();
-            carregarQtdTestSmells();
+            carregarStatitics();
         });
 
     };
@@ -124,7 +124,7 @@ function processar() {
 
 }
 
-function carregarQtdTestSmells() {
+function carregarStatitics() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
 
@@ -181,6 +181,6 @@ window.onload = (event) => {
     carregarNomesTestSmells();
     carregarResultados();
     carregarSelectProjects();
-    carregarQtdTestSmells();
+    carregarStatitics();
     carregarBotaoDownloadDb();
 };
