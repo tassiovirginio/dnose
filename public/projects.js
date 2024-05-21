@@ -8,6 +8,7 @@ function carregarListaProjetos(){
         html.className = "table is-fullwidth";
 
         for (let i = 0; i < lista.length; i++) {
+            const path = lista[i];
             const tr = document.createElement("tr");
             const td = document.createElement("td");
             tr.appendChild(td);
@@ -15,11 +16,16 @@ function carregarListaProjetos(){
             tr.appendChild(td2);
             let button = document.createElement("button");
             button.innerHTML = "deletar";
-            button.onclick = () => console.log("deletar" + lista[i]);
+            button.onclick = () => {
+                var result = confirm("Want to delete?");
+                if (result) {
+                    deletar(path);
+                }
+            };
             button.className = "button is-danger is-small";
             td2.appendChild(button);
             html.appendChild(tr);
-            td.innerHTML = lista[i];
+            td.innerHTML = path;
         }
         lista_projetos2.appendChild(html);
     };
@@ -36,6 +42,15 @@ function clonar(){
         document.getElementById("loading").style.visibility = "hidden";
     };
     req.open("GET", "/clonar?url=" + url, true);
+    req.send();
+}
+
+function deletar(path){
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        carregarListaProjetos();
+    };
+    req.open("GET", "/delete?path=" + path, true);
     req.send();
 }
 

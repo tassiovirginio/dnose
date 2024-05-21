@@ -147,6 +147,12 @@ Handler init() {
     return Response.ok("Clonagem concluída");
   });
 
+  app.get('/delete', (Request request) async {
+    String? path = request.url.queryParameters['path'];
+    await Directory(path!).delete(recursive: true);
+    return Response.ok("Projeto Excluído");
+  });
+
   app.get('/gerardb', (Request request) async {
     createSqlite();
     return Response.ok("Banco de dados gerado com sucesso!");
