@@ -9,9 +9,9 @@ function carregarNomeProjeto() {
 
 function carregarNomesTestSmells() {
     const req4 = new XMLHttpRequest();
-    const nomes = new Array();
-    const valores = new Array();
-    const valores2 = new Array();
+    const nomes = [];
+    const valores = [];
+    const valores2 = [];
     req4.onload = (e) => {
         const linhas = req4.response.split("\n");
         for (var i = 1; i < linhas.length; i++) {
