@@ -99,6 +99,7 @@ class DNose {
   }
 
   List<String> _scan2(AstNode n, TestClass testClass, String description) {
+    description = description.replaceAll("'", "");
     List<String> testSmells = List.empty(growable: true);
     n.childEntities.whereType<AstNode>().forEach((element) {
       if (isTest(element)) {
