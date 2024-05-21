@@ -12,9 +12,18 @@ import 'package:shelf_plus/shelf_plus.dart';
 const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 const apitKeyChatGPT =
     "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
-
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
+final resultado = "${Directory.current.path}/resultado.csv";
+final resultado2 = "${Directory.current.path}/resultado2.csv";
+final resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
+final userFolder = (Platform.isMacOS || Platform.isLinux)
+    ? Platform.environment['HOME']!
+    : Platform.environment['UserProfile']!;
+final folderHome = "$userFolder/dnose_projects";
+
+List<String> listaProjetos() =>
+    Directory(folderHome).listSync().map((d) => d.path).toList();
 
 void main() => shelfRun(
       init,
@@ -28,24 +37,16 @@ Handler init() {
   app.use(corsHeaders()); // liga o cors
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
-  var folderHome = "${_getFolderUser()}/dnose_projects";
   var existFolder = Directory(folderHome).existsSync();
   if (existFolder == false) Directory(folderHome).createSync();
 
-  List<String> listaProjetos() =>
-      Directory(folderHome).listSync().map((d) => d.path).toList();
-
-  app.get('/list_projects', listaProjetos);
-
+  app.get('/list_projects', () => listaProjetos());
   app.get('/getstatistics', () => getStatists());
-
   app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
 
   app.post('/solution', (Request request) async {
     String prompt = await request.readAsString();
-    print(prompt);
     prompt = prompt.replaceAll("_", " ");
-    print(prompt);
     String? resp;
     var content = [ai.Content.text(prompt)];
     final response = await gemini.generateContent(content);
@@ -60,10 +61,6 @@ Handler init() {
     return Response.ok(response);
   });
 
-  String resultado = "${Directory.current.path}/resultado.csv";
-  String resultado2 = "${Directory.current.path}/resultado2.csv";
-  String resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
-
   String result1exists() => File(resultado).existsSync().toString();
   app.get('/result1exists', result1exists);
 
@@ -76,7 +73,7 @@ Handler init() {
     return projectNameAtual;
   }
 
-  List<String> get100lines() {
+  List<String> getLines() {
     List<String> lista = List<String>.empty(growable: true);
     if (result1exists() == "true") {
       var file = File(resultado);
@@ -89,7 +86,7 @@ Handler init() {
     return lista;
   }
 
-  app.get('/getlines100', get100lines);
+  app.get('/getlines100', getLines);
 
   app.get('/getfiletext', (Request request) async {
     String? pathFile = request.url.queryParameters['path'];
@@ -103,7 +100,6 @@ Handler init() {
   String chartData() => File(resultado2).readAsStringSync();
 
   app.get('/projectnameatual', projectnameatual);
-
   app.get('/charts_data', chartData);
 
   File getResultado1() => File(resultado);
@@ -111,8 +107,8 @@ Handler init() {
 
   File getResultadoDbFile() {
     var file = File(resultadoDbFile);
-    if(file.existsSync() && file.lengthSync() > 0){
-        return file;
+    if (file.existsSync() && file.lengthSync() > 0) {
+      return file;
     }
     return file;
   }
@@ -125,10 +121,7 @@ Handler init() {
   app.get('/download', getResultado1, use: download());
   app.get('/download2', getResultado2, use: download());
   app.get('/download.db', getResultadoDbFile, use: download());
-
   app.get('/download.db.existe', resultDbExist);
-
-
   app.get('/', () => File('public/index.html'));
   app.get('/index.js', () => File('public/index.js'));
   app.get('/projects', () => File('public/projects.html'));
@@ -161,30 +154,6 @@ Handler init() {
 
   app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
 
-
-
-  String statistics() {
-    var file = File(resultado);
-    var lines = file.readAsLinesSync();
-    var list = lines.map((e) => e.split(";")[4]).toList();
-
-    print(list[0]);
-
-    print(list[1]);
-    print(list[2]);
-
-    // var listInt = list.map((e) => int.parse(e)).toList();
-    // var mean = mean(listInt);
-    // var median = median(listInt);
-    // var mode = mode(listInt);
-    // var variance = variance(listInt);
-    // var stdDev = standardDeviation(listInt);
-    // return "Média: $mean\nMediana: $median\nModa: $mode\nVariância: $variance\nDesvio Padrão: $stdDev";
-    return "Teste...";
-  }
-
-  app.get('/statistics', statistics);
-
   return corsHeaders() >> app.call;
 }
 
@@ -198,7 +167,3 @@ Future<String> getChatGptResponse(String prompt) async {
   );
   return res.output;
 }
-
-String _getFolderUser() => (Platform.isMacOS || Platform.isLinux)
-    ? Platform.environment['HOME']!
-    : Platform.environment['UserProfile']!;
