@@ -50,9 +50,11 @@ void main() {
   // });
 
   // //teste Empty Description Test
-  test("", () => {});
-  test("", () {print("teste");});
-  test("", () => {if (true) {}});
+  // test("", () => {});
+  // test("", () {print("teste");});
+  // test("", () => {if (true) {}});
+
+
   //
   // //teste vazio - Empty Test
   // test("EmptyFixture", () => {});
@@ -110,6 +112,15 @@ void main() {
   // test("PrintStatmentFixture", () => {print("")});
   //
   // test("SleepyFixture", () => {system.sleep(Duration(seconds: UM_SEGUNDO))});
+
+  test("Exception Handling", () {
+    try {
+      throw Exception("Erro");
+    } catch (e) {
+      print(e);
+    }
+  }
+  );
 
   // test(
   //     "VerboseFixture",

@@ -18,8 +18,10 @@ void main(List<String> args) {
   //   processar(args[0]);
   //   return;
   // }
+//
+//   processar("/home/tassio/dnose_projects/devtools");
+  processar("/home/tassio/Desenvolvimento/dart/dnose");
 
-  processar("/home/tassio/dnose_projects/devtools");
 }
 
 void processar(String pathProject) {
