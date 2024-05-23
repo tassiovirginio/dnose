@@ -9,6 +9,8 @@
 - [x] **Conditional Test Logic**
 - [x] **Duplicate Assert**
 - [x] **Empty Test**
+- [x] **Exception Handling**
+- [x] **Ignored Test**
 - [x] **Magic Number**
 - [x] **Print Statement**
 - [x] **Resource Optimism**
