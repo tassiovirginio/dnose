@@ -113,14 +113,24 @@ void main() {
   //
   // test("SleepyFixture", () => {system.sleep(Duration(seconds: UM_SEGUNDO))});
 
-  test("Exception Handling", () {
-    try {
-      throw Exception("Erro");
-    } catch (e) {
-      print(e);
-    }
-  }
-  );
+  // test("Exception Handling", () {
+  //   try {
+  //     throw Exception("Erro");
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
+  // );
+
+  test("Some Test", () async {
+    //Test Logic
+    expect(1 + 2, 3);
+  }, skip: true);
+
+  test("Some Other Test", () async {
+    //Test Logic
+    expect(1 + 2, 3);
+  }, skip: false);
 
   // test(
   //     "VerboseFixture",

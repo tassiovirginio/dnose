@@ -6,6 +6,7 @@ import 'package:dnose/detectors/conditional_test_logic_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
+import 'package:dnose/detectors/ignored_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
 import 'package:dnose/detectors/resource_optimism_detector.dart';
@@ -32,7 +33,8 @@ class DNose {
       VerboseTestDetector().testSmellName,
       EmptyTestDetector().testSmellName,
       UnknownTestDetector().testSmellName,
-      ExceptionHandlingDetector().testSmellName
+      ExceptionHandlingDetector().testSmellName,
+      IgnoredTestDetector().testSmellName
     ];
 
   bool isTest(AstNode e) {
@@ -60,7 +62,8 @@ class DNose {
       VerboseTestDetector(),
       EmptyTestDetector(),
       UnknownTestDetector(),
-      ExceptionHandlingDetector()
+      ExceptionHandlingDetector(),
+      IgnoredTestDetector()
     ];
 
     for (var d in detectors) {

@@ -27,12 +27,9 @@ void detectar01(var astnode) {
 
     // if (astnode is SetOrMapLiteral && astnode.toString().replaceAll(" ", "") == "{}"
     // && astnode.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"){
-    if (astnode is Block
-        && astnode.parent is BlockFunctionBody
-        && astnode.parent!.parent is FunctionExpression
-    && astnode.parent!.parent!.parent!.parent is MethodInvocation
-    && astnode.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"
-    && astnode.toString().replaceAll(" ", "") == "{}"){
+    if (astnode is NamedExpression && astnode.parent is ArgumentList
+        && astnode.toString().contains("skip: true")
+        ){
 
       // int start = lineNumber(astnode.parent!.offset);
       // int end = lineNumber(astnode.parent!.end);

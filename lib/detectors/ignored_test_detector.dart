@@ -1,0 +1,35 @@
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_smell.dart';
+
+class IgnoredTestDetector implements AbstractDetector {
+  @override
+  get testSmellName => "Ignored Test";
+
+  List<TestSmell> testSmells = List.empty(growable: true);
+
+  @override
+  List<TestSmell> detect(
+      ExpressionStatement e, TestClass testClass, String testName) {
+    _detect(e as AstNode, testClass, testName);
+    return testSmells;
+  }
+
+  void _detect(AstNode e, TestClass testClass, String testName) {
+    if (e is NamedExpression && e.parent is ArgumentList
+        && e.toString().contains("skip: true")) {
+      testSmells.add(TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
+          code: e.toSource(),
+          start: testClass.lineNumber(e.offset),
+          end: testClass.lineNumber(e.end)));
+    } else {
+      e.childEntities
+          .whereType<AstNode>()
+          .forEach((e) => _detect(e, testClass, testName));
+    }
+  }
+}
