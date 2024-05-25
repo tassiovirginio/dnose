@@ -165,6 +165,19 @@ function carregarBotaoDownloadDb() {
 
 }
 
+function reloadStatistic() {
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        console.log(req.response);
+        sleep(5000).then(r => {
+            console.log("Carregando estatísticas");
+            carregarStatitics();
+        });
+    };
+    req.open("GET", "/gerardb", true);
+    req.send();
+}
+
 window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
     carregarNomeProjeto();
