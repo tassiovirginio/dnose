@@ -167,12 +167,13 @@ function carregarBotaoDownloadDb() {
 
 function reloadStatistic() {
     var div = document.getElementById("qtdbytestsmellbytype");
-    div.innerHTML = "";
+    div.innerHTML = "Loading...";
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         console.log(req.response);
         sleep(5000).then(r => {
             console.log("Carregando estatísticas");
+            div.innerHTML = "";
             carregarStatitics();
         });
     };
