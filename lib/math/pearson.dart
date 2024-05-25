@@ -1,21 +1,20 @@
 import 'dart:math';
+
+import 'package:scidart/numdart.dart';
 import 'package:statistics/statistics.dart';
+import 'package:scidart/scidart.dart';
 
-
-// Função para calcular a média
-double calcularMedia(List<double> lista) {
-  double soma = lista.reduce((a, b) => a + b);
-  return soma / lista.length;
+extension NumberParsing on String {
+  int parseInt2() {
+    return int.parse(this);
+  }
+// ···
 }
 
-// Função para calcular o desvio padrão
-double calcularDesvioPadrao(List<double> lista, double media) {
-  num somaDesviosAoQuadrado = lista.map((x) => pow(x - media, 2)).reduce((a, b) => a + b);
-  return sqrt(somaDesviosAoQuadrado / (lista.length - 1));
-}
+
 
 // Função para calcular a covariância
-double calcularCovariancia(List<double> x, List<double> y, double mediaX, double mediaY) {
+double calcularCovariancia(List<num> x, List<num> y, double mediaX, double mediaY) {
   double soma = 0.0;
   for (int i = 0; i < x.length; i++) {
     soma += (x[i] - mediaX) * (y[i] - mediaY);
@@ -24,7 +23,7 @@ double calcularCovariancia(List<double> x, List<double> y, double mediaX, double
 }
 
 // Função para calcular a correlação de Pearson
-double calcularCorrelacaoPearson(List<double> x, List<double> y) {
+num calcularCorrelacaoPearson(List<num> x, List<num> y) {
   if (x.length != y.length) {
     throw Exception('As listas devem ter o mesmo tamanho');
   }
@@ -40,6 +39,18 @@ double calcularCorrelacaoPearson(List<double> x, List<double> y) {
   var x_center = x_statistics.center;
   var x_squaresSum = x_statistics.squaresSum;
 
+  print("x_media-> $x_media");
+  print("x_desvioPadrao-> $x_desvioPadrao");
+  print("x_desvioPadrao-> $x_desvioPadrao");
+
+  print("x_mediana-> $x_mediana");
+  print("x_squareMean-> $x_squareMean");
+  print("x_sum-> $x_sum");
+  print("x_max-> $x_max");
+  print("x_min-> $x_min");
+  print("x_center-> $x_center");
+  print("x_squaresSum-> $x_squaresSum");
+
   var y_statistics = y.statistics;
   var y_media = y_statistics.mean;
   var y_desvioPadrao = y_statistics.standardDeviation;
@@ -51,38 +62,38 @@ double calcularCorrelacaoPearson(List<double> x, List<double> y) {
   var y_center = y_statistics.center;
   var y_squaresSum = y_statistics.squaresSum;
 
-  double xy_covariancia = calcularCovariancia(x, y, x_media, y_media);
-  var resultado_with_lib = xy_covariancia / (x_desvioPadrao * y_desvioPadrao);
-  print(resultado_with_lib);
+  print("==============================================");
+  print("y_media-> $y_media");
+  print("y_desvioPadrao-> $y_desvioPadrao");
+  print("y_mediana-> $y_mediana");
+  print("y_squareMean-> $y_squareMean");
+  print("y_sum-> $y_sum");
+  print("y_max-> $y_max");
+  print("y_min-> $y_min");
+  print("y_center-> $y_center");
+  print("y_squaresSum-> $y_squaresSum");
 
+  print("==============================================");
 
-  double mediaX = calcularMedia(x);
-  double mediaY = calcularMedia(y);
+  double covariancia = calcularCovariancia(x, y, x_media, y_media);
+  print("Covariancia: $covariancia");
+  double correlacaoPearson = (covariancia / (x_desvioPadrao * y_desvioPadrao));
+  print(correlacaoPearson);
 
-  print("mediax1-> $mediaX");
-  print("mediax2-> $x_media");
-  print("mediay1-> $mediaY");
-  print("mediay2-> $y_media");
-
-  double desvioPadraoX = calcularDesvioPadrao(x, mediaX);
-  double desvioPadraoY = calcularDesvioPadrao(y, mediaY);
-
-  print("dvpx1-> $x_desvioPadrao");
-  print("dvpx2-> $desvioPadraoX");
-  print("dvpy1-> $y_desvioPadrao");
-  print("dvpy2-> $desvioPadraoY");
-
-  double covariancia = calcularCovariancia(x, y, mediaX, mediaY);
-  var resultado_normal = covariancia / (desvioPadraoX * desvioPadraoY);
-  print(resultado_normal);
-
-  return resultado_normal;
+  return correlacaoPearson;
 }
 
 void main() {
-  List<double> x = [1.0, 2.0, 3.0, 4.0, 5.0];
-  List<double> y = [1.0, 2.0, 3.0, 4.0, 5.0];
+  List<double> x = [6.0, 2.0, 3.0, 1.0];
+  List<double> y = [6.0, 2.0, 3.0, 1.0];
 
-  double correlacao = calcularCorrelacaoPearson(x, y);
+ var array_x = Array([6.0, 2.0, 3.0, 1.0]);
+ var array_y = Array([6.0, 2.0, 3.0, 1.0]);
+
+  num correlacao = calcularCorrelacaoPearson(x, y);
   print('A correlação de Pearson é: $correlacao');
+
+
+  var coor = correlate(array_x, array_y);
+  print("coor: $coor");
 }

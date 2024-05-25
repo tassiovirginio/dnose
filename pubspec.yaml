@@ -4,7 +4,7 @@ version: 1.0.0
 repository: https://github.com/tassiovirginio/dnose
 
 environment:
-  sdk: ^3.3.4
+  sdk: ^3.4.0
 
 dependencies:
   logging: ^1.2.0
@@ -20,6 +20,7 @@ dependencies:
   statistics: ^1.1.0
   sqlite3: ^2.4.3
   process_run: ^0.14.2
+  scidart: ^0.0.2-dev.12
 
 dev_dependencies:
   lints: ^4.0.0
