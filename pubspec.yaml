@@ -9,14 +9,14 @@ environment:
 dependencies:
   logging: ^1.2.0
   shelf_plus: ^1.9.2
-  yaml: 3.1.2
-  crypto: 3.0.3
-  analyzer: ^6.4.1
+  yaml: ^3.1.2
+  crypto: ^3.0.3
+  analyzer: ^6.5.0
   shelf_cors_headers: ^0.1.5
   git_clone: ^1.2.0
-  google_generative_ai: ^0.4.0
+  google_generative_ai: ^0.4.1
   langchain: ^0.7.1
-  langchain_openai: ^0.6.1
+  langchain_openai: ^0.6.1+1
   statistics: ^1.1.0
   sqlite3: ^2.4.3
   process_run: ^0.14.2
@@ -25,7 +25,7 @@ dependencies:
 dev_dependencies:
   lints: ^4.0.0
   test: ^1.25.5
-  build_runner: ^2.4.9
+  build_runner: ^2.4.10
   build_web_compilers: ^4.0.10
 
 

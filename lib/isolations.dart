@@ -26,7 +26,7 @@ void readFile(SendPort sendPort) async {
 }
 
 void main() async {
-  List<String> filePaths = ['/home/tassio/Desenvolvimento/dart/dnose/resultado2.csv', '/home/tassio/Desenvolvimento/dart/dnose/resultado2.csv'];
+  List<String> filePaths = ['/home/tassio/Desenvolvimento/dart/dnose/resultado.csv', '/home/tassio/Desenvolvimento/dart/dnose/resultado.csv'];
   
   // Lista de ReceivePorts para receber as respostas dos isolates
   List<ReceivePort> receivePorts = [];
