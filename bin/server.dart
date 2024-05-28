@@ -13,7 +13,7 @@ const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
 const apitKeyChatGPT =
     "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
 final ip = InternetAddress.anyIPv4;
-final port = int.parse(Platform.environment['PORT'] ?? '8080');
+final port = int.parse(Platform.environment['PORT'] ?? '80');
 final resultado = "${Directory.current.path}/resultado.csv";
 final resultado2 = "${Directory.current.path}/resultado2.csv";
 final resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
