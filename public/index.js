@@ -1,4 +1,4 @@
-function carregarNomeProjeto() {
+function loadProjectName() {
     const req3 = new XMLHttpRequest();
     req3.onload = (e) => {
         document.getElementById("projectname").innerHTML = req3.response;
@@ -7,7 +7,7 @@ function carregarNomeProjeto() {
     req3.send();
 }
 
-function carregarNomesTestSmells() {
+function loadTestSmellsNames() {
     const req4 = new XMLHttpRequest();
     const nomes = [];
     const valores = [];
@@ -24,15 +24,15 @@ function carregarNomesTestSmells() {
                 valores2.push(valorLog);
             }
         }
-        carregarChart('myChart', nomes, valores, '# of Test Smells');
-        carregarChart('myChart2', nomes, valores2, '# of Test Smells (log))');
+        loadChart('myChart', nomes, valores, '# of Test Smells');
+        loadChart('myChart2', nomes, valores2, '# of Test Smells (log))');
     };
     req4.open("GET", "/charts_data", true);
     req4.send();
     return nomes;
 }
 
-function carregarChart(id, nomes, valores, msg) {
+function loadChart(id, nomes, valores, msg) {
     const ctx = document.getElementById(id);
 
     new Chart(ctx, {
@@ -55,7 +55,7 @@ function carregarChart(id, nomes, valores, msg) {
     });
 }
 
-function carregarResultados() {
+function loadResults() {
     const req2 = new XMLHttpRequest();
     req2.onload = (e) => {
         if (req2.response === "true") {
@@ -70,7 +70,7 @@ function carregarResultados() {
     req2.send();
 }
 
-function gerardb() {
+function generatedb() {
     const req2 = new XMLHttpRequest();
     req2.onload = (e) => {
         console.log(req2.response);
@@ -79,7 +79,7 @@ function gerardb() {
     req2.send();
 }
 
-function carregarSelectProjects() {
+function loadSelectProjects() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         const lista_projetos = JSON.parse(req.response);
@@ -96,7 +96,7 @@ function carregarSelectProjects() {
     req.send();
 }
 
-function processar() {
+function process() {
     document.getElementById("resultado").style.visibility = "hidden";
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("loading").style.visibility = "visible";
@@ -107,17 +107,17 @@ function processar() {
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
-        carregarNomeProjeto();
+        loadProjectName();
         sleep(5000).then(r => {
-            gerardb();
-            carregarStatitics();
+            generatedb();
+            loadStatistics();
         });
     };
     req.open("GET", "/processar?path_project=" + path.value, true);
     req.send();
 }
 
-function carregarStatitics() {
+function loadStatistics() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         var table = document.createElement("table");
@@ -150,7 +150,7 @@ function carregarStatitics() {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function carregarBotaoDownloadDb() {
+function loadButtonDownloadDb() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         if (req.response == "true") {
@@ -174,7 +174,7 @@ function reloadStatistic() {
         sleep(5000).then(r => {
             console.log("Carregando estatísticas");
             div.innerHTML = "";
-            carregarStatitics();
+            loadStatistics();
         });
     };
     req.open("GET", "/gerardb", true);
@@ -183,10 +183,10 @@ function reloadStatistic() {
 
 window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
-    carregarNomeProjeto();
-    carregarNomesTestSmells();
-    carregarResultados();
-    carregarSelectProjects();
-    carregarStatitics();
-    carregarBotaoDownloadDb();
+    loadProjectName();
+    loadTestSmellsNames();
+    loadResults();
+    loadSelectProjects();
+    loadStatistics();
+    loadButtonDownloadDb();
 };

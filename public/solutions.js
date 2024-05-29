@@ -1,4 +1,4 @@
-function carrregarSelect() {
+function loadSelect() {
     let select = document.getElementById("testSmells");
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -14,7 +14,7 @@ function carrregarSelect() {
     req.send();//getlines100
 }
 
-function carrregarLista() {
+function loadList() {
     let listaFiles = document.getElementById("listaFiles");
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -48,7 +48,7 @@ function carrregarLista() {
                 let code = document.getElementById("code");
                 code.innerHTML = "";
                 console.log(path + " - " + testDescripcion + " - " + testSmellName);
-                carregarFile(path, testDescripcion, testSmellName)
+                loadFile(path, testDescripcion, testSmellName)
             };
             const td3 = document.createElement("td");
             td3.appendChild(button);
@@ -61,7 +61,7 @@ function carrregarLista() {
     req.send();
 }
 
-function carregarFile(path, testDescripcion, testSmellName) {
+function loadFile(path, testDescripcion, testSmellName) {
     console.log("path: " + path + " - " + testDescripcion);
     let code = document.getElementById("code");
     const req = new XMLHttpRequest();
@@ -70,14 +70,14 @@ function carregarFile(path, testDescripcion, testSmellName) {
         var code_full = req.response;
         code.innerHTML = code_full;
         var prompt = "O código abaixo tem um Test Smell (" + testSmellName + ") gostaria que me desse soluções para a resolução do test smells. Código: " + code_full;
-        await carregarSolution(prompt);
-        await carregarSolution2(prompt);
+        await uploadSolutions(prompt);
+        await uploadSolutions2(prompt);
     };
     req.open("GET", "/getfiletext?path=" + path + "&test='" + testDescripcion + "'", true);
     req.send();
 }
 
-async function carregarSolution(prompt) {
+async function uploadSolutions(prompt) {
     console.log(prompt);
     const solutionDiv = document.getElementById("solution");
     solutionDiv.innerHTML = "Analyzing...";
@@ -93,7 +93,7 @@ async function carregarSolution(prompt) {
     req.send(prompt);
 }
 
-async function carregarSolution2(prompt) {
+async function uploadSolutions2(prompt) {
     console.log(prompt);
     const solutionDiv = document.getElementById("solution2");
     solutionDiv.innerHTML = "Analyzing...";
@@ -109,7 +109,7 @@ async function carregarSolution2(prompt) {
     req.send(prompt);
 }
 
-function carregarStruturaSolution() {
+function loadStructureSolution() {
     document.getElementById("lkGemini").className = "is-active";
     document.getElementById("lkchatGPT").className = "";
     document.getElementById("solution").style.display = 'block';
@@ -147,9 +147,9 @@ window.onload = (event) => {
     console.log("loading...");
     document.getElementById("loading").style.visibility = "hidden";
     hljs.highlightAll();
-    carrregarSelect();
-    carrregarLista();
-    carregarStruturaSolution();
+    loadSelect();
+    loadList();
+    loadStructureSolution();
 };
 
 
