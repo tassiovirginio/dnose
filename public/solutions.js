@@ -151,7 +151,7 @@ function loadPrompt(){
     var promptLocal = window.localStorage.getItem("prompt");
 
     if(promptLocal == null){
-        prompt = "O código abaixo tem um Test Smell ( $testSmellName ) gostaria que me desse soluções para a resolução do test smells. Código: $code_full";
+        prompt = "The code below has a Test Smell ( $testSmellName ) I would like you to give me solutions for resolving the test smells. Code: $code_full";
         window.localStorage.setItem("prompt", prompt);
     }else{
         prompt = promptLocal;
