@@ -8,10 +8,8 @@ import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
+import 'package:properties/properties.dart';
 
-const apiKey = "AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM";
-const apitKeyChatGPT =
-    "sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa";
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 final resultado = "${Directory.current.path}/resultado.csv";
@@ -21,6 +19,10 @@ final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
 final folderHome = "$userFolder/dnose_projects";
+final filepath = "dnose.properties";
+
+String? apiKeyGemini;
+String? apiKeyChatGPT;
 
 List<String> listaProjetos() =>
     Directory(folderHome).listSync().map((d) => d.path).toList();
@@ -32,10 +34,15 @@ void main() => shelfRun(
     );
 
 Handler init() {
+
+  Properties p = Properties.fromFile(filepath);
+  apiKeyGemini = p.get('apiKeyGemini');
+  apiKeyChatGPT = p.get('apiKeyChatGPT');
+
   var app = Router().plus;
   // app.use(logRequests()); // liga o log
   app.use(corsHeaders()); // liga o cors
-  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
 
   var existFolder = Directory(folderHome).existsSync();
   if (existFolder == false) Directory(folderHome).createSync();
@@ -173,7 +180,7 @@ Handler init() {
 
 Future<String> getChatGptResponse(String prompt) async {
   final llm = OpenAI(
-    apiKey: apitKeyChatGPT,
+    apiKey: apiKeyChatGPT,
     defaultOptions: const OpenAIOptions(temperature: 0.9),
   );
   final LLMResult res = await llm.invoke(

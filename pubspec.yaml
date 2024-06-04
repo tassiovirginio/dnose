@@ -21,6 +21,7 @@ dependencies:
   sqlite3: ^2.4.3
   process_run: ^0.14.2
   scidart: ^0.0.2-dev.12
+  properties: ^2.1.0
 
 dev_dependencies:
   lints: ^4.0.0
