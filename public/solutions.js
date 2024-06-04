@@ -69,7 +69,9 @@ function loadFile(path, testDescripcion, testSmellName) {
         console.log(req.response);
         var code_full = req.response;
         code.innerHTML = code_full;
-        var prompt = "O código abaixo tem um Test Smell (" + testSmellName + ") gostaria que me desse soluções para a resolução do test smells. Código: " + code_full;
+        prompt = prompt.replaceAll("$testSmellName", testSmellName);
+        prompt = prompt.replaceAll("$code_full", code_full);
+        console.log(prompt);
         await uploadSolutions(prompt);
         await uploadSolutions2(prompt);
     };
@@ -143,9 +145,23 @@ copy1 = () =>
 copy2 = () => navigator.clipboard.writeText(document.getElementById("solution2").innerHTML)
     .then(r => console.log("copied"));
 
+var prompt = "";
+
+function loadPrompt(){
+    var promptLocal = window.localStorage.getItem("prompt");
+
+    if(promptLocal == null){
+        prompt = "O código abaixo tem um Test Smell ( $testSmellName ) gostaria que me desse soluções para a resolução do test smells. Código: $code_full";
+        window.localStorage.setItem("prompt", prompt);
+    }else{
+        prompt = promptLocal;
+    }
+}
+
 window.onload = (event) => {
     console.log("loading...");
     document.getElementById("loading").style.visibility = "hidden";
+    loadPrompt();
     hljs.highlightAll();
     loadSelect();
     loadList();
