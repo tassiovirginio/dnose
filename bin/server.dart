@@ -134,6 +134,7 @@ Handler init() {
   app.get('/projects.js', () => File('public/projects.js'));
   app.get('/solutions', () => File('public/solutions.html'));
   app.get('/solutions.js', () => File('public/solutions.js'));
+  app.get('/config', () => File('public/config.html'));
   app.get('/about', () => File('public/about.html'));
   app.get('/bulma.min.css', () => File('public/bulma.min.css'));
   app.get('/logo.png', () => File('public/logo.png'));

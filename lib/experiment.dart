@@ -2,6 +2,18 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/analysis/features.dart';
 
+extension NumberParsing on int {
+  int lineNumber(int offset) {
+    return ast.lineInfo.getLocation(offset).lineNumber;
+  }
+}
+
+extension NumberParsing2 on AstNode {
+  int lineNumberEnd() {
+    return ast.lineInfo.getLocation(end).lineNumber;
+  }
+}
+
 CompilationUnit ast = parseFile(
     path:
     '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
@@ -36,7 +48,8 @@ void detectar01(var astnode) {
 
 
       print("Linha start: " + lineNumber(astnode.parent!.offset).toString());
-      print("Linha end: " + lineNumber(astnode.parent!.end).toString());
+      print("Linha end: " + astnode.parent!.end.lineNumber.toString());
+      print("Linha end: " + astnode.parent!.lineNumberEnd().toString());
       print("1 => " + astnode.childEntities.isEmpty.toString());
       print("1 => " + astnode.toString());
       print("1.1 => " + (astnode.toString().replaceAll(" ", "") == "{}").toString());
