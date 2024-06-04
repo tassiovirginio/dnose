@@ -1,6 +1,12 @@
 function loadSelect() {
     let select = document.getElementById("testSmells");
     const req = new XMLHttpRequest();
+
+    const option = document.createElement("option");
+    option.value = "all";
+    option.text = "all";
+    select.appendChild(option);
+
     req.onload = (e) => {
         const lista = JSON.parse(req.response);
         for (let i = 0; i < lista.length; i++) {
