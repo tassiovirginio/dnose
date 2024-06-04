@@ -35,6 +35,12 @@ function loadProjectList(){
 
 function clone(){
     const url = document.getElementById("url").value;
+
+    if(url == null || url == ""){
+        alert("URL is empty");
+        return;
+    }
+
     document.getElementById("loading").style.visibility = "visible";
     const req = new XMLHttpRequest();
     req.onload = (e) => {
