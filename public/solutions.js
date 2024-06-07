@@ -80,6 +80,7 @@ function loadFile(path, testDescripcion, testSmellName) {
         console.log(prompt);
         await uploadSolutions(prompt);
         await uploadSolutions2(prompt);
+        await uploadSolutions3(prompt);
     };
     req.open("GET", "/getfiletext?path=" + path + "&test='" + testDescripcion + "'", true);
     req.send();
@@ -117,30 +118,65 @@ async function uploadSolutions2(prompt) {
     req.send(prompt);
 }
 
+async function uploadSolutions3(prompt) {
+    console.log(prompt);
+    const solutionDiv = document.getElementById("solution3");
+    solutionDiv.innerHTML = "Analyzing...";
+    const req = new XMLHttpRequest();
+    req.open("POST", "/solution3", true);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    prompt = prompt.replaceAll(" ", "_");
+    req.onreadystatechange = () => {
+        if (req.readyState === XMLHttpRequest.DONE && req.status === 200) {
+            solutionDiv.innerHTML = req.response;
+        }
+    };
+    req.send(prompt);
+}
+
 function loadStructureSolution() {
     document.getElementById("lkGemini").className = "is-active";
     document.getElementById("lkchatGPT").className = "";
+    document.getElementById("lkOllama").className = "";
     document.getElementById("solution").style.display = 'block';
     document.getElementById("solution2").style.display = 'none';
+    document.getElementById("solution3").style.display = 'none';
     document.getElementById("btCopy1").style.display = 'block';
     document.getElementById("btCopy2").style.display = 'none';
+    document.getElementById("btCopy3").style.display = 'none';
 }
 
 function tabs(atual) {
     if (atual == "0") {
         document.getElementById("lkGemini").className = "is-active";
         document.getElementById("lkchatGPT").className = "";
+        document.getElementById("lkOllama").className = "";
         document.getElementById("solution").style.display = 'block';
         document.getElementById("solution2").style.display = 'none';
+        document.getElementById("solution3").style.display = 'none';
         document.getElementById("btCopy1").style.display = 'block';
         document.getElementById("btCopy2").style.display = 'none';
-    } else {
+        document.getElementById("btCopy3").style.display = 'none';
+    } else if (atual == "1"){
         document.getElementById("lkGemini").className = "";
         document.getElementById("lkchatGPT").className = "is-active";
+        document.getElementById("lkOllama").className = "";
         document.getElementById("solution").style.display = 'none';
         document.getElementById("solution2").style.display = 'block';
+        document.getElementById("solution3").style.display = 'none';
         document.getElementById("btCopy1").style.display = 'none';
         document.getElementById("btCopy2").style.display = 'block';
+        document.getElementById("btCopy3").style.display = 'none';
+    } else if (atual == "2"){
+        document.getElementById("lkGemini").className = "";
+        document.getElementById("lkchatGPT").className = "";
+        document.getElementById("lkOllama").className = "is-active";
+        document.getElementById("solution").style.display = 'none';
+        document.getElementById("solution2").style.display = 'none';
+        document.getElementById("solution3").style.display = 'block';
+        document.getElementById("btCopy1").style.display = 'none';
+        document.getElementById("btCopy2").style.display = 'none';
+        document.getElementById("btCopy3").style.display = 'block';
     }
 }
 
@@ -149,6 +185,9 @@ copy1 = () =>
         .then(r => console.log("copied"));
 
 copy2 = () => navigator.clipboard.writeText(document.getElementById("solution2").innerHTML)
+    .then(r => console.log("copied"));
+
+copy3 = () => navigator.clipboard.writeText(document.getElementById("solution3").innerHTML)
     .then(r => console.log("copied"));
 
 var prompt = "";

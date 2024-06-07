@@ -22,6 +22,7 @@ dependencies:
   process_run: ^0.14.2
   scidart: ^0.0.2-dev.12
   properties: ^2.1.0
+  langchain_ollama: ^0.2.2
 
 dev_dependencies:
   lints: ^4.0.0

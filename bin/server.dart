@@ -6,6 +6,7 @@ import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
+import 'package:langchain_ollama/langchain_ollama.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:properties/properties.dart';
@@ -65,6 +66,13 @@ Handler init() {
     String prompt = await request.readAsString();
     prompt = prompt.replaceAll("_", " ");
     String response = await getChatGptResponse(prompt);
+    return Response.ok(response);
+  });
+
+  app.post('/solution3', (Request request) async {
+    String prompt = await request.readAsString();
+    prompt = prompt.replaceAll("_", " ");
+    String response = await getOllamaResponse(prompt);
     return Response.ok(response);
   });
 
@@ -183,6 +191,16 @@ Future<String> getChatGptResponse(String prompt) async {
     apiKey: apiKeyChatGPT,
     defaultOptions: const OpenAIOptions(temperature: 0.9),
   );
+  final LLMResult res = await llm.invoke(
+    PromptValue.string(prompt),
+  );
+  return res.output;
+}
+
+
+Future<String> getOllamaResponse(String prompt) async {
+  print(prompt);
+  final llm = Ollama();
   final LLMResult res = await llm.invoke(
     PromptValue.string(prompt),
   );
