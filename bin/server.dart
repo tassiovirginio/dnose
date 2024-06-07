@@ -199,8 +199,11 @@ Future<String> getChatGptResponse(String prompt) async {
 
 
 Future<String> getOllamaResponse(String prompt) async {
-  print(prompt);
-  final llm = Ollama();
+  final llm = Ollama(
+      defaultOptions: const OllamaOptions(
+        model: 'phi3',
+      )
+  );
   final LLMResult res = await llm.invoke(
     PromptValue.string(prompt),
   );
