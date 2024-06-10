@@ -24,6 +24,7 @@ final filepath = "dnose.properties";
 
 String? apiKeyGemini;
 String? apiKeyChatGPT;
+String? ollamaModel;
 
 List<String> listaProjetos() =>
     Directory(folderHome).listSync().map((d) => d.path).toList();
@@ -39,6 +40,7 @@ Handler init() {
   Properties p = Properties.fromFile(filepath);
   apiKeyGemini = p.get('apiKeyGemini');
   apiKeyChatGPT = p.get('apiKeyChatGPT');
+  ollamaModel = p.get('ollamaModel');
 
   var app = Router().plus;
   // app.use(logRequests()); // liga o log
@@ -200,8 +202,8 @@ Future<String> getChatGptResponse(String prompt) async {
 
 Future<String> getOllamaResponse(String prompt) async {
   final llm = Ollama(
-      defaultOptions: const OllamaOptions(
-        model: 'llama3', //phi3
+      defaultOptions: OllamaOptions(
+        model: ollamaModel, //phi3
       )
   );
   final LLMResult res = await llm.invoke(
