@@ -14,7 +14,10 @@ class MagicNumberDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is ForElement || e is IfElement || e is WhileStatement) return;
+    if (e is ForElement ||
+        e is IfElement ||
+        e is WhileStatement ||
+        e is NamedExpression) return;
 
     if (e is IntegerLiteral || e is DoubleLiteral) {
       testSmells.add(TestSmell(
