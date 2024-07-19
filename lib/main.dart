@@ -10,6 +10,7 @@ import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:statistics/statistics.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
+import 'package:git/git.dart';
 
 final Logger _logger = Logger('Main');
 
@@ -24,7 +25,7 @@ void main(List<String> args) {
 
 }
 
-void processar(String pathProject) {
+Future<String> processar(String pathProject) async {
   Logger.root.level = Level.INFO; // defaults to Level.INFO
   // Logger.root.onRecord.listen((record) {
   //   print('${record.level.name}: ${record.time}: ${record.message}');
@@ -33,6 +34,8 @@ void processar(String pathProject) {
   _logger.info("==============================================");
   _logger.info("========= Dart Test Smells Detector ==========");
   _logger.info("==============================================");
+
+  String commitAtual = await getCommit(pathProject);
 
   DNose dnose = DNose();
 
@@ -66,6 +69,7 @@ void processar(String pathProject) {
       _logger.info("Analyzing: ${file.path}");
       try {
         TestClass testClass = TestClass(
+          commit: commitAtual,
             path: file.path,
             moduleAtual: moduleAtual,
             projectName: projectName);
@@ -83,6 +87,8 @@ void processar(String pathProject) {
   });
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
+
+  return "OK";
 }
 
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
@@ -93,12 +99,12 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   file.createSync();
 
   var sink = file.openWrite();
-  sink.write("project_name;test_name;module;path;testsmell;start;end\n");
+  sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
   for (var ts in listaTotal) {
     sink.write(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}\n");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end}");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
     _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
@@ -195,3 +201,14 @@ String getStatists() {
 }
 
 String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
+
+
+Future<String> getCommit(String path) async {
+  if (await GitDir.isGitDir(path)) {
+    final gitDir = await GitDir.fromExisting(path);
+    // int commit = await gitDir.commitCount();
+      var branch = await gitDir.currentBranch();
+    return branch.sha;
+  }
+  return "";
+}

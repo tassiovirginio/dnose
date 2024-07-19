@@ -22,20 +22,20 @@ class DNose {
   static final Logger _logger = Logger('DNose');
 
   static final List<String> listTestSmellsNames = [
-      ConditionalTestLogicDetector().testSmellName,
-      PrintStatmentFixtureDetector().testSmellName,
-      TestWithoutDescriptionDetector().testSmellName,
-      MagicNumberDetector().testSmellName,
-      SleepyFixtureDetector().testSmellName,
-      DuplicateAssertDetector().testSmellName,
-      ResourceOptimismDetector().testSmellName,
-      AssertionRouletteDetector().testSmellName,
-      VerboseTestDetector().testSmellName,
-      EmptyTestDetector().testSmellName,
-      UnknownTestDetector().testSmellName,
-      ExceptionHandlingDetector().testSmellName,
-      IgnoredTestDetector().testSmellName
-    ];
+    ConditionalTestLogicDetector().testSmellName,
+    PrintStatmentFixtureDetector().testSmellName,
+    TestWithoutDescriptionDetector().testSmellName,
+    MagicNumberDetector().testSmellName,
+    SleepyFixtureDetector().testSmellName,
+    DuplicateAssertDetector().testSmellName,
+    ResourceOptimismDetector().testSmellName,
+    AssertionRouletteDetector().testSmellName,
+    VerboseTestDetector().testSmellName,
+    EmptyTestDetector().testSmellName,
+    UnknownTestDetector().testSmellName,
+    ExceptionHandlingDetector().testSmellName,
+    IgnoredTestDetector().testSmellName
+  ];
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
@@ -98,7 +98,7 @@ class DNose {
 
   String getCodeTestByDescription(String path, String description) {
     TestClass testClass =
-        TestClass(path: path, moduleAtual: "", projectName: "");
+        TestClass(path: path, moduleAtual: "", projectName: "", commit: "");
     var root = testClass.root;
     List<String> code = _scan2(root, testClass, description);
     return code.first;

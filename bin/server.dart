@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
+import 'package:dnose/experiment.dart';
 import 'package:dnose/main.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
@@ -160,7 +161,7 @@ Handler init() {
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
-    processar(pathProject!);
+    await   processar(pathProject!);
     return Response.ok("Processamento concluído");
   });
 
