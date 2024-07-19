@@ -206,7 +206,6 @@ String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
 Future<String> getCommit(String path) async {
   if (await GitDir.isGitDir(path)) {
     final gitDir = await GitDir.fromExisting(path);
-    // int commit = await gitDir.commitCount();
       var branch = await gitDir.currentBranch();
     return branch.sha;
   }
