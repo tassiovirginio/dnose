@@ -63,7 +63,7 @@
         <article class="panel is-link block">
             <p class="panel-heading">Analyze Project</p>
             <div class="panel-block">
-                <label class="label">Path Project:</label>
+                <label class="label">Path Project(s):</label>
                 <div class="select is-multiple" style="width: 100%; height: 100px;">
                     <select size="3" multiple class="input is-link" id="select_project"></select>
                 </div>
@@ -79,8 +79,10 @@
                 </div>
             </div>
             <div class="panel-block">
+                Project(s): <span id="projectname"></span>
+            </div>
+            <div class="panel-block">
                 <div class="buttons">
-                    Project: <span id="projectname"></span>
                     <a class="button is-warning" id='resultado' href="/download">CSV 1</a>
                     <a class="button is-warning" id='resultado2' href="/download2">CSV 2</a>
                     <a class="button is-warning" id='resultado_db' href="/download.db">DB</a>

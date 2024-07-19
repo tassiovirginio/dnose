@@ -171,6 +171,13 @@ List<String> getQtdTestSmellsByType() {
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
+List<String> getProjects() {
+  final db = sqlite3.open('resultado.sqlite');
+  final ResultSet resultSet = db.select(
+      'select distinct project_name from dataset;');
+  return resultSet.toList().map((e) => e.toString()).toList();
+}
+
 String getStatists() {
   var file = File('resultado.sqlite');
   if (!file.existsSync()) return "";

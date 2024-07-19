@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
@@ -84,17 +85,33 @@ Handler init() {
 
   String currentprojectname() {
     sleep(Duration(seconds:1));
-    var currentprojectname = "NONE";
-    var file = File(resultado);
-    if (file.existsSync()) {
-      if(file.lengthSync() > 0){
-        var linhas = file.readAsLinesSync();
-        if(linhas.length > 1){
-          currentprojectname = linhas[1].split(";")[0];
-        }
+    var lista = getProjects();
+    String projetos = "";
+
+    for(var p in lista){
+      p = p.replaceAll("{", "").replaceAll("}", "");
+      if(projetos.isEmpty){
+        projetos = p.split(":")[1].trim();
+      }else{
+        projetos = projetos + "|" + p.split(":")[1].trim();
       }
+
     }
-    return currentprojectname;
+
+
+    return projetos;
+
+    // var currentprojectname = "NONE";
+    // var file = File(resultado);
+    // if (file.existsSync()) {
+    //   if(file.lengthSync() > 0){
+    //     var linhas = file.readAsLinesSync();
+    //     if(linhas.length > 1){
+    //       currentprojectname = linhas[1].split(";")[0];
+    //     }
+    //   }
+    // }
+    // return currentprojectname;
   }
 
   List<String> getLines() {
