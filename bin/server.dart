@@ -93,7 +93,7 @@ Handler init() {
       if(projetos.isEmpty){
         projetos = p.split(":")[1].trim();
       }else{
-        projetos = projetos + "|" + p.split(":")[1].trim();
+        projetos = projetos + ", " + p.split(":")[1].trim();
       }
 
     }
