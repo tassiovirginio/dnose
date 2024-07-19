@@ -28,8 +28,26 @@ String? apiKeyGemini;
 String? apiKeyChatGPT;
 String? ollamaModel;
 
-List<String> listaProjetos() =>
-    Directory(folderHome).listSync().map((d) => d.path).toList();
+Future<List<String>> listaProjetos() async {
+
+  List<String> projetosDart = List.empty(growable: true);
+
+  var lista = Directory(folderHome).listSync().toList();
+
+  for(var d in lista){
+    final dir = Directory(d.path);
+    final List<FileSystemEntity> entities = await dir.list().toList();
+    entities.forEach((element) {
+      if(element.toString().contains("pubspec.yaml")){
+        print(element);
+        projetosDart.add(d.path);
+      }
+    },);
+  }
+
+  return projetosDart;
+}
+
 
 void main() => shelfRun(
       init,
@@ -38,7 +56,6 @@ void main() => shelfRun(
     );
 
 Handler init() {
-
   Properties p = Properties.fromFile(filepath);
   apiKeyGemini = p.get('apiKeyGemini');
   apiKeyChatGPT = p.get('apiKeyChatGPT');
@@ -84,20 +101,18 @@ Handler init() {
   app.get('/result1exists', result1exists);
 
   String currentprojectname() {
-    sleep(Duration(seconds:1));
+    sleep(Duration(seconds: 1));
     var lista = getProjects();
     String projetos = "";
 
-    for(var p in lista){
+    for (var p in lista) {
       p = p.replaceAll("{", "").replaceAll("}", "");
-      if(projetos.isEmpty){
+      if (projetos.isEmpty) {
         projetos = p.split(":")[1].trim();
-      }else{
+      } else {
         projetos = projetos + ", " + p.split(":")[1].trim();
       }
-
     }
-
 
     return projetos;
 
@@ -217,13 +232,11 @@ Future<String> getChatGptResponse(String prompt) async {
   return res.output;
 }
 
-
 Future<String> getOllamaResponse(String prompt) async {
   final llm = Ollama(
       defaultOptions: OllamaOptions(
-        model: ollamaModel, //phi3
-      )
-  );
+    model: ollamaModel, //phi3
+  ));
   final LLMResult res = await llm.invoke(
     PromptValue.string(prompt),
   );
