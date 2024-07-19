@@ -134,6 +134,7 @@ class DNose {
         });
       });
     }
-    return testName.replaceAll("\"", "-");
+    testName = testName.replaceAll("\"", "-");
+    return testName;
   }
 }
