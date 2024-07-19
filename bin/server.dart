@@ -161,7 +161,7 @@ Handler init() {
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
-    await   processar(pathProject!);
+    await processar(pathProject!);
     return Response.ok("Processamento concluído");
   });
 

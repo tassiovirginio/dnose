@@ -113,8 +113,33 @@ function process() {
             loadStatistics();
         });
     };
-    req.open("GET", "/processar?path_project=" + path.value, true);
+
+
+    var lista = getSelectValues(path);
+
+    var listaString = "";
+
+    lista.forEach((p) => listaString = listaString + ";" +p);
+
+    console.log(listaString);
+
+    req.open("GET", "/processar?path_project=" + listaString, true);
     req.send();
+}
+
+function getSelectValues(select) {
+    var result = [];
+    var options = select && select.options;
+    var opt;
+
+    for (var i=0, iLen=options.length; i<iLen; i++) {
+        opt = options[i];
+
+        if (opt.selected) {
+            result.push(opt.value || opt.text);
+        }
+    }
+    return result;
 }
 
 function loadStatistics() {

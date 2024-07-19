@@ -25,7 +25,29 @@ void main(List<String> args) {
 
 }
 
-Future<String> processar(String pathProject) async {
+Future<String> processar(String pathProjects) async {
+
+  List<TestSmell> listaTotal = List.empty(growable: true);
+
+  var lista = pathProjects.split(";");
+
+  for (final project in lista) {
+    if(project.trim().isNotEmpty){
+      listaTotal.addAll(await _processar(project));
+    }
+  }
+
+  createCSV(listaTotal).then((value) {
+    _logger.info("CSV criado com sucesso.");
+    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
+  });
+
+  _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
+
+  return "OK";
+}
+
+Future<List<TestSmell>> _processar(String pathProject) async {
   Logger.root.level = Level.INFO; // defaults to Level.INFO
   // Logger.root.onRecord.listen((record) {
   //   print('${record.level.name}: ${record.time}: ${record.message}');
@@ -81,14 +103,14 @@ Future<String> processar(String pathProject) async {
     }
   }
 
-  createCSV(listaTotal).then((value) {
-    _logger.info("CSV criado com sucesso.");
-    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
-  });
+  // createCSV(listaTotal).then((value) {
+  //   _logger.info("CSV criado com sucesso.");
+  //   createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
+  // });
+  //
+  // _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
-  _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
-
-  return "OK";
+  return listaTotal;
 }
 
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
