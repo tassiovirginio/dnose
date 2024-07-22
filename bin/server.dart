@@ -34,18 +34,19 @@ Future<List<String>> listaProjetos() async {
 
   var lista = Directory(folderHome).listSync().toList();
 
-  for(var d in lista){
-    final dir = Directory(d.path);
-    final List<FileSystemEntity> entities = await dir.list().toList();
-    entities.forEach((element) {
-      if(element.toString().contains("pubspec.yaml")){
-        print(element);
-        projetosDart.add(d.path);
-      }
-    },);
-  }
+  // for(var d in lista){
+  //   final dir = Directory(d.path);
+  //   final List<FileSystemEntity> entities = await dir.list().toList();
+  //   entities.forEach((element) {
+  //     //Só adiciona projetos com pubspec.yaml
+  //     if(element.toString().contains("pubspec.yaml")){
+  //       print(element);
+  //       projetosDart.add(d.path);
+  //     }
+  //   },);
+  // }
 
-  return projetosDart;
+  return lista.map((e) => e.path).toList();
 }
 
 

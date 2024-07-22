@@ -25,6 +25,7 @@ dependencies:
   langchain_ollama: ^0.2.2
   git: ^2.3.0
   basics: ^0.10.0
+  csv: ^6.0.0
 
 dev_dependencies:
   lints: ^4.0.0
