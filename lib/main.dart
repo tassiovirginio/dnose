@@ -12,8 +12,8 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:statistics/statistics.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:git/git.dart';
-import 'package:git_clone/git_clone.dart' as git;
-import 'package:csv/csv.dart';
+// import 'package:git_clone/git_clone.dart' as git;
+// import 'package:csv/csv.dart';
 
 final Logger _logger = Logger('Main');
 
@@ -60,7 +60,7 @@ void cloandoProjetos() async{
 
   var localPath = "/home/tassio/dnose_projects/";
 
-  int cont = 1;
+  // int cont = 1;
 
   var set = <String>{};
 

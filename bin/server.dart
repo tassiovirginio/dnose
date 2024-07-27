@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
-import 'package:dnose/experiment.dart';
 import 'package:dnose/main.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
@@ -31,7 +29,7 @@ String? ollamaModel;
 
 Future<List<String>> listaProjetos() async {
 
-  List<String> projetosDart = List.empty(growable: true);
+  // List<String> projetosDart = List.empty(growable: true);
 
   var lista = Directory(folderHome).listSync().toList();
 
