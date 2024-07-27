@@ -55,7 +55,7 @@ class DNose {
 
     List<AbstractMetric> metrics = [
       LinesOfCodeMetric(),
-      CyclomaticComplexityMetric()  ,
+      CyclomaticComplexityMetric(),
     ];
 
     for (var m in metrics) {
