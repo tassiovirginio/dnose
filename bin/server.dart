@@ -17,6 +17,7 @@ final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 final resultado = "${Directory.current.path}/resultado.csv";
 final resultado2 = "${Directory.current.path}/resultado2.csv";
+final resultadoMetrics = "${Directory.current.path}/resultado_metrics.csv";
 final resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
@@ -161,6 +162,8 @@ Handler init() {
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
+  File getResultado3() => File(resultadoMetrics);
+
 
   File getResultadoDbFile() {
     var file = File(resultadoDbFile);
@@ -177,6 +180,7 @@ Handler init() {
 
   app.get('/download', getResultado1, use: download());
   app.get('/download2', getResultado2, use: download());
+  app.get('/download_metrics', getResultado3, use: download());
   app.get('/download.db', getResultadoDbFile, use: download());
   app.get('/download.db.existe', resultDbExist);
   app.get('/', () => File('public/index.html'));
