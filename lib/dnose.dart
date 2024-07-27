@@ -14,7 +14,10 @@ import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/metrics/abstract_metric.dart';
+import 'package:dnose/metrics/lines_of_code_metric.dart';
 import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:logging/logging.dart';
 
@@ -45,6 +48,21 @@ class DNose {
                 "testWidgets"); //Métodos de teste do Flutter
   }
 
+  List<TestMetric> calculeTestMetrics(
+      ExpressionStatement e, TestClass testClass, String testName) {
+    List<TestMetric> testMetrics = List.empty(growable: true);
+
+    List<AbstractMetric> metrics = [
+      LinesOfCodeMetric(),
+    ];
+
+    for (var m in metrics) {
+      testMetrics.add(m.calculate(e, testClass, testName));
+    }
+
+    return testMetrics;
+  }
+
   List<TestSmell> detectTestSmells(
       ExpressionStatement e, TestClass testClass, String testName) {
     List<TestSmell> testSmells = List.empty(growable: true);
@@ -73,13 +91,30 @@ class DNose {
     return testSmells;
   }
 
-  List<TestSmell> scan(TestClass testClass) {
+  (List<TestSmell>,List<TestMetric>) scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
+    List<TestMetric> testMetrics = List.empty(growable: true);
     AstNode n = testClass.root;
     _logger.info("Scanning...");
     _logger.info("Path: ${testClass.path}");
     testSmells.addAll(_scan(n, testClass));
-    return testSmells;
+    testMetrics.addAll(_scanMetric(n, testClass));
+    return (testSmells, testMetrics);
+  }
+
+
+  List<TestMetric> _scanMetric(AstNode n, TestClass testClass) {
+    List<TestMetric> testMetrics = List.empty(growable: true);
+    n.childEntities.whereType<AstNode>().forEach((element) {
+      if (isTest(element)) {
+        String testName = getTestName(element);
+        _logger.info("Test Function Detect: $testName - ${element.toSource()}");
+        testMetrics.addAll(calculeTestMetrics(
+            element as ExpressionStatement, testClass, testName));
+      }
+      testMetrics.addAll(_scanMetric(element, testClass));
+    });
+    return testMetrics;
   }
 
   List<TestSmell> _scan(AstNode n, TestClass testClass) {

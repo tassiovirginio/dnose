@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart' show md5;
 import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
@@ -160,12 +161,15 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
 Future<String> processar(String pathProjects) async {
 
   List<TestSmell> listaTotal = List.empty(growable: true);
+  List<TestMetric> listaTotalMetrics = List.empty(growable: true);
 
   var lista = pathProjects.split(";");
 
   for (final project in lista) {
     if(project.trim().isNotEmpty){
-      listaTotal.addAll(await _processar(project));
+      var (listaTotal2,listaTotalMetrics2) = await _processar(project);
+      listaTotal.addAll(listaTotal2);
+      listaTotalMetrics.addAll(listaTotalMetrics2);
     }
   }
 
@@ -174,12 +178,16 @@ Future<String> processar(String pathProjects) async {
     createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
   });
 
+  createMatricsCSV(listaTotalMetrics).then((value) {
+    _logger.info("CSV criado com sucesso.");
+  });
+
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
   return "OK";
 }
 
-Future<List<TestSmell>> _processar(String pathProject) async {
+Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async {
   Logger.root.level = Level.INFO; // defaults to Level.INFO
   // Logger.root.onRecord.listen((record) {
   //   print('${record.level.name}: ${record.time}: ${record.message}');
@@ -194,6 +202,7 @@ Future<List<TestSmell>> _processar(String pathProject) async {
   DNose dnose = DNose();
 
   List<TestSmell> listaTotal = List.empty(growable: true);
+  List<TestMetric> listaTotalMetrics = List.empty(growable: true);
 
   Directory dir = Directory(pathProject);
 
@@ -227,8 +236,9 @@ Future<List<TestSmell>> _processar(String pathProject) async {
             path: file.path,
             moduleAtual: moduleAtual,
             projectName: projectName);
-        var testSmells = dnose.scan(testClass);
+        var (testSmells,testMetrics) = dnose.scan(testClass);
         listaTotal.addAll(testSmells);
+        listaTotalMetrics.addAll(testMetrics);
       } catch (e) {
         print(e);
       }
@@ -242,7 +252,7 @@ Future<List<TestSmell>> _processar(String pathProject) async {
   //
   // _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
-  return listaTotal;
+  return (listaTotal,listaTotalMetrics);
 }
 
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
@@ -280,6 +290,27 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     _logger.info("$key;$value");
   });
   sink2.close();
+
+  return true;
+}
+
+Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
+
+  var file = File('resultado_metrics.csv');
+  if (file.existsSync()) file.deleteSync();
+  file.createSync();
+
+  var sink = file.openWrite();
+  sink.write("project_name;test_name;module;path;metric;start;end;value;commit\n");
+  for (var m in listaTotal) {
+    sink.write(
+        "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n");
+    _logger.info(
+        "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}");
+    _logger.info("Code: ${m.code}");
+
+  }
+  sink.close();
 
   return true;
 }
