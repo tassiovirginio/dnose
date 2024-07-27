@@ -15,6 +15,7 @@ import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
 import 'package:dnose/metrics/abstract_metric.dart';
+import 'package:dnose/metrics/cyclomatic_complexity_metric.dart';
 import 'package:dnose/metrics/lines_of_code_metric.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
@@ -54,6 +55,7 @@ class DNose {
 
     List<AbstractMetric> metrics = [
       LinesOfCodeMetric(),
+      CyclomaticComplexityMetric()  ,
     ];
 
     for (var m in metrics) {
