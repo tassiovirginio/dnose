@@ -8,7 +8,7 @@ class CyclomaticComplexityMetric implements AbstractMetric {
   @override
   TestMetric calculate(
       ExpressionStatement e, TestClass testClass, String testName) {
-    _calculate(e, testClass, testName);
+    _calculate(e);
 
     TestMetric testMetric = TestMetric(
         name: metricName,
@@ -24,22 +24,19 @@ class CyclomaticComplexityMetric implements AbstractMetric {
 
   int cont = 0;
 
-  void _calculate(AstNode e, TestClass testClass, String testName) {
+  void _calculate(AstNode e) {
     if (e is AssertStatement ||
-    e is CatchClause ||
-    e is ConditionalExpression ||
-    e is ForStatement ||
-    e is IfStatement ||
-    e is SwitchCase ||
-    e is SwitchDefault ||
-    e is WhileStatement ||
-    e is YieldStatement) {
+        e is CatchClause ||
+        e is ConditionalExpression ||
+        e is ForStatement ||
+        e is IfStatement ||
+        e is SwitchCase ||
+        e is SwitchDefault ||
+        e is WhileStatement ||
+        e is YieldStatement) {
       cont++;
-    } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _calculate(e, testClass, testName));
     }
+    e.childEntities.whereType<AstNode>().forEach((e) => _calculate(e));
   }
 
   @override
