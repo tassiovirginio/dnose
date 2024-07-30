@@ -27,10 +27,9 @@ class SleepyFixtureDetector implements AbstractDetector {
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
-    } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
     }
+    e.childEntities
+        .whereType<AstNode>()
+        .forEach((e) => _detect(e, testClass, testName));
   }
 }
