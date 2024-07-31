@@ -41,12 +41,12 @@ class DNose {
     IgnoredTestDetector().testSmellName
   ];
 
+  final Set<String> listTestNames = {"test","testWidgets","testWithGame","isarTest"};
+
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
-        (e.beginToken.toString() == "test" || //Métodos de teste normal
-            e.beginToken.toString() ==
-                "testWidgets"); //Métodos de teste do Flutter
+        (listTestNames.contains(e.beginToken.toString())); //Métodos de teste do Flutter
   }
 
   List<TestMetric> calculeTestMetrics(

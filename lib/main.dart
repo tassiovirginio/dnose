@@ -23,12 +23,12 @@ Future<void> main(List<String> args) async {
   //   return;
   // }
 //
-//   processar("/home/tassio/dnose_projects/devtools");
+  processar("/home/tassio/Desenvolvimento/teste");
 //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
 
-  cloandoProjetos2();
+  // cloandoProjetos2();
 
   // verificandoProjetosComAPasta();
 
