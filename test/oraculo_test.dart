@@ -85,7 +85,7 @@ void main() {
   //   while (1 == 1) {}
   // });
   //
-  // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
+  test("MagicNumberFixture", () => {expect(1 + 2, 3)});
   //
   // test("MagicNumberFixture", () => {
   //   for(int i = 0; i < 10; i++){
