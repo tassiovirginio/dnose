@@ -23,7 +23,7 @@ Future<void> main(List<String> args) async {
   //   return;
   // }
 //
-  processar("/home/tassio/Desenvolvimento/teste");
+  processar("/home/tassio/Desenvolvimento/dart/dnose");
 //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
@@ -321,23 +321,27 @@ Future<bool> createSqlite() async {
   var shell = Shell();
   String dbPath = 'resultado.sqlite';
   String csvFilePath = 'resultado.csv';
+  String csvMEtricsFilePath = 'resultado_metrics.csv';
   String command =
-      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath dataset"';
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
+  String command2 =
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMEtricsFilePath metrics"';
   shell.run(command);
+  shell.run(command2);
   return true;
 }
 
 List<String> getQtdTestSmellsByType() {
   final db = sqlite3.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
-      'select testsmell, count(testsmell) as qtd from dataset group by testsmell;');
+      'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
 List<String> getProjects() {
   final db = sqlite3.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
-      'select distinct project_name from dataset;');
+      'select distinct project_name from testsmells;');
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
@@ -347,7 +351,7 @@ String getStatists() {
 
   final db = sqlite3.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
-      'select path, testsmell, count(testsmell) as qtd from dataset group by testsmell, path;');
+      'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
   var lista = resultSet.toList();
 
   var mapa = <String, List<int>>{};

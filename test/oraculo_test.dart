@@ -87,6 +87,17 @@ void main() {
   //
   // test("MagicNumberFixture", () => {expect(1 + 2, 3)});
   //
+  // test("MagicNumberFixture", () => {
+  //   for(int i = 0; i < 10; i++){
+  //     for(int i = 0; i < 10; i++){
+  //       expect(1 + 2, 3),
+  //       expect(reason: 123);
+  //     }
+  //   }
+  // }
+  // );
+
+  //
   // test("DuplicateAssert", () {
   //   expect(1 + 2, 3, reason: "Verificando o valor");
   //   expect(1 + 2, 3, reason: "Verificando o valor");
@@ -122,15 +133,15 @@ void main() {
   // }
   // );
 
-  test("Some Test", () async {
-    //Test Logic
-    expect(1 + 2, 3);
-  }, skip: true);
-
-  test("Some Other Test", () async {
-    //Test Logic
-    expect(1 + 2, 3);
-  }, skip: false);
+  // test("Some Test", () async {
+  //   //Test Logic
+  //   expect(1 + 2, 3);
+  // }, skip: true);
+  //
+  // test("Some Other Test", () async {
+  //   //Test Logic
+  //   expect(1 + 2, 3);
+  // }, skip: false);
 
   // test(
   //     "VerboseFixture",
