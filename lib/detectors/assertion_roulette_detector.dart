@@ -31,7 +31,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             name: testSmellName,
             testName: testName,
             testClass: testClass,
-            code: e.toSource(),
+            code: e.parent!.parent!.toSource(),
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end)));
       }else{
@@ -39,7 +39,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             name: testSmellName,
             testName: testName,
             testClass: testClass,
-            code: e.toSource(),
+            code: e.parent!.parent!.toSource(),
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end));
         count++;
@@ -55,7 +55,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             name: testSmellName,
             testName: testName,
             testClass: testClass,
-            code: e.toSource(),
+            code: e.parent!.parent!.toSource(),
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end)));
       }else{
@@ -63,7 +63,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             name: testSmellName,
             testName: testName,
             testClass: testClass,
-            code: e.toSource(),
+            code: e.parent!.parent!.toSource(),
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end));
         count++;

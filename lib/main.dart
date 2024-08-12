@@ -264,7 +264,23 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
 
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
+
   for (var ts in listaTotal) {
+
+    String code_line = ts.code.trim().replaceAll(" ", "");
+    var containsFor = code_line.contains('for(') ? 1 : 0;
+    var containsWhile = code_line.contains('while(') ? 1 : 0;
+    var containsIf = code_line.contains('if(') ? 1 : 0;
+    var containsSleep = code_line.contains('sleep(') ? 1 : 0;
+    var containsExpect = code_line.contains('expect(') ? 1 : 0;
+    var containsCatch = code_line.contains('catch') ? 1 : 0;
+    var containsThrow = code_line.contains('throw') ? 1 : 0;
+    var containsTry = code_line.contains('try') ? 1 : 0;
+    var containsNumber = code_line.contains(RegExp(r'\d+')) ? 1 : 0;
+    var containsPrint = code_line.contains('print') ? 1 : 0;
+    var containsFile = code_line.contains('File') ? 1 : 0;
+
+
     sink.write(
         "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
     _logger.info(
