@@ -11,18 +11,18 @@ dependencies:
   shelf_plus: ^1.9.2
   yaml: ^3.1.2
   crypto: ^3.0.3
-  analyzer: ^6.5.0
+  analyzer: ^6.7.0
   shelf_cors_headers: ^0.1.5
   git_clone: ^1.2.0
   google_generative_ai: ^0.4.1
-  langchain: ^0.7.1
-  langchain_openai: ^0.6.1+1
-  statistics: ^1.1.0
-  sqlite3: ^2.4.3
-  process_run: ^0.14.2
+  langchain: ^0.7.4
+  langchain_openai: ^0.7.0
+  statistics: ^1.1.2
+  sqlite3: ^2.4.4
+  process_run: ^1.1.0
   scidart: ^0.0.2-dev.12
   properties: ^2.1.0
-  langchain_ollama: ^0.2.2
+  langchain_ollama: ^0.3.0
   git: ^2.3.0
   basics: ^0.10.0
   csv: ^6.0.0
@@ -30,8 +30,8 @@ dependencies:
 dev_dependencies:
   lints: ^4.0.0
   test: ^1.25.5
-  build_runner: ^2.4.10
-  build_web_compilers: ^4.0.10
+  build_runner: ^2.4.11
+  build_web_compilers: ^4.0.11
 
 
 linter:
