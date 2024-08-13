@@ -48,7 +48,7 @@ void verificandoProjetosComAPasta(){
     if(lista2.contains(name)){
       // print("Tem -> ${name}");
     }else{
-      print("${name}");
+      print(name);
     }
   }
 }
@@ -88,7 +88,7 @@ void cloandoProjetos() async{
             }
           }
           // if(contTestDart > 0)
-          print("${name},${contDart},${contTestDart},${url},${getURLBaseGithubProject(url)}");
+          print("$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
 
 
         }else{
@@ -127,7 +127,7 @@ void cloandoProjetos2() async {
     }
     // if(contTestDart > 0)
     print(
-        "${nome},${contDart},${contTestDart}");
+        "$nome,$contDart,$contTestDart");
   }
 
 }
@@ -137,8 +137,8 @@ String getURLBaseGithubProject(String url){
   String urlFinal = "";
 
   if(urlList.length > 4){
-    var url_final = urlList.sublist(0,5).map((e) => "${e}/",).toString();
-    urlFinal = url_final.toString().replaceAll(",", "").replaceAll(" ", "").replaceAll("(", "").replaceAll(")", "");
+    var urlFinal = urlList.sublist(0,5).map((e) => "$e/",).toString();
+    urlFinal = urlFinal.toString().replaceAll(",", "").replaceAll(" ", "").replaceAll("(", "").replaceAll(")", "");
   }
 
   return urlFinal;
@@ -261,24 +261,38 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var file = File('resultado.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
-
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
 
+  var file4 = File('metrics2.csv');
+  if (file4.existsSync()) file4.deleteSync();
+  file4.createSync();
+  var sink4 = file4.openWrite();
+  sink4.write("project_name;test_name;module;path;testsmell;start;end;commit;for;while;if;sleep;expect;catch;throw;try;number;print;file\n");
+
+
   for (var ts in listaTotal) {
 
-    String code_line = ts.code.trim().replaceAll(" ", "");
-    var containsFor = code_line.contains('for(') ? 1 : 0;
-    var containsWhile = code_line.contains('while(') ? 1 : 0;
-    var containsIf = code_line.contains('if(') ? 1 : 0;
-    var containsSleep = code_line.contains('sleep(') ? 1 : 0;
-    var containsExpect = code_line.contains('expect(') ? 1 : 0;
-    var containsCatch = code_line.contains('catch') ? 1 : 0;
-    var containsThrow = code_line.contains('throw') ? 1 : 0;
-    var containsTry = code_line.contains('try') ? 1 : 0;
-    var containsNumber = code_line.contains(RegExp(r'\d+')) ? 1 : 0;
-    var containsPrint = code_line.contains('print') ? 1 : 0;
-    var containsFile = code_line.contains('File') ? 1 : 0;
+    String codeLine = ts.code.trim().replaceAll(" ", "");
+    var containsFor = codeLine.contains('for(') ? 1 : 0;
+    var containsWhile = codeLine.contains('while(') ? 1 : 0;
+    var containsIf = codeLine.contains('if(') ? 1 : 0;
+    var containsSleep = codeLine.contains('sleep(') ? 1 : 0;
+    var containsExpect = codeLine.contains('expect(') ? 1 : 0;
+    var containsCatch = codeLine.contains('catch') ? 1 : 0;
+    var containsThrow = codeLine.contains('throw') ? 1 : 0;
+    var containsTry = codeLine.contains('try') ? 1 : 0;
+    var containsNumber = codeLine.contains(RegExp(r'\d+')) ? 1 : 0;
+    var containsPrint = codeLine.contains('print') ? 1 : 0;
+    var containsFile = codeLine.contains('File') ? 1 : 0;
+
+    sink4.write(
+        "${ts.testClass.projectName}"
+            ";${ts.testName.replaceAll(";", ",")}"
+            ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
+            ";${ts.start};${ts.end};${ts.testClass.commit};"
+            "$containsFor;$containsWhile;$containsIf;$containsSleep;"
+            "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile\n");
 
 
     sink.write(
