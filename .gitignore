@@ -7,4 +7,5 @@
 *.exe
 *.db
 *.sqlite
+*.zip
 pubspec.lock
