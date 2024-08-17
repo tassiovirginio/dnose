@@ -21,13 +21,15 @@ class EmptyTestDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
-    if (e is Block &&
-        e.parent is BlockFunctionBody &&
-        e.parent!.parent is FunctionExpression &&
-        e.parent!.parent!.parent!.parent is MethodInvocation &&
-        e.parent!.parent!.parent!.parent!.childEntities.first.toString() ==
-            "test" &&
-        e.toString().replaceAll(" ", "") == "{}") {
+    if (e is FunctionExpression &&
+        e.parent is ArgumentList &&
+        e.parent!.parent is MethodInvocation &&
+        e.parent!.parent!.parent is ExpressionStatement &&
+        e.parent!.parent!.parent!.parent is Block &&
+        e.parent!.parent!.childEntities.first.toString() == "test" &&
+        (e.toString().replaceAll(" ", "") == "()=>{}" 
+        || e.toString().replaceAll(" ", "") == "{}"
+        || e.toString().replaceAll(" ", "") == "(){}")) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,
@@ -35,10 +37,9 @@ class EmptyTestDetector implements AbstractDetector {
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
-    } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
     }
+    e.childEntities
+        .whereType<AstNode>()
+        .forEach((e) => _detect(e, testClass, testName));
   }
 }

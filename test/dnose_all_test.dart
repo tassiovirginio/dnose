@@ -37,4 +37,19 @@ void main() {
           reason: "Deveria encontrar 3 test smells do tipo Test Without Description");
     }
   });
+
+  test("Detect: Empty Test", () {
+    File file =
+        File("${Directory.current.path}/test/samples/empty_test.dart");
+
+    if (file.path.endsWith("_test.dart") == true) {
+      TestClass testClass = TestClass(
+          commit: "", path: file.path, moduleAtual: "", projectName: "");
+      var (testSmells, testMetrics) = dnose.scan(testClass);
+      var lista =
+          testSmells.where((e) => e.name == "Empty Test").toList();
+      expect(lista.length, 3,
+          reason: "Deveria encontrar 3 test smells do tipo Empty Test");
+    }
+  });
 }
