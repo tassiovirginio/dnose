@@ -5,7 +5,7 @@ import 'package:dnose/models/test_smell.dart';
 
 class ResourceOptimismDetector implements AbstractDetector {
   @override
-  get testSmellName => "Detector Resource Optimism";
+  get testSmellName => "Resource Optimism";
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
@@ -17,7 +17,7 @@ class ResourceOptimismDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is MethodInvocation && e.toSource().contains("File")) {
+    if (e is MethodInvocation && e.toSource().replaceAll(" ", "").contains("File(")) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,
@@ -25,9 +25,11 @@ class ResourceOptimismDetector implements AbstractDetector {
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
-    }
-    e.childEntities
+    }else{
+      e.childEntities
         .whereType<AstNode>()
         .forEach((e) => _detect(e, testClass, testName));
+    }
+    
   }
 }
