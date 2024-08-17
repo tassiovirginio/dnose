@@ -33,7 +33,7 @@ void main() {
   //       throwsA(TypeMatcher<ArgumentError>()));
   // });
 
-  // //AssertionRouletteFixture
+  //AssertionRouletteFixture
   // test('Exemplo de DuplicateAssertFixture em DART', () {
   //   expect(() => calcularDesconto(valorSemDesconto, -1, true),
   //       throwsA(TypeMatcher<ArgumentError>()));
@@ -49,11 +49,20 @@ void main() {
   //       throwsA(TypeMatcher<ArgumentError>()));
   // });
 
+  // test('Exemplo de AssertionRouletteFixture em DART', () {
+  //   expect(() => calcularDesconto(valorSemDesconto, -1, true),
+  //       throwsA(TypeMatcher<ArgumentError>()),
+  //       reason: 'Desconto com quantidade negativa deve lançar ArgumentError.');
+
+  //   expect(() => calcularDesconto(valorSemDesconto, 0, false),
+  //       throwsA(TypeMatcher<ArgumentError>()),
+  //       reason: 'Desconto com quantidade zero deve lançar ArgumentError.');
+  // });
+
   // //teste Empty Description Test
   // test("", () => {});
   // test("", () {print("teste");});
   // test("", () => {if (true) {}});
-
 
   //
   // //teste vazio - Empty Test
@@ -61,7 +70,6 @@ void main() {
   // test("EmptyFixture", () => {     });
   // test("EmptyFixture", () {});
   // test("EmptyFixture", () {print("teste");});
-
 
   // test("DetectorUnknownTest", () {print("teste");});
 
@@ -103,7 +111,6 @@ void main() {
   //   expect(1 + 2, 3, reason: "Verificando o valor");
   //   expect(1 + 2, 3, reason: "Verificando o valor");
   // });
-
 
   // test("AssertionRoulet", () {
   //   expect(1 + 2, 3, reason: "Verificando o valor");

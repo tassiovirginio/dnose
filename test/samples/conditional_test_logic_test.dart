@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 
 void main() {
   test("Conditional Test Logic IF", () => {if (true) {}});
+  // ignore: dead_code
   test("Conditional Test Logic IF", () => {if (true) {} else if (false) {}});
 
   test("Conditional Test Logic IF", () {

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
-import 'package:dnose/main.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:test/test.dart';
 
