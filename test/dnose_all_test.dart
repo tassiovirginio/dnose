@@ -137,24 +137,66 @@ void main() {
       var lista =
           testSmells.where((e) => e.name == "Print Statment Fixture").toList();
       expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Print Statment Fixture");
+          reason:
+              "Deveria encontrar 1 test smells do tipo Print Statment Fixture");
     }
   });
 
   test("Detect: Sleepy Fixture", () {
+    File file =
+        File("${Directory.current.path}/test/samples/sleepy_fixture_test.dart");
+
+    if (file.path.endsWith("_test.dart") == true) {
+      TestClass testClass = TestClass(
+          commit: "", path: file.path, moduleAtual: "", projectName: "");
+      var (testSmells, testMetrics) = dnose.scan(testClass);
+      var lista = testSmells.where((e) => e.name == "Sleepy Fixture").toList();
+      expect(lista.length, 1,
+          reason: "Deveria encontrar 1 test smells do tipo Sleepy Fixture");
+    }
+  });
+
+  test("Detect: Exception Handling", () {
     File file = File(
-        "${Directory.current.path}/test/samples/sleepy_fixture_test.dart");
+        "${Directory.current.path}/test/samples/exception_handling_test.dart");
 
     if (file.path.endsWith("_test.dart") == true) {
       TestClass testClass = TestClass(
           commit: "", path: file.path, moduleAtual: "", projectName: "");
       var (testSmells, testMetrics) = dnose.scan(testClass);
       var lista =
-          testSmells.where((e) => e.name == "Sleepy Fixture").toList();
+          testSmells.where((e) => e.name == "Exception Handling").toList();
+      expect(lista.length, 3,
+          reason: "Deveria encontrar 3 test smells do tipo Exception Handling");
+    }
+  });
+
+  test("Detect: Ignored Test", () {
+    File file =
+        File("${Directory.current.path}/test/samples/ignored_test.dart");
+
+    if (file.path.endsWith("_test.dart") == true) {
+      TestClass testClass = TestClass(
+          commit: "", path: file.path, moduleAtual: "", projectName: "");
+      var (testSmells, testMetrics) = dnose.scan(testClass);
+      var lista = testSmells.where((e) => e.name == "Ignored Test").toList();
       expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Sleepy Fixture");
+          reason: "Deveria encontrar 1 test smells do tipo Ignored Test");
     }
   });
 
 
+  test("Detect: Verbose Test", () {
+    File file =
+        File("${Directory.current.path}/test/samples/verbose_test.dart");
+
+    if (file.path.endsWith("_test.dart") == true) {
+      TestClass testClass = TestClass(
+          commit: "", path: file.path, moduleAtual: "", projectName: "");
+      var (testSmells, testMetrics) = dnose.scan(testClass);
+      var lista = testSmells.where((e) => e.name == "Verbose Test").toList();
+      expect(lista.length, 1,
+          reason: "Deveria encontrar 1 test smells do tipo Verbose Test");
+    }
+  });
 }
