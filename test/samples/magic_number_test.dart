@@ -3,6 +3,16 @@ import 'package:test/test.dart';
 void main() {
   test("Magic Number", () => {expect(1 + 2, 3)});
 
+  test("Magic Number", () => {expect("3", "3")});
+
+  test("Magic Number", () {
+    print(123);
+  });
+
+  test("Magic Number", () {
+    print("123");
+  });
+
   test(
       "Magic Number",
       () =>{

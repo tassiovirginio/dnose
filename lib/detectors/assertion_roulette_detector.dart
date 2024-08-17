@@ -8,7 +8,7 @@ class AssertionRouletteDetector implements AbstractDetector {
   get testSmellName => "Assertion Roulette";
   int count = 0;
 
-  var testsmell_first;
+  var testsmellFirst;
 
   List<TestSmell> testSmells = List.empty(growable: true);
 
@@ -25,7 +25,7 @@ class AssertionRouletteDetector implements AbstractDetector {
         e.parent!.parent!.parent!.childEntities.firstOrNull!.toString() ==
             "expect") {
       if(count > 0) {
-        if(count == 1) testSmells.add(testsmell_first);
+        if(count == 1) testSmells.add(testsmellFirst);
         count++;
         testSmells.add(TestSmell(
             name: testSmellName,
@@ -35,7 +35,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end)));
       }else{
-        testsmell_first = TestSmell(
+        testsmellFirst = TestSmell(
             name: testSmellName,
             testName: testName,
             testClass: testClass,
@@ -49,7 +49,7 @@ class AssertionRouletteDetector implements AbstractDetector {
         !e.toString().contains("reason:") &&
         e.parent!.childEntities.first.toString() == "expect") {
       if(count > 0) {
-        if(count == 1) testSmells.add(testsmell_first);
+        if(count == 1) testSmells.add(testsmellFirst);
         count++;
         testSmells.add(TestSmell(
             name: testSmellName,
@@ -59,7 +59,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end)));
       }else{
-        testsmell_first = TestSmell(
+        testsmellFirst = TestSmell(
             name: testSmellName,
             testName: testName,
             testClass: testClass,

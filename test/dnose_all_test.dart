@@ -15,9 +15,9 @@ void main() {
       TestClass testClass = TestClass(
           commit: "", path: file.path, moduleAtual: "", projectName: "");
       var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
+      var list =
           testSmells.where((e) => e.name == "Assertion Roulette").toList();
-      expect(lista.length, 3,
+      expect(list.length, 3,
           reason: "Deveria encontrar 3 test smells do tipo Assertion Roulette");
     }
   });
@@ -91,8 +91,8 @@ void main() {
           commit: "", path: file.path, moduleAtual: "", projectName: "");
       var (testSmells, testMetrics) = dnose.scan(testClass);
       var lista = testSmells.where((e) => e.name == "Magic Number").toList();
-      expect(lista.length, 6,
-          reason: "Deveria encontrar 6 test smells do tipo Magic Number");
+      expect(lista.length, 10,
+          reason: "Deveria encontrar 10 test smells do tipo Magic Number");
     }
   });
 

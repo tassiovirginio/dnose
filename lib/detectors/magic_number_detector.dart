@@ -14,17 +14,6 @@ class MagicNumberDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    // if (e is ForElement || e is ForStatement || e is NamedExpression || e is ForPartsWithDeclarations) {
-    //   print(e);
-    //
-    //   e.childEntities.forEach((e) {
-    //     print("${e} -> ${e.runtimeType}");
-    //   });
-    //
-    //   return;
-    // }
-    // ;
-
     if (e is ForPartsWithDeclarations || e is NamedExpression) return;
 
     if (e is IntegerLiteral || e is DoubleLiteral) {
@@ -35,7 +24,7 @@ class MagicNumberDetector implements AbstractDetector {
           code: e.toSource(),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
-    }else if (e is StringLiteral && e.toSource().contains(RegExp(r'^\d+$'))) {
+    }else if (e is SimpleStringLiteral && e.toSource().replaceAll("\"", "").contains(RegExp(r'^\d+$'))) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,
