@@ -5,9 +5,18 @@ import 'package:analyzer/dart/analysis/features.dart' show FeatureSet;
 class TestClass {
   late CompilationUnit ast;
   late AstNode root;
-  final String path, moduleAtual, projectName, commit;
+  late final String path, moduleAtual, projectName, commit;
 
   TestClass({required this.commit,required this.path, required this.moduleAtual, required this.projectName}) {
+    ast = parseFile(path: path, featureSet: FeatureSet.latestLanguageVersion())
+        .unit;
+    root = ast.root;
+  }
+
+  TestClass.test(this.path) {
+    commit = "";
+    moduleAtual="";
+    projectName = "";
     ast = parseFile(path: path, featureSet: FeatureSet.latestLanguageVersion())
         .unit;
     root = ast.root;

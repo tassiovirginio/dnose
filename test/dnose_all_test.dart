@@ -5,198 +5,104 @@ import 'package:dnose/models/test_class.dart';
 import 'package:test/test.dart';
 
 void main() {
-  DNose dnose = DNose();
+  final dnose = DNose();
+  final path = Directory.current.path;
+
+  void verify(
+      {required String name, required int qtd, required String pathFile}) {
+    var (testSmells, testMetrics) =
+        dnose.scan(TestClass.test(File("$path$pathFile").path));
+    var list = testSmells.where((e) => e.name == name).toList();
+    expect(list.length, qtd,
+        reason: "Deveria encontrar $qtd test smells $name");
+  }
 
   test("Detect: Assertion Roulet", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/assertion_roulette_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var list =
-          testSmells.where((e) => e.name == "Assertion Roulette").toList();
-      expect(list.length, 3,
-          reason: "Deveria encontrar 3 test smells do tipo Assertion Roulette");
-    }
+    verify(
+        name: "Assertion Roulette",
+        qtd: 3,
+        pathFile: "/test/samples/assertion_roulette_test.dart");
   });
 
   test("Detect: Test Without Description", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/test_without_description_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells
-          .where((e) => e.name == "Test Without Description")
-          .toList();
-      expect(lista.length, 3,
-          reason:
-              "Deveria encontrar 3 test smells do tipo Test Without Description");
-    }
+    verify(
+        name: "Test Without Description",
+        qtd: 3,
+        pathFile: "/test/samples/test_without_description_test.dart");
   });
 
   test("Detect: Empty Test", () {
-    File file = File("${Directory.current.path}/test/samples/empty_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Empty Test").toList();
-      expect(lista.length, 3,
-          reason: "Deveria encontrar 3 test smells do tipo Empty Test");
-    }
+    verify(
+        name: "Empty Test", qtd: 3, pathFile: "/test/samples/empty_test.dart");
   });
 
   test("Detect: Unknown Test", () {
-    File file =
-        File("${Directory.current.path}/test/samples/unknown_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Unknown Test").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Unknown Test");
-    }
+    verify(
+        name: "Unknown Test",
+        qtd: 1,
+        pathFile: "/test/samples/unknown_test.dart");
   });
 
   test("Detect: Conditional Test Logic", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/conditional_test_logic_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
-          testSmells.where((e) => e.name == "Conditional Test Logic").toList();
-      expect(lista.length, 7,
-          reason:
-              "Deveria encontrar 7 test smells do tipo Conditional Test Logic");
-    }
+    verify(
+        name: "Conditional Test Logic",
+        qtd: 7,
+        pathFile: "/test/samples/conditional_test_logic_test.dart");
   });
 
   test("Detect: Magic Number", () {
-    File file =
-        File("${Directory.current.path}/test/samples/magic_number_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Magic Number").toList();
-      expect(lista.length, 10,
-          reason: "Deveria encontrar 10 test smells do tipo Magic Number");
-    }
+    verify(
+        name: "Magic Number",
+        qtd: 10,
+        pathFile: "/test/samples/magic_number_test.dart");
   });
 
   test("Detect: Duplicate Assert", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/duplicate_assert_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
-          testSmells.where((e) => e.name == "Duplicate Assert").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Duplicate Assert");
-    }
+    verify(
+        name: "Duplicate Assert",
+        qtd: 1,
+        pathFile: "/test/samples/duplicate_assert_test.dart");
   });
 
   test("Detect: Resource Optimism", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/resource_optimism_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
-          testSmells.where((e) => e.name == "Resource Optimism").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Resource Optimism");
-    }
+    verify(
+        name: "Resource Optimism",
+        qtd: 1,
+        pathFile: "/test/samples/resource_optimism_test.dart");
   });
 
   test("Detect: Print Statment Fixture", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/print_statment_fixture_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
-          testSmells.where((e) => e.name == "Print Statment Fixture").toList();
-      expect(lista.length, 1,
-          reason:
-              "Deveria encontrar 1 test smells do tipo Print Statment Fixture");
-    }
+    verify(
+        name: "Print Statment Fixture",
+        qtd: 1,
+        pathFile: "/test/samples/print_statment_fixture_test.dart");
   });
 
   test("Detect: Sleepy Fixture", () {
-    File file =
-        File("${Directory.current.path}/test/samples/sleepy_fixture_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Sleepy Fixture").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Sleepy Fixture");
-    }
+    verify(
+        name: "Sleepy Fixture",
+        qtd: 1,
+        pathFile: "/test/samples/sleepy_fixture_test.dart");
   });
 
   test("Detect: Exception Handling", () {
-    File file = File(
-        "${Directory.current.path}/test/samples/exception_handling_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista =
-          testSmells.where((e) => e.name == "Exception Handling").toList();
-      expect(lista.length, 3,
-          reason: "Deveria encontrar 3 test smells do tipo Exception Handling");
-    }
+    verify(
+        name: "Exception Handling",
+        qtd: 3,
+        pathFile: "/test/samples/exception_handling_test.dart");
   });
 
   test("Detect: Ignored Test", () {
-    File file =
-        File("${Directory.current.path}/test/samples/ignored_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Ignored Test").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Ignored Test");
-    }
+    verify(
+        name: "Ignored Test",
+        qtd: 1,
+        pathFile: "/test/samples/ignored_test.dart");
   });
 
-
   test("Detect: Verbose Test", () {
-    File file =
-        File("${Directory.current.path}/test/samples/verbose_test.dart");
-
-    if (file.path.endsWith("_test.dart") == true) {
-      TestClass testClass = TestClass(
-          commit: "", path: file.path, moduleAtual: "", projectName: "");
-      var (testSmells, testMetrics) = dnose.scan(testClass);
-      var lista = testSmells.where((e) => e.name == "Verbose Test").toList();
-      expect(lista.length, 1,
-          reason: "Deveria encontrar 1 test smells do tipo Verbose Test");
-    }
+    verify(
+        name: "Verbose Test",
+        qtd: 1,
+        pathFile: "/test/samples/verbose_test.dart");
   });
 }
