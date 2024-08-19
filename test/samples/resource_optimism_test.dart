@@ -19,8 +19,8 @@ void main() {
   });
 
   test("DetectorResourceOptimism", () {
-    // ignore: unused_local_variable
     if(File('file.txt').existsSync()){
+      // ignore: unused_local_variable
       var file = File('file.txt');
     }
   });
