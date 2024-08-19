@@ -12,4 +12,12 @@ void main() {
       print("teste");
     }
   });
+
+  test("UnknownTest", () {
+    print("teste");
+    if(true){
+      print("teste");
+    }
+    expect(1, 1, reason: "teste");
+  });
 }
