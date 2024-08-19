@@ -46,7 +46,7 @@ void main() {
   test("Detect: Conditional Test Logic", () {
     verify(
         name: "Conditional Test Logic",
-        qtd: 7,
+        qtd: 9,
         pathFile: "/test/samples/conditional_test_logic_test.dart");
   });
 
