@@ -18,7 +18,7 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is SimpleIdentifier &&
-        e.name == "print" &&
+        (e.name == "print" || e.name == "write") &&
         e.parent is MethodInvocation) {
       testSmells.add(TestSmell(
           name: testSmellName,

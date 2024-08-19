@@ -74,7 +74,7 @@ void main() {
   test("Detect: Print Statment Fixture", () {
     verify(
         name: "Print Statment Fixture",
-        qtd: 1,
+        qtd: 2,
         pathFile: "/test/samples/print_statment_fixture_test.dart");
   });
 
