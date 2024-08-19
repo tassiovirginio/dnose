@@ -31,7 +31,7 @@ void main() {
     }
   },skip: true);
 
-  test("Conditional Test Logic Switch", () {
+  test("Conditional Test Logic forEach", () {
     List<int> list = [1,2,3];
     list.forEach((number)=> print(number));
   });
