@@ -5,5 +5,8 @@ void main() {
   test("EmptyFixture", () => {});
   test("EmptyFixture", () => {     });
   test("EmptyFixture", () {});
+  test("EmptyFixture", () {
+    //comentário
+  });
   test("EmptyFixture", () {print("teste");});
 }

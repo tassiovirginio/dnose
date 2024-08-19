@@ -33,7 +33,7 @@ void main() {
 
   test("Detect: Empty Test", () {
     verify(
-        name: "Empty Test", qtd: 3, pathFile: "/test/samples/empty_test.dart");
+        name: "Empty Test", qtd: 4, pathFile: "/test/samples/empty_test.dart");
   });
 
   test("Detect: Unknown Test", () {
