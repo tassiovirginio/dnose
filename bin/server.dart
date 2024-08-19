@@ -17,6 +17,7 @@ final currentPath = Directory.current.path;
 final resultado = "$currentPath/resultado.csv";
 final resultado2 = "$currentPath/resultado2.csv";
 final resultadoMetrics = "$currentPath/resultado_metrics.csv";
+final resultadoMetrics2 = "$currentPath/metrics2.csv";
 final resultadoDbFile = "$currentPath/resultado.sqlite";
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
@@ -162,6 +163,7 @@ Handler init() {
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
   File getResultado3() => File(resultadoMetrics);
+  File getResultado4() => File(resultadoMetrics2);
 
 
   File getResultadoDbFile() {
@@ -180,6 +182,7 @@ Handler init() {
   app.get('/download', getResultado1, use: download());
   app.get('/download2', getResultado2, use: download());
   app.get('/download_metrics', getResultado3, use: download());
+  app.get('/download_metrics2', getResultado4, use: download());
   app.get('/download.db', getResultadoDbFile, use: download());
   app.get('/download.db.existe', resultDbExist);
   app.get('/', () => File('public/index.html'));
