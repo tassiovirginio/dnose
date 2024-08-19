@@ -39,7 +39,7 @@ void main() {
   test("Detect: Unknown Test", () {
     verify(
         name: "Unknown Test",
-        qtd: 1,
+        qtd: 2,
         pathFile: "/test/samples/unknown_test.dart");
   });
 

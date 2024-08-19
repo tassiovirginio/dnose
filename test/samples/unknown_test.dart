@@ -2,5 +2,14 @@ import 'package:test/test.dart';
 
 void main() {
   //UnknownTest
-  test("UnknownTest", () {print("teste");});
+  test("UnknownTest", () {
+    print("teste");
+  });
+
+  test("UnknownTest", () {
+    print("teste");
+    if(true){
+      print("teste");
+    }
+  });
 }
