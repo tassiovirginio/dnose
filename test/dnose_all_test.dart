@@ -88,7 +88,7 @@ void main() {
   test("Detect: Exception Handling", () {
     verify(
         name: "Exception Handling",
-        qtd: 3,
+        qtd: 5,
         pathFile: "/test/samples/exception_handling_test.dart");
   });
 
