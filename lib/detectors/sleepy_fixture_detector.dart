@@ -18,7 +18,7 @@ class SleepyFixtureDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is SimpleIdentifier &&
-        e.name == "sleep" &&
+        (e.name == "sleep" || e.name == "delayed") &&
         e.parent is MethodInvocation) {
       testSmells.add(TestSmell(
           name: testSmellName,

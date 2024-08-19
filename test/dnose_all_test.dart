@@ -81,7 +81,7 @@ void main() {
   test("Detect: Sleepy Fixture", () {
     verify(
         name: "Sleepy Fixture",
-        qtd: 1,
+        qtd: 2,
         pathFile: "/test/samples/sleepy_fixture_test.dart");
   });
 
