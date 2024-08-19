@@ -13,10 +13,11 @@ import 'package:properties/properties.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
-final resultado = "${Directory.current.path}/resultado.csv";
-final resultado2 = "${Directory.current.path}/resultado2.csv";
-final resultadoMetrics = "${Directory.current.path}/resultado_metrics.csv";
-final resultadoDbFile = "${Directory.current.path}/resultado.sqlite";
+final currentPath = Directory.current.path;
+final resultado = "$currentPath/resultado.csv";
+final resultado2 = "$currentPath/resultado2.csv";
+final resultadoMetrics = "$currentPath/resultado_metrics.csv";
+final resultadoDbFile = "$currentPath/resultado.sqlite";
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;

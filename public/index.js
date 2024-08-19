@@ -9,39 +9,39 @@ function loadProjectName() {
 
 function loadTestSmellsNames() {
     const req4 = new XMLHttpRequest();
-    const nomes = [];
-    const valores = [];
-    const valores2 = [];
+    const names_ = [];
+    const values = [];
+    const values2 = [];
     req4.onload = (e) => {
-        const linhas = req4.response.split("\n");
-        for (let i = 1; i < linhas.length; i++) {
-            const nome = linhas[i].split(";")[0];
-            const valor = linhas[i].split(";")[1];
+        const lines = req4.response.split("\n");
+        for (let i = 1; i < lines.length; i++) {
+            const nome = lines[i].split(";")[0];
+            const value = lines[i].split(";")[1];
             if (nome !== "") {
-                nomes.push(nome);
-                const valorLog = Math.log(valor);
-                valores.push(valor);
-                valores2.push(valorLog);
+                names_.push(nome);
+                const valueLog = Math.log(value);
+                values.push(value);
+                values2.push(valueLog);
             }
         }
-        loadChart('myChart', nomes, valores, '# of Test Smells');
-        loadChart('myChart2', nomes, valores2, '# of Test Smells (log))');
+        loadChart('myChart', names_, values, '# of Test Smells');
+        loadChart('myChart2', names_, values2, '# of Test Smells (log))');
     };
     req4.open("GET", "/charts_data", true);
     req4.send();
-    return nomes;
+    return names_;
 }
 
-function loadChart(id, nomes, valores, msg) {
+function loadChart(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: nomes,
+            labels: names,
             datasets: [{
                 label: msg,
-                data: valores,
+                data: values,
                 borderWidth: 1
             }]
         },
@@ -155,16 +155,17 @@ function loadStatistics() {
         let linha1 = 0;
 
         for (let i = 0; i < linhas.length; i++) {
-            let linha = linhas[i].split(";");
+            let line = linhas[i].split(";");
             let tr = document.createElement("tr");
-            for (let j = 0; j < linha.length; j++) {
+            for (let j = 0; j < line.length; j++) {
                 let td;
-                if (linha1 == 0) {
+                if (linha1 === 0) {
                     td = document.createElement("th");
                 } else {
                     td = document.createElement("td");
                 }
-                td.innerHTML = linha[j];
+                td.innerHTML = line[j];
+                if(j === 7) td.style.color = "blue";
                 tr.appendChild(td);
             }
             linha1 = 1;
