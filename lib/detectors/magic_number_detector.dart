@@ -6,9 +6,15 @@ import 'package:dnose/models/test_smell.dart';
 class MagicNumberDetector implements AbstractDetector {
   List<TestSmell> testSmells = List.empty(growable: true);
 
+  String? codeTest;
+  int startTest = 0, endTest = 0;
+
   @override
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName) {
+    codeTest = e.toSource();
+    startTest = testClass.lineNumber(e.offset);
+    endTest = testClass.lineNumber(e.end);
     _detect(e as AstNode, testClass, testName);
     return testSmells;
   }
@@ -22,6 +28,9 @@ class MagicNumberDetector implements AbstractDetector {
           testName: testName,
           testClass: testClass,
           code: e.toSource(),
+          codeTest: codeTest,
+          startTest: startTest,
+          endTest: endTest,
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
     }else if (e is SimpleStringLiteral && e.toSource().replaceAll("\"", "").contains(RegExp(r'^\d+$'))) {
@@ -30,6 +39,9 @@ class MagicNumberDetector implements AbstractDetector {
           testName: testName,
           testClass: testClass,
           code: e.toSource(),
+          codeTest: codeTest,
+          startTest: startTest,
+          endTest: endTest,
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
     }

@@ -7,6 +7,9 @@ class VerboseTestDetector implements AbstractDetector {
   @override
   get testSmellName => "Verbose Test";
 
+  String? codeTest;
+  int startTest = 0, endTest = 0;
+
   static const valueMaxLineVerbose = 30;
 
   List<TestSmell> testSmells = List.empty(growable: true);
@@ -14,6 +17,9 @@ class VerboseTestDetector implements AbstractDetector {
   @override
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName) {
+    codeTest = e.toSource();
+    startTest = testClass.lineNumber(e.offset);
+    endTest = testClass.lineNumber(e.end);
     _detect(e as AstNode, testClass, testName);
     return testSmells;
   }
@@ -31,6 +37,9 @@ class VerboseTestDetector implements AbstractDetector {
             testName: testName,
             testClass: testClass,
             code: e.toSource(),
+            codeTest: codeTest,
+            startTest: startTest,
+            endTest: endTest,
             start: testClass.lineNumber(e.parent!.offset),
             end: testClass.lineNumber(e.parent!.end)));
       }

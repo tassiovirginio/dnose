@@ -9,9 +9,15 @@ class ConditionalTestLogicDetector implements AbstractDetector {
   @override
   get testSmellName => "Conditional Test Logic";
 
+  String? codeTest;
+  int startTest = 0, endTest = 0;
+
   @override
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName) {
+    codeTest = e.toSource();
+    startTest = testClass.lineNumber(e.offset);
+    endTest = testClass.lineNumber(e.end);
     _detect(e, testClass, testName);
     return testSmells;
   }
@@ -23,6 +29,9 @@ class ConditionalTestLogicDetector implements AbstractDetector {
           testName: testName,
           testClass: testClass,
           code: e.toSource(),
+          codeTest: codeTest,
+          startTest: startTest,
+          endTest: endTest,
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end)));
     }

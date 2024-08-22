@@ -255,6 +255,10 @@ Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async 
   return (listaTotal,listaTotalMetrics);
 }
 
+int qtd(String texto, String palavra) {
+  return RegExp(palavra).allMatches(texto).length;
+}
+
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var somatorio = <String, int>{};
 
@@ -268,10 +272,13 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   if (file4.existsSync()) file4.deleteSync();
   file4.createSync();
   var sink4 = file4.openWrite();
-  sink4.write("project_name;test_name;module;path;testsmell;start;end;commit;for;while;if;sleep;expect;catch;throw;try;number;print;file\n");
+  sink4.write("project_name;test_name;module;path;testsmell;start;end;commit;qtdLine;qtdLineTeste;"
+      "for;while;if;sleep;expect;catch;throw;try;number;print;file;"
+      "forT;whileT;ifT;sleepT;expectT;catchT;throwT;tryT;printT;fileT"
+      "\n");
 
 
-  for (var ts in listaTotal) {
+  for (TestSmell ts in listaTotal) {
 
     String codeLine = ts.code.trim().replaceAll(" ", "");
     var containsFor = codeLine.contains('for(') ? 1 : 0;
@@ -286,13 +293,31 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     var containsPrint = codeLine.contains('print') ? 1 : 0;
     var containsFile = codeLine.contains('File') ? 1 : 0;
 
+    String codeLineTest = ts.codeTest!;
+    var containsForTeste = qtd(codeLineTest, 'for');
+    var containsWhileTeste =  qtd(codeLineTest, 'while');
+    var containsIfTeste = qtd(codeLineTest, 'if');
+    var containsSleepTeste = qtd(codeLineTest, 'sleep');
+    var containsExpectTeste = qtd(codeLineTest, 'expect');
+    var containsCatchTeste = qtd(codeLineTest, 'catch');
+    var containsThrowTeste = qtd(codeLineTest, 'throw');
+    var containsTryTeste = qtd(codeLineTest, 'try');
+    var containsPrintTeste = qtd(codeLineTest, 'print');
+    var containsFileTeste = qtd(codeLineTest, 'File');
+
+    int qtdLine = ts.end - ts.start + 1;
+    int qtdLineTeste = ts.endTest - ts.startTest + 1;
+
     sink4.write(
         "${ts.testClass.projectName}"
             ";${ts.testName.replaceAll(";", ",")}"
             ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
-            ";${ts.start};${ts.end};${ts.testClass.commit};"
+            ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
             "$containsFor;$containsWhile;$containsIf;$containsSleep;"
-            "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile\n");
+            "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
+            "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
+            "$containsExpectTeste;$containsCatchTeste;$containsThrowTeste;$containsTryTeste;$containsPrintTeste;$containsFileTeste"
+            "\n");
 
 
     sink.write(
