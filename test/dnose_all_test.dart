@@ -17,7 +17,7 @@ void main() {
         reason: "Deveria encontrar $qtd test smells $name");
   }
 
-  test("Detect: Assertion Roulet", () {
+  test("Detect: Assertion Roullet", () {
     verify(
         name: "Assertion Roulette",
         qtd: 3,
