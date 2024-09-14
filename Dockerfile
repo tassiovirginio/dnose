@@ -17,7 +17,8 @@ RUN chmod +x /app/bin/server
 # Use Alpine as a minimal base image
 
 FROM alpine:latest
-RUN apk update && apk add --no-cache sqlite-libs
+RUN apk update && apk add --no-cache sqlite sqlite-libs git
+RUN ln -s /usr/lib/libsqlite3.so.0 /usr/lib/libsqlite3.so   
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/server /app/bin/
 COPY --from=build /app/dnose.properties /app/
