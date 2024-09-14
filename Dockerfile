@@ -15,7 +15,9 @@ RUN dart compile exe bin/server.dart -o bin/server
 RUN chmod +x /app/bin/server
 
 # Use Alpine as a minimal base image
+
 FROM alpine:latest
+RUN apk update && apk add --no-cache sqlite-libs
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/server /app/bin/
 COPY --from=build /app/dnose.properties /app/
