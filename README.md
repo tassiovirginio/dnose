@@ -23,3 +23,9 @@
 ### Pré-requisito
 
 - sudo apt-get -y install sqlite3 libsqlite3-dev
+
+
+### Docker
+
+- docker build -t dnose .
+- docker run -it --rm -p 8080:8080 --name dnose dnose

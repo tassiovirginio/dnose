@@ -53,6 +53,7 @@ Future<List<String>> listaProjetos() async {
 
 void main() => shelfRun(
       init,
+      defaultEnableHotReload: false,
       defaultBindPort: port,
       defaultBindAddress: ip,
     );
