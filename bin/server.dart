@@ -30,7 +30,6 @@ String? apiKeyChatGPT;
 String? ollamaModel;
 
 Future<List<String>> listaProjetos() async {
-
   // List<String> projetosDart = List.empty(growable: true);
 
   var lista = Directory(folderHome).listSync().toList();
@@ -49,7 +48,6 @@ Future<List<String>> listaProjetos() async {
 
   return lista.map((e) => e.path).toList();
 }
-
 
 void main() => shelfRun(
       init,
@@ -166,7 +164,6 @@ Handler init() {
   File getResultado3() => File(resultadoMetrics);
   File getResultado4() => File(resultadoMetrics2);
 
-
   File getResultadoDbFile() {
     var file = File(resultadoDbFile);
     if (file.existsSync() && file.lengthSync() > 0) {
@@ -192,6 +189,8 @@ Handler init() {
   app.get('/projects.js', () => File('public/projects.js'));
   app.get('/solutions', () => File('public/solutions.html'));
   app.get('/solutions.js', () => File('public/solutions.js'));
+  app.get('/mining', () => File('public/mining.html'));
+  app.get('/mining.js', () => File('public/mining.js'));
   app.get('/config', () => File('public/config.html'));
   app.get('/config.js', () => File('public/config.js'));
   app.get('/about', () => File('public/about.html'));

@@ -29,7 +29,7 @@
             background-color: rgba(0, 0, 0, 0.4);
         }
     </style>
-    <script src="/projects.js"></script>
+    <script src="/mining.js"></script>
 </head>
 <body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
 
@@ -49,12 +49,12 @@
             <a class="navbar-item" href="/"> Home </a>
             <a class="navbar-item" href="/projects"> Projects </a>
             <a class="navbar-item" href="/solutions"> Solutions </a>
-            <a class="navbar-item" href="/mining"> Mining </a>
+            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/mining"> Mining </a>
         </div>
 
         <div class="navbar-end">
             <a class="navbar-item" href="/config"> Config </a>
-            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/about"> About </a>
+            <a class="navbar-item" href="/about"> About </a>
         </div>
     </div>
 </nav>
@@ -62,34 +62,43 @@
 <section class="section is-medium">
     <div class="container is-align-content-center">
         <article class="panel is-link block">
-            <p class="panel-heading">About</p>
+            <p class="panel-heading">Mining</p>
             <div style="align-content: center;">
                 <div class="box">
                     <div class="content">
-                        <br>
-                        <div style="text-align: center;">
-                            <img src="/logo.png" alt="logo" style="width: 150px;"/>
+                        <div class="field is-grouped is-grouped-multiline">
+                            <div class="control is-expanded">
+                                <select id="select_project" class="input is-link is-fullwidth">
+                                    <option value="0">Select Project</option>
+                                </select>
+                            </div>
+                            <div class="control">
+                                <button id="btn_mining" class="button is-link is-fullwidth">Load</button>
+                            </div>
                         </div>
-                        <p>
-                            Test smell detection system for the Dart language.
-                        </p>
                         <br>
-                        List of Test Smells that the system detects:
-                        <ol>
-                            <li>Assertion Roulette</li>
-                            <li>Conditional Test Logic</li>
-                            <li>Duplicate Assert</li>
-                            <li>Empty Test</li>
-                            <li>Exception Handling</li>
-                            <li>Ignored Test</li>
-                            <li>Magic Number</li>
-                            <li>Print Statement</li>
-                            <li>Resource Optimism</li>
-                            <li>Sleepy Test</li>
-                            <li>Test Without Description</li>
-                            <li>Unknow Test</li>
-                            <li>Verbose Test</li>
-                        </ol>
+                        <label>Branch: </label> <caption id="branch">main</caption>
+                        <br>
+                        <label>Qtd Commits: </label> <caption id="branch">1234</caption>
+                        <br><br>
+                        <progress class="progress is-info is-large" value="15" max="100">15%</progress>
+                        <br>
+                        <button id="btn_mining" class="button is-link">Mining</button>
+                        <br><br>
+                        <article class="panel is-link block">
+                            <p class="panel-heading">Resultados</p>
+                            <a class="panel-block is-active">
+                                <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                </span>
+                                <div class="buttons">
+                                    <button class="button is-info">Relatório 01</button>
+                                    <button class="button is-info">Relatório 02</button>
+                                    <button class="button is-info">Relatório 03</button>
+                                    <button class="button is-info">Relatório 04</button>
+                                </div>
+                            </a>
+                        </article>
                     </div>
                 </div>
             </div>
@@ -113,7 +122,7 @@
 
 <div class="loading" id="loading">
     <div class='window'>
-        <div class="box">Clonning...
+        <div class="box">Mining...
             <progress class="progress is-large is-info" max="100">60%</progress>
         </div>
     </div>
