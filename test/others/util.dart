@@ -5,7 +5,7 @@ Future<void> main() async {
   final directoryPath = '/home/tassio/dnose_projects_/conduit/';
 
   // Cria uma instância de Directory
-  int count = await getQtyFilesWithTestSuffix(directoryPath);
+  int count = Util.getQtyFilesWithTestSuffix(directoryPath);
 
   print('Quantidade de arquivos com sufixo _test.dart: $count');
 }
