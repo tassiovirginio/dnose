@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dnose/dnose.dart';
 import 'package:dnose/main.dart';
+import 'package:dnose/utils/util.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
 import 'package:langchain/langchain.dart';
@@ -57,6 +58,9 @@ void main() => shelfRun(
     );
 
 Handler init() {
+
+  DNose.contProcessProject = 0;
+
   Properties p = Properties.fromFile(filepath);
   apiKeyGemini = p.get('apiKeyGemini');
   apiKeyChatGPT = p.get('apiKeyChatGPT');
@@ -230,6 +234,18 @@ Handler init() {
   });
 
   app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
+
+  app.get('/qtd_commits', (Request request) async {
+    String? path_project = request.url.queryParameters['path_project'];
+    final size = Util.getQtyFilesWithTestSuffix(path_project);
+    return Response.ok(size.toString());
+  });
+
+  app.get('/qtd_progress', () {
+    print("Teste");
+    int valor = DNose.contProcessProject;
+    return Response.ok(valor.toString());
+  });
 
   return corsHeaders() >> app.call;
 }

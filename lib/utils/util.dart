@@ -11,8 +11,8 @@ Future<void> main() async {
 }
 
 class Util {
-  static int getQtyFilesWithTestSuffix(String directoryPath) {
-    final directory = Directory(directoryPath);
+  static int getQtyFilesWithTestSuffix(String? directoryPath) {
+    final directory = Directory(directoryPath!);
 
     try {
       if (directory.existsSync()) {

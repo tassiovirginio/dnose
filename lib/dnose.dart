@@ -25,6 +25,8 @@ import 'package:logging/logging.dart';
 class DNose {
   static final Logger _logger = Logger('DNose');
 
+  static int contProcessProject = 0;
+
   static final List<String> listTestSmellsNames = [
     ConditionalTestLogicDetector().testSmellName,
     PrintStatmentFixtureDetector().testSmellName,

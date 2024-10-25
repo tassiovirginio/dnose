@@ -238,6 +238,8 @@ Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async 
 
     if (file.path.endsWith("_test.dart") == true) {
       _logger.info("Analyzing: ${file.path}");
+      //contador de procentagem para a tela
+      DNose.contProcessProject++;
       try {
         TestClass testClass = TestClass(
           commit: commitAtual,
