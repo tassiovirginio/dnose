@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart' show md5;
@@ -14,6 +15,12 @@ import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:git/git.dart';
 // import 'package:git_clone/git_clone.dart' as git;
 // import 'package:csv/csv.dart';
+
+import 'package:sqlite3/src/ffi/implementation.dart';
+
+
+final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
+
 
 final Logger _logger = Logger('Main');
 
@@ -387,24 +394,38 @@ Future<bool> createSqlite() async {
 }
 
 List<String> getQtdTestSmellsByType() {
-  final db = sqlite3.open('resultado.sqlite');
+
+   final sqlite3_ = FfiSqlite3(libsqlite3);
+  // final db = sqlite3.open('resultado.sqlite');
+  final db = sqlite3_.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
       'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
 List<String> getProjects() {
-  final db = sqlite3.open('resultado.sqlite');
-  final ResultSet resultSet = db.select(
-      'select distinct project_name from testsmells;');
-  return resultSet.toList().map((e) => e.toString()).toList();
+  if(File("resultado.sqlite").existsSync()){
+    final sqlite3_ = FfiSqlite3(libsqlite3);
+  // final db = sqlite3.open('resultado.sqlite');
+  final db = sqlite3_.open('resultado.sqlite');
+    // final db = sqlite3.open('resultado.sqlite');
+    
+    final ResultSet resultSet = db.select(
+        'select distinct project_name from testsmells;');
+    return resultSet.toList().map((e) => e.toString()).toList();
+  }else{
+    return [];
+  }
 }
 
 String getStatists() {
   var file = File('resultado.sqlite');
   if (!file.existsSync()) return "";
 
-  final db = sqlite3.open('resultado.sqlite');
+  final sqlite3_ = FfiSqlite3(libsqlite3);
+  // final db = sqlite3.open('resultado.sqlite');
+  final db = sqlite3_.open('resultado.sqlite');
+
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
   var lista = resultSet.toList();

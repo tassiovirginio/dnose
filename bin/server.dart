@@ -154,7 +154,13 @@ Handler init() {
     return Response.ok(code);
   });
 
-  String chartData() => File(resultado2).readAsStringSync();
+  String chartData() {
+    if (File(resultado2).existsSync()) {
+      return File(resultado2).readAsStringSync();
+    } else {
+      return "";
+    }
+  }
 
   app.get('/projectnameatual', currentprojectname);
   app.get('/charts_data', chartData);
