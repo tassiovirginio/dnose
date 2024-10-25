@@ -43,5 +43,11 @@ class GitUtil{
     return commitCount;
   }
 
+  static Future<Map<String, Commit>> getListCommits(String path) async{
+    final GitDir gitDir = await GitDir.fromExisting(path);
+    final Map<String, Commit> mapa = await gitDir.commits();
+    return mapa;
+  }
+
 }
 
