@@ -27,3 +27,21 @@ Future<void> main() async {
     print('Not a Git directory');
   }
 }
+
+class GitUtil{
+
+  Future<String> getCurrentBranch(String path) async{
+    final gitDir = await GitDir.fromExisting(path);
+    final currentBranch = await gitDir.currentBranch();
+    final name = currentBranch.branchName;
+    return name;
+  }
+
+  Future<int> getSizeCommits(String path) async{
+    final gitDir = await GitDir.fromExisting(path);
+    final commitCount = await gitDir.commitCount();
+    return commitCount;
+  }
+
+}
+
