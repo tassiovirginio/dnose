@@ -30,14 +30,14 @@ Future<void> main() async {
 
 class GitUtil{
 
-  Future<String> getCurrentBranch(String path) async{
+  static Future<String> getCurrentBranch(String path) async{
     final gitDir = await GitDir.fromExisting(path);
     final currentBranch = await gitDir.currentBranch();
     final name = currentBranch.branchName;
     return name;
   }
 
-  Future<int> getSizeCommits(String path) async{
+  static Future<int> getSizeCommits(String path) async{
     final gitDir = await GitDir.fromExisting(path);
     final commitCount = await gitDir.commitCount();
     return commitCount;

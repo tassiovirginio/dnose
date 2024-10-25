@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dnose/dnose.dart';
 import 'package:dnose/main.dart';
+import 'package:dnose/utils/git_utils.dart';
 import 'package:dnose/utils/util.dart';
 import 'package:git_clone/git_clone.dart' as git;
 import 'package:google_generative_ai/google_generative_ai.dart' as ai;
@@ -245,6 +246,19 @@ Handler init() {
     print("Teste");
     int valor = DNose.contProcessProject;
     return Response.ok(valor.toString());
+  });
+
+
+  app.get('/get_branch', (Request request) async {
+    String? pathProject = request.url.queryParameters['path_project'];
+    String name = await GitUtil.getCurrentBranch(pathProject!);
+    return Response.ok(name);
+  });
+
+  app.get('/get_qtd_commits', (Request request) async {
+    String? pathProject = request.url.queryParameters['path_project'];
+    int qtd = await GitUtil.getSizeCommits(pathProject!);
+    return Response.ok(qtd.toString());
   });
 
   return corsHeaders() >> app.call;
