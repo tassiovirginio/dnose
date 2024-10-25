@@ -19,7 +19,8 @@ import 'package:git/git.dart';
 import 'package:sqlite3/src/ffi/implementation.dart';
 
 
-final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
+// final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
+final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
 
 final Logger _logger = Logger('Main');
