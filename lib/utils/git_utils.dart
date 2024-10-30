@@ -26,7 +26,9 @@ Future<void> main() async {
 
     // final retorno = await gitDir.runCommand(['status']);
     // print(retorno.stdout);
+    final lista = await GitUtil.getListCommits(path);
 
+    lista.values.forEach((x) => print("$x.author, $x.message"));
 
     final retorno_ = await GitUtil.getFileChangeCommit(path,"7282bb4489060a01a03923f0636933f773dd45b6");
 
