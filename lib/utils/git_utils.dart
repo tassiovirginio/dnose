@@ -2,27 +2,36 @@ import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main() async {
-  print('Current directory: ${p.current}');
 
-  if (await GitDir.isGitDir(p.current)) {
-    final gitDir = await GitDir.fromExisting(p.current);
-    final commitCount = await gitDir.commitCount();
-    print('Git commit count: $commitCount');
+  var path = "/home/tassio/Desenvolvimento/repo.git/dnose";
 
-    final latestCommit = await gitDir.currentBranch();
-    print('Latest commit: $latestCommit');
+  print('Current directory: ${path}');
 
-    final currentBranch = await gitDir.currentBranch();
-    final name = currentBranch.branchName;
-    print('BranchName: $name');
+  if (await GitDir.isGitDir(path)) {
+    final gitDir = await GitDir.fromExisting(path);
+    // final commitCount = await gitDir.commitCount();
+    // print('Git commit count: $commitCount');
 
-    final lista = await gitDir.branches();
-    lista.forEach((element) {
-      print(element.branchName);
-    });
+    // final latestCommit = await gitDir.currentBranch();
+    // print('Latest commit: $latestCommit');
 
-    final retorno = await gitDir.runCommand(['status']);
-    print(retorno.stdout);
+    // final currentBranch = await gitDir.currentBranch();
+    // final name = currentBranch.branchName;
+    // print('BranchName: $name');
+
+    // final lista = await gitDir.branches();
+    // lista.forEach((element) {
+    //   print(element.branchName);
+    // });
+
+    // final retorno = await gitDir.runCommand(['status']);
+    // print(retorno.stdout);
+
+
+    final retorno_ = await GitUtil.getFileChangeCommit(path,"7282bb4489060a01a03923f0636933f773dd45b6");
+
+    print(retorno_);
+
   } else {
     print('Not a Git directory');
   }
@@ -47,6 +56,15 @@ class GitUtil{
     final GitDir gitDir = await GitDir.fromExisting(path);
     final Map<String, Commit> mapa = await gitDir.commits();
     return mapa;
+  }
+
+
+  static Future<List<String>> getFileChangeCommit(String path, String commit) async {
+    final gitDir = await GitDir.fromExisting(path);
+    final retorno = await gitDir.runCommand(['show', '--name-only','--pretty=''', commit]);
+    String files = retorno.stdout.toString();
+    final lista = files.split('\n');
+    return lista;
   }
 
 }
