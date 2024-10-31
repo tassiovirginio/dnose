@@ -59,7 +59,6 @@ void main() => shelfRun(
     );
 
 Handler init() {
-
   DNose.contProcessProject = 0;
 
   Properties p = Properties.fromFile(filepath);
@@ -248,7 +247,6 @@ Handler init() {
     return Response.ok(valor.toString());
   });
 
-
   app.get('/get_branch', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
     String name = await GitUtil.getCurrentBranch(pathProject!);
@@ -260,6 +258,28 @@ Handler init() {
     int qtd = await GitUtil.getSizeCommits(pathProject!);
     return Response.ok(qtd.toString());
   });
+
+  app.get(
+      '/websocket',
+      () => WebSocketSession(
+            onOpen: (ws) => ws.send('Hello!'),
+            onMessage: (ws, data) => ws.send('You sent me: $data'),
+            onClose: (ws) => ws.send('Bye!'),
+          ));
+  
+  app.get(
+      '/timenow',
+      () => WebSocketSession(
+            onOpen: (ws) => ws.send('Iniciando...'),
+            onMessage: (ws, data){
+              for(int i = 0; i < 10; i++){
+                ws.send('contador: $i');
+                sleep(Duration(seconds: 1));
+              }
+              ws.send('You sent me: $data');
+            },
+            onClose: (ws) => ws.send('Bye!'),
+          ));
 
   return corsHeaders() >> app.call;
 }

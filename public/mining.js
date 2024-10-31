@@ -37,8 +37,61 @@ function loadProjectToMining(){
 }
 
 
+function websocketTest(){
+     // Cria um novo WebSocket
+     const socket = new WebSocket('ws://localhost:8080/websocket');
+
+     const socket2 = new WebSocket('ws://localhost:8080/timenow');
+
+     // Manipula o evento de abertura da conexão
+     socket.onopen = function(event) {
+         console.log('Conexão estabelecida!');
+         socket.send('Oi, servidor!'); // Envia mensagem ao servidor
+     };
+
+     socket2.onopen = function(event) {
+        console.log('Conexão estabelecida 2!');
+        socket.send('Oi, servidor!'); // Envia mensagem ao servidor
+    };
+
+     // Manipula o recebimento de mensagens do servidor
+     socket.onmessage = function(event) {
+         const messagesDiv = document.getElementById('messages');
+         messagesDiv.innerHTML += `<div>Mensagem do servidor: ${event.data}</div>`;
+         messagesDiv.scrollTop = messagesDiv.scrollHeight; // Rola para baixo
+     };
+
+     socket2.onmessage = function(event) {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML += `<div>Mensagem do servidor: ${event.data}</div>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Rola para baixo
+    };
+
+     // Manipula o fechamento da conexão
+     socket.onclose = function(event) {
+         console.log('Conexão fechada!');
+     };
+
+     socket2.onclose = function(event) {
+        console.log('Conexão fechada!');
+    };
+
+     // Envia uma mensagem ao clicar no botão
+     document.getElementById('sendButton').onclick = function() {
+         const input = document.getElementById('messageInput');
+         const message = input.value;
+         if (message) {
+             socket.send(message);
+             socket2.send(message);
+             input.value = ''; // Limpa o campo de entrada
+         }
+     };
+}
+
+
 window.onload = (event) => {
     console.log("Loading...");
     document.getElementById("loading").style.visibility = "hidden";
     loadSelectProjects();
+    websocketTest();
 };
