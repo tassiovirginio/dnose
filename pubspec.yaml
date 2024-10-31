@@ -23,7 +23,7 @@ dependencies:
   scidart: ^0.0.2-dev.12
   shelf_cors_headers: ^0.1.5
   shelf_plus: ^1.9.2
-  shelf_web_socket: ^2.0.0
+  shelf_web_socket: ^1.0.4
   sqlite3: ^2.4.5
   statistics: ^1.1.2
   yaml: ^3.1.2
