@@ -1,13 +1,19 @@
+import 'package:dnose/dnose.dart';
+import 'package:dnose/models/test_class.dart';
+import 'package:dnose/models/test_metric.dart';
+import 'package:dnose/models/test_smell.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main() async {
-  var path = "/home/tassio/Desenvolvimento/repo.git/dnose";
-
+  DNose dnose = DNose();
+  var path = "/home/tassio/Desenvolvimento/repo.git/flutter";
+  
   print('Current directory: ${path}');
 
   if (await GitDir.isGitDir(path)) {
     final gitDir = await GitDir.fromExisting(path);
+    final checkoutHEAD = await gitDir.runCommand(['checkout', "HEAD"]);
     // final commitCount = await gitDir.commitCount();
     // print('Git commit count: $commitCount');
 
@@ -44,8 +50,25 @@ Future<void> main() async {
         }
       }
 
-      if(listaArquivos.length > 0){
-        print("Indo para commit $commit e analisando arquivos: $listaArquivos");
+      if(listaArquivos.isNotEmpty){
+        // print("Indo para commit $commit e analisando arquivos: $listaArquivos");
+
+        final checkoutCommit = await gitDir.runCommand(['checkout', commit]);
+
+        for(final String file in listaArquivos){
+          // print("Analisando arquivo: $file");
+            try{
+            TestClass testClass = TestClass(commit: commit, path: "$path/$file", moduleAtual: "", projectName: "");
+            final (List<TestSmell>,List<TestMetric>) mapa = dnose.scan(testClass);
+            print("$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
+          }catch (e){
+            print("Erro ao analisar arquivo: $file");
+          }
+           
+          // for(final TestSmell ts in mapa.$1){
+          //   print("TestSmell: ${ts.name}");
+          // }
+        }
       }
       
       
