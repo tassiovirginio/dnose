@@ -29,7 +29,7 @@ void mining(String path) async {
     file.createSync();
     var sink = file.openWrite();
     sink.write(
-        "projectName;testName;path;testsmell;commit;author;message;md5TestSmell\n");
+        "projectName;testName;path;testsmell;commit;author;date;message;md5TestSmell\n");
 
     final gitDir = await GitDir.fromExisting(path);
     final checkoutHEAD = await gitDir.runCommand(['checkout', "HEAD"]);
@@ -126,13 +126,17 @@ void mining(String path) async {
 
               String msgFilter = c.message.replaceAll(";", "-").replaceAll("\n", " ").replaceAll("\r", " ");
 
+              String commitUserName = c.author.split("<").first;
+              String commitDate = c.author.split(">").last;
+
               sink.write(
                   "${testClass.projectName};"
                       "${ts.testName};"
-                      "$path;"
+                      "$path/$file;"
                       "${ts.name};"
                       "$commit;"
-                      "${c.author};"
+                      "$commitUserName;"
+                      "$commitDate;"
                       "$msgFilter;"
                       "$md5TestSmell"
                       "\n");
