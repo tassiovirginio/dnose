@@ -188,7 +188,8 @@ class GitUtil {
   static Future<Map<String, Commit>> getListCommits(String path) async {
     final GitDir gitDir = await GitDir.fromExisting(path);
     final Map<String, Commit> mapa = await gitDir.commits();
-    return mapa;
+    final reversedMap = Map.fromEntries(mapa.entries.toList().reversed);
+    return reversedMap;
   }
 
   static Future<List<String>> getFileChangeCommit(
