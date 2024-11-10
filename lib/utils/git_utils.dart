@@ -128,6 +128,7 @@ void mining(String path) async {
 
               String commitUserName = c.author.split("<").first;
               String commitDate = c.author.split(">").last;
+              String commitDateFormatted = Util.date(commitDate);
 
               sink.write(
                   "${testClass.projectName};"
@@ -136,7 +137,7 @@ void mining(String path) async {
                       "${ts.name};"
                       "$commit;"
                       "$commitUserName;"
-                      "$commitDate;"
+                      "$commitDateFormatted;"
                       "$msgFilter;"
                       "$md5TestSmell"
                       "\n");
