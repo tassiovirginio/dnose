@@ -8,7 +8,8 @@ import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 import 'package:git/git.dart';
-import 'package:path/path.dart' as p;
+import 'package:sqlite3/sqlite3.dart';
+import 'package:path/path.dart' as path;
 
 Future<void> main() async {
   var path = "/home/tassio/Desenvolvimento/repo.git/flutter";
@@ -23,16 +24,21 @@ void mining(String path) async {
   print('Current directory: ${path}');
 
   if (await GitDir.isGitDir(path)) {
+
+    final db = initializeDatabase();
+
+
     //criando o arquivo csv
-    var file = File('resultado_mining.csv');
-    if (file.existsSync()) file.deleteSync();
-    file.createSync();
-    var sink = file.openWrite();
-    sink.write(
-        "projectName;testName;path;testsmell;commit;author;date;message;md5TestSmell\n");
+    // var file = File('resultado_mining.csv');
+    // if (file.existsSync()) file.deleteSync();
+    // file.createSync();
+    // var sink = file.openWrite();
+    // sink.write(
+    //     "projectName;testName;path;testsmell;commit;author;date;message;md5TestSmell\n");
 
     final gitDir = await GitDir.fromExisting(path);
-    final checkoutHEAD = await gitDir.runCommand(['checkout', "HEAD"]);
+    final checkoutHEAD = await gitDir.runCommand(['checkout', "master"]);
+    final checkoutHEAD2 = await gitDir.runCommand(['checkout', "main"]);
     // final commitCount = await gitDir.commitCount();
     // print('Git commit count: $commitCount');
 
@@ -130,17 +136,41 @@ void mining(String path) async {
               String commitDate = c.author.split(">").last;
               String commitDateFormatted = Util.date(commitDate);
 
-              sink.write(
-                  "${testClass.projectName};"
-                      "${ts.testName};"
-                      "$path/$file;"
-                      "${ts.name};"
-                      "$commit;"
-                      "$commitUserName;"
-                      "$commitDateFormatted;"
-                      "$msgFilter;"
-                      "$md5TestSmell"
-                      "\n");
+              // sink.write(
+              //     "${testClass.projectName};"
+              //         "${ts.testName};"
+              //         "$path/$file;"
+              //         "${ts.name};"
+              //         "$commit;"
+              //         "$commitUserName;"
+              //         "$commitDateFormatted;"
+              //         "$msgFilter;"
+              //         "$md5TestSmell"
+              //         "\n");
+
+
+
+              // Exemplo de uso do método de verificação
+              final exists = checkIfMd5TestSmellExists(db, md5TestSmell);
+              if (exists) {
+                print('Registro com md5TestSmell já existe.');
+                updateDate(db, md5TestSmell, commitDateFormatted);
+              } else {
+                print('Registro com md5TestSmell não existe.');
+                // Insere dados na tabela TestSmells
+                insertTestSmell(
+                    db,
+                    projectName: testClass.projectName,
+                    testName: ts.testName,
+                    path: '$path/$file',
+                    testsmell: ts.name,
+                    commitHash: commit,
+                    author: commitUserName,
+                    date: commitDateFormatted,
+                    message: msgFilter,
+                    md5TestSmell: md5TestSmell
+                );
+              }
 
               // Verificar se já existe o TestSmell no banco de dados,
               // se existir, atualizar a data de UPDATE, se NÃO -> inserir no banco de dados.
@@ -165,10 +195,13 @@ void mining(String path) async {
       // print("========================================");
     }
 
-    sink.close();
+    // sink.close();
+
+    db.dispose();
   } else {
     print('Not a Git directory');
   }
+
 }
 
 class GitUtil {
@@ -227,4 +260,82 @@ void openCSV() {
   sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
 
   sink.close();
+}
+
+
+// Inicializa o banco de dados e cria a tabela se necessário
+Database initializeDatabase() {
+  final dbPath = path.join(Directory.current.path, 'mining.db');
+  final db = sqlite3.open(dbPath);
+
+  db.execute('''
+    CREATE TABLE IF NOT EXISTS TestSmells (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      projectName TEXT,
+      testName TEXT,
+      path TEXT,
+      testsmell TEXT,
+      commitHash TEXT,
+      author TEXT,
+      date TEXT,
+      date_update TEXT,
+      message TEXT,
+      md5TestSmell TEXT
+    )
+  ''');
+
+  return db;
+}
+
+// Método para inserir dados na tabela TestSmells
+void insertTestSmell(Database db, {
+  required String projectName,
+  required String testName,
+  required String path,
+  required String testsmell,
+  required String commitHash,
+  required String author,
+  required String date,
+  required String message,
+  required String md5TestSmell,
+}) {
+  db.execute('''
+    INSERT INTO TestSmells (
+      projectName, testName, path, testsmell, commitHash, author, date, message, md5TestSmell
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  ''', [
+    projectName,
+    testName,
+    path,
+    testsmell,
+    commitHash,
+    author,
+    date,
+    message,
+    md5TestSmell
+  ]);
+
+  print('Dados inseridos com sucesso!');
+}
+
+bool checkIfMd5TestSmellExists(Database db, String md5TestSmell) {
+  final result = db.select('''
+    SELECT COUNT(*) AS count
+    FROM TestSmells
+    WHERE md5TestSmell = ?
+  ''', [md5TestSmell]);
+
+  // Retorna true se encontrar um ou mais registros, caso contrário, false
+  return result.isNotEmpty && result.first['count'] > 0;
+}
+
+// Método para atualizar apenas a coluna 'date' de um registro com base no 'md5TestSmell'
+void updateDate(Database db, String md5TestSmell, String dateUpdate) {
+  final result = db.execute('''
+    UPDATE TestSmells
+    SET date_update = ?
+    WHERE md5TestSmell = ?
+  ''', [dateUpdate, md5TestSmell]);
+
+  print('Data atualizada com sucesso para o md5TestSmell $md5TestSmell.');
 }
