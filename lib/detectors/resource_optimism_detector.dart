@@ -2,6 +2,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/util.dart';
 
 class ResourceOptimismDetector implements AbstractDetector {
   @override
@@ -31,6 +32,7 @@ class ResourceOptimismDetector implements AbstractDetector {
             testClass: testClass,
             code: e.toSource(),
             codeTest: codeTest,
+            codeTestMD5: Util.MD5(codeTest!),
             startTest: startTest,
             endTest: endTest,
             start: testClass.lineNumber(e.offset),

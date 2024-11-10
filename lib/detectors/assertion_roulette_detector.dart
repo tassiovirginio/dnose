@@ -2,6 +2,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/util.dart';
 
 class AssertionRouletteDetector implements AbstractDetector {
   @override
@@ -35,6 +36,7 @@ class AssertionRouletteDetector implements AbstractDetector {
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end),
             codeTest: codeTest,
+            codeTestMD5: Util.MD5(codeTest!),
             startTest: startTest,
             endTest: endTest,
         ));

@@ -2,6 +2,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/util.dart';
 
 class MagicNumberDetector implements AbstractDetector {
   List<TestSmell> testSmells = List.empty(growable: true);
@@ -29,6 +30,7 @@ class MagicNumberDetector implements AbstractDetector {
           testClass: testClass,
           code: e.toSource(),
           codeTest: codeTest,
+          codeTestMD5: Util.MD5(codeTest!),
           startTest: startTest,
           endTest: endTest,
           start: testClass.lineNumber(e.offset),
@@ -40,6 +42,7 @@ class MagicNumberDetector implements AbstractDetector {
           testClass: testClass,
           code: e.toSource(),
           codeTest: codeTest,
+          codeTestMD5: Util.MD5(codeTest!),
           startTest: startTest,
           endTest: endTest,
           start: testClass.lineNumber(e.offset),

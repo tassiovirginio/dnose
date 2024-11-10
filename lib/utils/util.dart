@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 
 Future<void> main() async {
   // Caminho da pasta que você deseja ler
@@ -27,5 +30,10 @@ class Util {
     } catch (e) {
       return -1;
     }
+  }
+
+  static String MD5(String code) {
+    code = code.replaceAll("\n", "").replaceAll("\r", "").replaceAll(" ", "");
+    return md5.convert(utf8.encode(code)).toString();
   }
 }

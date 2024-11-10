@@ -3,6 +3,7 @@ import 'package:dnose/models/test_class.dart';
 class TestSmell {
   String name, testName, code;
   String? codeTest;
+  String? codeTestMD5;
   TestClass testClass;
   int start, end, startTest, endTest;
 
@@ -14,7 +15,9 @@ class TestSmell {
     required this.start,
     required this.end,
     required this.codeTest,
+    required this.codeTestMD5,
     required this.startTest,
     required this.endTest,
   });
+
 }

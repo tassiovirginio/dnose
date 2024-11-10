@@ -5,13 +5,18 @@ import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/util.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main() async {
+
+  Set<String> setTest = <String>{};
+
   DNose dnose = DNose();
   var path = "/home/tassio/Desenvolvimento/repo.git/flutter";
-  
+
+
   print('Current directory: ${path}');
 
   if (await GitDir.isGitDir(path)) {
@@ -63,10 +68,36 @@ Future<void> main() async {
             try{
             TestClass testClass = TestClass(commit: commit, path: "$path/$file", moduleAtual: "", projectName: "");
             final (List<TestSmell>,List<TestMetric>) mapa = dnose.scan(testClass);
-            mapa.$1.forEach((element) {
-              String? code = element.codeTest?.replaceAll("\n", "").replaceAll(" ", "");
-              String? code_md5 = md5.convert(utf8.encode(code!)).toString();
-              print("TestSmell: ${code_md5}");
+
+            final mapUtil = MapUtil();
+
+            mapa.$1.forEach((ts) {
+
+              String codeMD5 = Util.MD5(ts.code);
+              int qtd = mapUtil.add(ts.codeTestMD5!,codeMD5);
+
+              print("#####################################################################");
+              print("TestSmell: ${ts.name}");
+              print("TestSmell.codeTest: ${ts.codeTest}");
+              print("TestSmell.codeTestMD5: ${ts.codeTestMD5}");
+              print("TestSmell.code: ${ts.code}");
+              print("TestSmell.codeMD5: $codeMD5");
+              int indexOf = ts.codeTest!.indexOf(ts.code);
+              int lastIndexOf = ts.codeTest!.lastIndexOf(ts.code);
+              print("TestSmell.indexOf: $indexOf");
+              print("TestSmell.lastIndexOf: $lastIndexOf");
+              print("QTD: $qtd");
+              String md5TestSmell = Util.MD5(ts.codeTestMD5! + ts.code + indexOf.toString() + lastIndexOf.toString() + qtd.toString());
+              print("TestSmell.MD5TS: $md5TestSmell");
+
+              if(setTest.contains(md5TestSmell)) {
+                print("TestSmell já analisado");
+              }else{
+                setTest.add(md5TestSmell);
+                print("TestSmell não analisado");
+              }
+
+
             });
             print("$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
           }catch (e){
@@ -117,5 +148,22 @@ class GitUtil {
     String files = retorno.stdout.toString();
     final lista = files.split('\n');
     return lista;
+  }
+}
+
+class MapUtil{
+  static Map<String, int> map = <String, int>{};
+
+  int add(md5Code, md5CodeTest){
+
+    String key = md5Code + md5CodeTest;
+
+    if(map.containsKey(key)) {
+      map[key] = map[key]! + 1;
+    }else{
+      map[key] = 1;
+    }
+
+    return map[key]!;
   }
 }
