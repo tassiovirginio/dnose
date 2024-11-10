@@ -11,10 +11,10 @@ import 'package:path/path.dart' as p;
 
 Future<void> main() async {
   var path = "/home/tassio/Desenvolvimento/repo.git/flutter";
-  processar(path);
+  mining(path);
 }
 
-void processar(String path) async{
+void mining(String path) async{
   DNose dnose = DNose();
 
   Set<String> setTest = <String>{};
