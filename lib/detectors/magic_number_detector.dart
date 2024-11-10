@@ -29,24 +29,36 @@ class MagicNumberDetector implements AbstractDetector {
           testName: testName,
           testClass: testClass,
           code: e.toSource(),
+          codeMD5: Util.MD5(e.toSource()),
           codeTest: codeTest,
           codeTestMD5: Util.MD5(codeTest!),
           startTest: startTest,
           endTest: endTest,
           start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end)));
+          end: testClass.lineNumber(e.end),
+          collumnStart: testClass.columnNumber(e.offset),
+          collumnEnd: testClass.columnNumber(e.end),
+          offset: e.offset,
+          endOffset: e.end
+      ));
     }else if (e is SimpleStringLiteral && e.toSource().replaceAll("\"", "").contains(RegExp(r'^\d+$'))) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
           code: e.toSource(),
+          codeMD5: Util.MD5(e.toSource()),
           codeTest: codeTest,
           codeTestMD5: Util.MD5(codeTest!),
           startTest: startTest,
           endTest: endTest,
           start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end)));
+          end: testClass.lineNumber(e.end),
+          collumnStart: testClass.columnNumber(e.offset),
+          collumnEnd: testClass.columnNumber(e.end),
+          offset: e.offset,
+          endOffset: e.end
+      ));
     }
 
     e.childEntities

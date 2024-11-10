@@ -33,12 +33,17 @@ class AssertionRouletteDetector implements AbstractDetector {
             testName: testName,
             testClass: testClass,
             code: e.parent!.parent!.toSource(),
+            codeMD5: Util.MD5(e.parent!.parent!.toSource()),
             start: testClass.lineNumber(e.offset),
             end: testClass.lineNumber(e.end),
+            collumnStart: testClass.columnNumber(e.offset),
+            collumnEnd: testClass.columnNumber(e.end),
             codeTest: codeTest,
             codeTestMD5: Util.MD5(codeTest!),
             startTest: startTest,
             endTest: endTest,
+            offset: e.offset,
+            endOffset: e.end
         ));
     } else {
       e.childEntities

@@ -38,12 +38,18 @@ class VerboseTestDetector implements AbstractDetector {
             testName: testName,
             testClass: testClass,
             code: e.toSource(),
+            codeMD5: Util.MD5(e.toSource()),
             codeTest: codeTest,
             codeTestMD5: Util.MD5(codeTest!),
             startTest: startTest,
             endTest: endTest,
             start: testClass.lineNumber(e.parent!.offset),
-            end: testClass.lineNumber(e.parent!.end)));
+            end: testClass.lineNumber(e.parent!.end),
+            collumnStart: testClass.columnNumber(e.offset),
+            collumnEnd: testClass.columnNumber(e.end),
+            offset: e.offset,
+            endOffset: e.end
+        ));
       }
     } else {
       e.childEntities

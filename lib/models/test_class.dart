@@ -23,4 +23,5 @@ class TestClass {
   }
 
   int lineNumber(int offset) => ast.lineInfo.getLocation(offset).lineNumber;
+  int columnNumber(int offset) => ast.lineInfo.getLocation(offset).columnNumber;
 }
