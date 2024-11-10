@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
@@ -60,6 +63,11 @@ Future<void> main() async {
             try{
             TestClass testClass = TestClass(commit: commit, path: "$path/$file", moduleAtual: "", projectName: "");
             final (List<TestSmell>,List<TestMetric>) mapa = dnose.scan(testClass);
+            mapa.$1.forEach((element) {
+              String? code = element.codeTest?.replaceAll("\n", "").replaceAll(" ", "");
+              String? code_md5 = md5.convert(utf8.encode(code!)).toString();
+              print("TestSmell: ${code_md5}");
+            });
             print("$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
           }catch (e){
             print("Erro ao analisar arquivo: $file");
