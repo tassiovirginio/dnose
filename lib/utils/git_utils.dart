@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:dnose/dnose.dart';
@@ -14,7 +15,7 @@ Future<void> main() async {
   mining(path);
 }
 
-void mining(String path) async{
+void mining(String path) async {
   DNose dnose = DNose();
 
   Set<String> setTest = <String>{};
@@ -22,6 +23,14 @@ void mining(String path) async{
   print('Current directory: ${path}');
 
   if (await GitDir.isGitDir(path)) {
+    //criando o arquivo csv
+    var file = File('resultado_mining.csv');
+    if (file.existsSync()) file.deleteSync();
+    file.createSync();
+    var sink = file.openWrite();
+    sink.write(
+        "projectName;testName;path;testsmell;commit;author;message;md5TestSmell\n");
+
     final gitDir = await GitDir.fromExisting(path);
     final checkoutHEAD = await gitDir.runCommand(['checkout', "HEAD"]);
     // final commitCount = await gitDir.commitCount();
@@ -72,7 +81,7 @@ void mining(String path) async{
                 commit: commit,
                 path: "$path/$file",
                 moduleAtual: "",
-                projectName: "");
+                projectName: path.split("/").last);
             final (List<TestSmell>, List<TestMetric>) mapa =
                 dnose.scan(testClass);
 
@@ -113,11 +122,28 @@ void mining(String path) async{
                 setTest.add(md5TestSmell);
                 print("TestSmell não analisado");
               }
+
+
+              String msgFilter = c.message.replaceAll(";", "-").replaceAll("\n", " ").replaceAll("\r", " ");
+
+              sink.write(
+                  "${testClass.projectName};"
+                      "${ts.testName};"
+                      "$path;"
+                      "${ts.name};"
+                      "$commit;"
+                      "${c.author};"
+                      "$msgFilter;"
+                      "$md5TestSmell"
+                      "\n");
+
+              // Verificar se já existe o TestSmell no banco de dados,
+              // se existir, atualizar a data de UPDATE, se NÃO -> inserir no banco de dados.
+              //INSERIR NO BANCO DE DADOS AQUI
+
+
             });
 
-            // Verificar se já existe o TestSmell no banco de dados,
-            // se existir, atualizar a data de UPDATE, se NÃO -> inserir no banco de dados.
-            //INSERIR NO BANCO DE DADOS AQUI
 
             print(
                 "$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
@@ -133,6 +159,8 @@ void mining(String path) async{
 
       // print("========================================");
     }
+
+    sink.close();
   } else {
     print('Not a Git directory');
   }
@@ -183,4 +211,14 @@ class MapUtil {
 
     return map[key]!;
   }
+}
+
+void openCSV() {
+  var file = File('resultado_mining.csv');
+  if (file.existsSync()) file.deleteSync();
+  file.createSync();
+  var sink = file.openWrite();
+  sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
+
+  sink.close();
 }
