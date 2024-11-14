@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
+import 'package:dnose/main.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -15,86 +16,85 @@ Future<void> main() async {
 }
 
 void mining(String path) async {
-  DNose dnose = DNose();
+  final DNose dnose = DNose();
 
   Set<String> setTest = <String>{};
 
-  print('Current directory: ${path}');
+  print('Current directory: $path');
 
   if (await GitDir.isGitDir(path)) {
 
     final db = initializeDatabase();
 
-
-    //criando o arquivo csv
-    // var file = File('resultado_mining.csv');
-    // if (file.existsSync()) file.deleteSync();
-    // file.createSync();
-    // var sink = file.openWrite();
-    // sink.write(
-    //     "projectName;testName;path;testsmell;commit;author;date;message;md5TestSmell\n");
-
     final gitDir = await GitDir.fromExisting(path);
-    await gitDir.runCommand(['checkout', "master"]);
-    await gitDir.runCommand(['checkout', "main"]);
-    // final commitCount = await gitDir.commitCount();
-    // print('Git commit count: $commitCount');
 
-    // final latestCommit = await gitDir.currentBranch();
-    // print('Latest commit: $latestCommit');
+    // Vai para a branch master ou main
+    try {
+      await gitDir.runCommand(['checkout', "master"]);
+    } catch (e) {
+      print("Erro ao tentar mudar para a branch master");
+    }
+    try {
+      await gitDir.runCommand(['checkout', "main"]);
+    } catch (e) {
+      print("Erro ao tentar mudar para a branch main");
+    }
 
-    // final currentBranch = await gitDir.currentBranch();
-    // final name = currentBranch.branchName;
-    // print('BranchName: $name');
-
-    // final lista = await gitDir.branches();
-    // lista.forEach((element) {
-    //   print(element.branchName);
-    // });
-
-    // final retorno = await gitDir.runCommand(['status']);
-    // print(retorno.stdout);
+    //Carrega a lista de commits
     final lista = await GitUtil.getListCommits(path);
 
     for (final c in lista.values) {
+      // pega o código HASH do commit
       final String commit =
           c.content.split(" ")[1].replaceAll("tree", "").trim();
-      // print("#######################################");
-      // print("${c.author}, ${c.message} , ${commit}");
 
+      // pega a lista de arquivos que foram modificados no commit
       final List<String> retorno_ =
           await GitUtil.getFileChangeCommit(path, commit);
 
+      //cria uma lista vazia
       final List<String> listaArquivos = [];
 
+      // adiciona na lista de arquivos apenas os arquivos que são de teste
       for (final String file in retorno_) {
         if (file.contains('_test.dart')) {
           listaArquivos.add(file);
         }
       }
 
+      //verifica se a lista esta vazia
       if (listaArquivos.isNotEmpty) {
-        // print("Indo para commit $commit e analisando arquivos: $listaArquivos");
 
+        // muda para o commit - checkout commit
         await gitDir.runCommand(['checkout', commit]);
 
+        // inicia a navegação de arquivo por arquivo
         for (final String file in listaArquivos) {
-          // print("Analisando arquivo: $file");
           try {
+            // cria uma testclass
             TestClass testClass = TestClass(
                 commit: commit,
                 path: "$path/$file",
                 moduleAtual: "",
                 projectName: path.split("/").last);
+
+            // cria um MAP com a lista de testsmells encontrados e as métricas
             final (List<TestSmell>, List<TestMetric>) mapa =
                 dnose.scan(testClass);
 
+            // Map utilizado para controlar as ocorrencias 'duplicadas'
             final mapUtil = MapUtil();
 
-            mapa.$1.forEach((ts) {
+            //pega a lista de testsmells
+            List<TestSmell> testSmells = mapa.$1;
+
+            // intera sobre a lista de testsmells
+            for (var ts in testSmells) {
               String codeMD5 = Util.MD5(ts.code);
               int qtd = mapUtil.add(ts.codeTestMD5!, codeMD5);
 
+
+              //dados que podem ser utilizados para gerar o identificados único
               print(
                   "#####################################################################");
               print("TestSmell: ${ts.name}");
@@ -113,20 +113,15 @@ void mining(String path) async {
               print("TestSmell.collumnStart: ${ts.collumnStart}");
               print("TestSmell.collumnEnd: ${ts.collumnEnd}");
               print("QTD: $qtd");
-              String md5TestSmell = Util.MD5(ts.codeTestMD5! +
-                  ts.code +
-                  indexOf.toString() +
-                  lastIndexOf.toString() +
-                  qtd.toString());
+
+
+              // gera o identificador UNICO para o testsmell
+              String md5TestSmell = Util.MD5(
+                  ts.codeTestMD5! +
+                  ts.codeMD5 + ts.collumnStart.toString()
+              );
+
               print("TestSmell.MD5TS: $md5TestSmell");
-
-              if (setTest.contains(md5TestSmell)) {
-                print("TestSmell já analisado");
-              } else {
-                setTest.add(md5TestSmell);
-                print("TestSmell não analisado");
-              }
-
 
               String msgFilter = c.message.replaceAll(";", "-").replaceAll("\n", " ").replaceAll("\r", " ");
 
@@ -134,27 +129,18 @@ void mining(String path) async {
               String commitDate = c.author.split(">").last;
               String commitDateFormatted = Util.date(commitDate);
 
-              // sink.write(
-              //     "${testClass.projectName};"
-              //         "${ts.testName};"
-              //         "$path/$file;"
-              //         "${ts.name};"
-              //         "$commit;"
-              //         "$commitUserName;"
-              //         "$commitDateFormatted;"
-              //         "$msgFilter;"
-              //         "$md5TestSmell"
-              //         "\n");
-
-
-
-              // Exemplo de uso do método de verificação
+              // verifica se o testsmell já foi cadastrado no banco de dados
               final exists = checkIfMd5TestSmellExists(db, md5TestSmell);
+
+              // se existir, atualiza a data de UPDATE, se NÃO -> insere no banco de dados
               if (exists) {
                 print('Registro com md5TestSmell já existe.');
+
+                //atualiza o testsmell
                 updateDate(db, md5TestSmell, commitDateFormatted);
               } else {
                 print('Registro com md5TestSmell não existe.');
+
                 // Insere dados na tabela TestSmells
                 insertTestSmell(
                     db,
@@ -169,14 +155,7 @@ void mining(String path) async {
                     md5TestSmell: md5TestSmell
                 );
               }
-
-              // Verificar se já existe o TestSmell no banco de dados,
-              // se existir, atualizar a data de UPDATE, se NÃO -> inserir no banco de dados.
-              //INSERIR NO BANCO DE DADOS AQUI
-
-
-            });
-
+            }
 
             print(
                 "$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
@@ -184,9 +163,6 @@ void mining(String path) async {
             print("Erro ao analisar arquivo: $file");
           }
 
-          // for(final TestSmell ts in mapa.$1){
-          //   print("TestSmell: ${ts.name}");
-          // }
         }
       }
 
@@ -216,6 +192,7 @@ class GitUtil {
     return commitCount;
   }
 
+  /// Retorna a lista de commits dos mais antigos para os mais novos
   static Future<Map<String, Commit>> getListCommits(String path) async {
     final GitDir gitDir = await GitDir.fromExisting(path);
     final Map<String, Commit> mapa = await gitDir.commits();
