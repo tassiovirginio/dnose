@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dnose/main.dart';
 import 'package:intl/intl.dart';
 
 import 'package:crypto/crypto.dart';

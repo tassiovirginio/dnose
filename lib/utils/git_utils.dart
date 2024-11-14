@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:crypto/crypto.dart';
 import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
@@ -37,8 +35,8 @@ void mining(String path) async {
     //     "projectName;testName;path;testsmell;commit;author;date;message;md5TestSmell\n");
 
     final gitDir = await GitDir.fromExisting(path);
-    final checkoutHEAD = await gitDir.runCommand(['checkout', "master"]);
-    final checkoutHEAD2 = await gitDir.runCommand(['checkout', "main"]);
+    await gitDir.runCommand(['checkout', "master"]);
+    await gitDir.runCommand(['checkout', "main"]);
     // final commitCount = await gitDir.commitCount();
     // print('Git commit count: $commitCount');
 
@@ -78,7 +76,7 @@ void mining(String path) async {
       if (listaArquivos.isNotEmpty) {
         // print("Indo para commit $commit e analisando arquivos: $listaArquivos");
 
-        final checkoutCommit = await gitDir.runCommand(['checkout', commit]);
+        await gitDir.runCommand(['checkout', commit]);
 
         for (final String file in listaArquivos) {
           // print("Analisando arquivo: $file");
@@ -331,7 +329,7 @@ bool checkIfMd5TestSmellExists(Database db, String md5TestSmell) {
 
 // Método para atualizar apenas a coluna 'date' de um registro com base no 'md5TestSmell'
 void updateDate(Database db, String md5TestSmell, String dateUpdate) {
-  final result = db.execute('''
+  db.execute('''
     UPDATE TestSmells
     SET date_update = ?
     WHERE md5TestSmell = ?
