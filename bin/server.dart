@@ -222,6 +222,20 @@ Handler init() {
     return Response.ok("Clonagem concluída");
   });
 
+  app.get('/clonar_lote', (Request request) async {
+    String? urls = request.url.queryParameters['urls'];
+    var lista = urls!.split("|");
+
+    for(var url in lista){
+      var projectName = url!.split("/").last.replaceAll(".git", "");
+      String caminhoCompleto = "$folderHome/$projectName";
+      await git.gitClone(repo: url, directory: caminhoCompleto);
+      print(projectName);
+    }
+    
+    return Response.ok("Clonagem concluída");
+  });
+
   app.get('/delete', (Request request) async {
     String? path = request.url.queryParameters['path'];
     await Directory(path!).delete(recursive: true);

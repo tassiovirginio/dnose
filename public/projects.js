@@ -51,6 +51,30 @@ function clone(){
     req.send();
 }
 
+function clone_lote(){
+    var urls = document.getElementById("urls").value;
+
+    console.log(urls);
+
+    if(urls == null || urls == ""){
+        alert("URLS is empty");
+        return;
+    }
+
+    urls = urls.replace(/\n/g, '|');
+
+    console.log(urls);
+
+    document.getElementById("loading").style.visibility = "visible";
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        loadProjectList();
+        document.getElementById("loading").style.visibility = "hidden";
+    };
+    req.open("GET", "/clonar_lote?urls=" + urls, true);
+    req.send();
+}
+
 function del(path){
     const req = new XMLHttpRequest();
     req.onload = (e) => {
