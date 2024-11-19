@@ -18,10 +18,13 @@ import 'package:git/git.dart';
 
 import 'package:sqlite3/src/ffi/implementation.dart';
 
-
 // final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
 final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
+final userFolder = (Platform.isMacOS || Platform.isLinux)
+    ? Platform.environment['HOME']!
+    : Platform.environment['UserProfile']!;
+final folderHome = "$userFolder/dnose_projects";
 
 final Logger _logger = Logger('Main');
 
@@ -39,31 +42,33 @@ Future<void> main(List<String> args) async {
   // cloandoProjetos2();
 
   // verificandoProjetosComAPasta();
-
 }
 
-void verificandoProjetosComAPasta(){
-  var file = File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
+void verificandoProjetosComAPasta() {
+  var file =
+      File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
   var lista = file.readAsLinesSync();
   var localPath = "/home/tassio/dnose_projects/";
 
-  var lista2 = lista.map((e) => e.split(",")[2].toString().split("/").last.toString()).toList();
+  var lista2 = lista
+      .map((e) => e.split(",")[2].toString().split("/").last.toString())
+      .toList();
 
   var listaDir = Directory(localPath).listSync();
-  for(var dir in listaDir){
+  for (var dir in listaDir) {
     var name = dir.path.split("/").last;
 
-    if(lista2.contains(name)){
+    if (lista2.contains(name)) {
       // print("Tem -> ${name}");
-    }else{
+    } else {
       print(name);
     }
   }
 }
 
-
-void cloandoProjetos() async{
-  var file = File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
+void cloandoProjetos() async {
+  var file =
+      File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
   var lista = file.readAsLinesSync();
 
   var localPath = "/home/tassio/dnose_projects/";
@@ -72,54 +77,49 @@ void cloandoProjetos() async{
 
   var set = <String>{};
 
-  for(var linha in lista){
+  for (var linha in lista) {
     var name = linha.split(",")[2].split("/").last;
     var size = linha.split("/").length;
     var url = linha.split(",")[2];
 
-    if(size == 5) {
-      if(!set.contains(url)) {
+    if (size == 5) {
+      if (!set.contains(url)) {
         set.add(url);
         // print("${cont++} - ${name} - ${size}  - ${url}");
-        if(Directory(localPath + name).existsSync()){
+        if (Directory(localPath + name).existsSync()) {
           // print("${cont++},${name},${size},${url}");
 
           var listaArquivos = getFilesFromDirRecursive(localPath + name);
           int contDart = 0;
           int contTestDart = 0;
-          for(FileSystemEntity file in listaArquivos){
-            if(file.path.contains(".dart")){
+          for (FileSystemEntity file in listaArquivos) {
+            if (file.path.contains(".dart")) {
               contDart = contDart + 1;
             }
-            if(file.path.contains("_test.dart")){
+            if (file.path.contains("_test.dart")) {
               contTestDart = contTestDart + 1;
             }
           }
           // if(contTestDart > 0)
-          print("$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
-
-
-        }else{
+          print(
+              "$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
+        } else {
           // print("${cont++},${name},${size},${url}");
           // await git.gitClone(repo: url, directory: localPath + name);
         }
       }
-    }else{
+    } else {
       // print("${name}, ${size}, ${url}, ${getURLBaseGithubProject(url)}");
     }
-
   }
 }
-
 
 void cloandoProjetos2() async {
   var localPath = "/home/tassio/dnose_projects/";
 
-
   var listaPastas = Directory(localPath).listSync();
 
-  for( var pasta in listaPastas){
-
+  for (var pasta in listaPastas) {
     String nome = pasta.path.split("/").last;
 
     var listaArquivos = getFilesFromDirRecursive(pasta.path);
@@ -134,19 +134,27 @@ void cloandoProjetos2() async {
       }
     }
     // if(contTestDart > 0)
-    print(
-        "$nome,$contDart,$contTestDart");
+    print("$nome,$contDart,$contTestDart");
   }
-
 }
 
-String getURLBaseGithubProject(String url){
+String getURLBaseGithubProject(String url) {
   var urlList = url.split("/");
   String urlFinal = "";
 
-  if(urlList.length > 4){
-    var urlFinal = urlList.sublist(0,5).map((e) => "$e/",).toString();
-    urlFinal = urlFinal.toString().replaceAll(",", "").replaceAll(" ", "").replaceAll("(", "").replaceAll(")", "");
+  if (urlList.length > 4) {
+    var urlFinal = urlList
+        .sublist(0, 5)
+        .map(
+          (e) => "$e/",
+        )
+        .toString();
+    urlFinal = urlFinal
+        .toString()
+        .replaceAll(",", "")
+        .replaceAll(" ", "")
+        .replaceAll("(", "")
+        .replaceAll(")", "");
   }
 
   return urlFinal;
@@ -159,7 +167,7 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
   for (var entity in entities) {
     if (entity is File) {
       result.add(entity);
-    } else if (entity is Directory){
+    } else if (entity is Directory) {
       result.addAll(getFilesFromDirRecursive(entity.path));
     }
   }
@@ -167,15 +175,14 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
 }
 
 Future<String> processar(String pathProjects) async {
-
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
 
   var lista = pathProjects.split(";");
 
   for (final project in lista) {
-    if(project.trim().isNotEmpty){
-      var (listaTotal2,listaTotalMetrics2) = await _processar(project);
+    if (project.trim().isNotEmpty) {
+      var (listaTotal2, listaTotalMetrics2) = await _processar(project);
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
     }
@@ -195,7 +202,37 @@ Future<String> processar(String pathProjects) async {
   return "OK";
 }
 
-Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async {
+Future<String> processarAll() async {
+  List<TestSmell> listaTotal = List.empty(growable: true);
+  List<TestMetric> listaTotalMetrics = List.empty(growable: true);
+
+  final directory = Directory(folderHome);
+
+  final directories =
+      directory.listSync().where((entity) => entity is Directory);
+
+  for (final folder in directories) {
+    var (listaTotal2, listaTotalMetrics2) = await _processar(folder.path);
+    listaTotal.addAll(listaTotal2);
+    listaTotalMetrics.addAll(listaTotalMetrics2);
+  }
+
+  createCSV(listaTotal).then((value) {
+    _logger.info("CSV criado com sucesso.");
+    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
+  });
+
+  createMatricsCSV(listaTotalMetrics).then((value) {
+    _logger.info("CSV criado com sucesso.");
+  });
+
+  _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
+
+  return "OK";
+}
+
+Future<(List<TestSmell>, List<TestMetric>)> _processar(
+    String pathProject) async {
   Logger.root.level = Level.INFO; // defaults to Level.INFO
   // Logger.root.onRecord.listen((record) {
   //   print('${record.level.name}: ${record.time}: ${record.message}');
@@ -230,9 +267,14 @@ Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async 
       File file2 = File("$diretorioAtual/pubspec.yaml");
 
       if (file2.existsSync()) {
-        String yamlString = file2.readAsStringSync();
-        Map yaml = loadYaml(yamlString);
-        moduleAtual = yaml['name'];
+        String yamlString = "";
+        try {
+          yamlString = file2.readAsStringSync();
+          Map yaml = loadYaml(yamlString);
+          moduleAtual = yaml['name'];
+        } catch (e) {
+          moduleAtual = "";
+        }
       }
     }
 
@@ -242,11 +284,11 @@ Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async 
       DNose.contProcessProject++;
       try {
         TestClass testClass = TestClass(
-          commit: commitAtual,
+            commit: commitAtual,
             path: file.path,
             moduleAtual: moduleAtual,
             projectName: projectName);
-        var (testSmells,testMetrics) = dnose.scan(testClass);
+        var (testSmells, testMetrics) = dnose.scan(testClass);
         listaTotal.addAll(testSmells);
         listaTotalMetrics.addAll(testMetrics);
       } catch (e) {
@@ -262,7 +304,7 @@ Future<(List<TestSmell>,List<TestMetric>)> _processar(String pathProject) async 
   //
   // _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
-  return (listaTotal,listaTotalMetrics);
+  return (listaTotal, listaTotalMetrics);
 }
 
 int qtd(String texto, String palavra) {
@@ -282,14 +324,13 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   if (file4.existsSync()) file4.deleteSync();
   file4.createSync();
   var sink4 = file4.openWrite();
-  sink4.write("project_name;test_name;module;path;testsmell;start;end;commit;qtdLine;qtdLineTeste;"
+  sink4.write(
+      "project_name;test_name;module;path;testsmell;start;end;commit;qtdLine;qtdLineTeste;"
       "for;while;if;sleep;expect;catch;throw;try;number;print;file;"
       "forT;whileT;ifT;sleepT;expectT;catchT;throwT;tryT;printT;fileT"
       "\n");
 
-
   for (TestSmell ts in listaTotal) {
-
     String codeLine = ts.code.trim().replaceAll(" ", "");
     var containsFor = codeLine.contains('for(') ? 1 : 0;
     var containsWhile = codeLine.contains('while(') ? 1 : 0;
@@ -305,7 +346,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
 
     String codeLineTest = ts.codeTest!;
     var containsForTeste = qtd(codeLineTest, 'for');
-    var containsWhileTeste =  qtd(codeLineTest, 'while');
+    var containsWhileTeste = qtd(codeLineTest, 'while');
     var containsIfTeste = qtd(codeLineTest, 'if');
     var containsSleepTeste = qtd(codeLineTest, 'sleep');
     var containsExpectTeste = qtd(codeLineTest, 'expect');
@@ -318,17 +359,15 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     int qtdLine = ts.end - ts.start + 1;
     int qtdLineTeste = ts.endTest - ts.startTest + 1;
 
-    sink4.write(
-        "${ts.testClass.projectName}"
-            ";${ts.testName.replaceAll(";", ",")}"
-            ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
-            ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
-            "$containsFor;$containsWhile;$containsIf;$containsSleep;"
-            "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
-            "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
-            "$containsExpectTeste;$containsCatchTeste;$containsThrowTeste;$containsTryTeste;$containsPrintTeste;$containsFileTeste"
-            "\n");
-
+    sink4.write("${ts.testClass.projectName}"
+        ";${ts.testName.replaceAll(";", ",")}"
+        ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
+        ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
+        "$containsFor;$containsWhile;$containsIf;$containsSleep;"
+        "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
+        "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
+        "$containsExpectTeste;$containsCatchTeste;$containsThrowTeste;$containsTryTeste;$containsPrintTeste;$containsFileTeste"
+        "\n");
 
     sink.write(
         "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
@@ -360,20 +399,19 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
 }
 
 Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
-
   var file = File('resultado_metrics.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
 
   var sink = file.openWrite();
-  sink.write("project_name;test_name;module;path;metric;start;end;value;commit\n");
+  sink.write(
+      "project_name;test_name;module;path;metric;start;end;value;commit\n");
   for (var m in listaTotal) {
     sink.write(
         "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n");
     _logger.info(
         "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}");
     _logger.info("Code: ${m.code}");
-
   }
   sink.close();
 
@@ -397,8 +435,7 @@ Future<bool> createSqlite() async {
 }
 
 List<String> getQtdTestSmellsByType() {
-
-   final sqlite3_ = FfiSqlite3(libsqlite3);
+  final sqlite3_ = FfiSqlite3(libsqlite3);
   // final db = sqlite3.open('resultado.sqlite');
   final db = sqlite3_.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
@@ -407,16 +444,16 @@ List<String> getQtdTestSmellsByType() {
 }
 
 List<String> getProjects() {
-  if(File("resultado.sqlite").existsSync()){
+  if (File("resultado.sqlite").existsSync()) {
     final sqlite3_ = FfiSqlite3(libsqlite3);
-  // final db = sqlite3.open('resultado.sqlite');
-  final db = sqlite3_.open('resultado.sqlite');
     // final db = sqlite3.open('resultado.sqlite');
-    
-    final ResultSet resultSet = db.select(
-        'select distinct project_name from testsmells;');
+    final db = sqlite3_.open('resultado.sqlite');
+    // final db = sqlite3.open('resultado.sqlite');
+
+    final ResultSet resultSet =
+        db.select('select distinct project_name from testsmells;');
     return resultSet.toList().map((e) => e.toString()).toList();
-  }else{
+  } else {
     return [];
   }
 }
@@ -477,11 +514,10 @@ String getStatists() {
 
 String generateMd5(String input) => md5.convert(utf8.encode(input)).toString();
 
-
 Future<String> getCommit(String path) async {
   if (await GitDir.isGitDir(path)) {
     final gitDir = await GitDir.fromExisting(path);
-      var branch = await gitDir.currentBranch();
+    var branch = await gitDir.currentBranch();
     return branch.sha;
   }
   return "";

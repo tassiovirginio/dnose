@@ -133,6 +133,43 @@ function process() {
     req.send();
 }
 
+
+
+function process_all() {
+    console.log("Processar todos....");
+
+    document.getElementById("resultado").style.visibility = "hidden";
+    document.getElementById("resultado2").style.visibility = "hidden";
+    document.getElementById("resultado3").style.visibility = "hidden";
+    document.getElementById("resultado4").style.visibility = "hidden";
+    document.getElementById("resultado_db").style.visibility = "hidden";
+    document.getElementById("loading").style.visibility = "visible";
+
+    const path = document.getElementById("select_project");
+
+    const req = new XMLHttpRequest();
+
+    req.onload = (e) => {
+        const resultado = document.getElementById("resultado");
+        document.getElementById("resultado").style.visibility = "visible";
+        document.getElementById("resultado2").style.visibility = "visible";
+        document.getElementById("resultado3").style.visibility = "visible";
+        document.getElementById("resultado4").style.visibility = "visible";
+        document.getElementById("resultado_db").style.visibility = "visible";
+        document.getElementById("loading").style.visibility = "hidden";
+
+        document.getElementById("projectname").innerHTML = "ALL";
+        
+        sleep(10000).then(r => {
+            generatedb();
+            loadStatistics();
+        });
+    };
+
+    req.open("GET", "/processar_all", true);
+    req.send();
+}
+
 function getSelectValues(select) {
     var result = [];
     var options = select && select.options;

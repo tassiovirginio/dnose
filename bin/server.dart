@@ -214,6 +214,11 @@ Handler init() {
     return Response.ok("Processamento concluído");
   });
 
+  app.get('/processar_all', (Request request) async {
+    await processarAll();
+    return Response.ok("Processamento concluído");
+  });
+
   app.get('/clonar', (Request request) async {
     String? url = request.url.queryParameters['url'];
     var projectName = url!.split("/").last.replaceAll(".git", "");
