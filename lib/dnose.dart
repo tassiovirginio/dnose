@@ -10,6 +10,7 @@ import 'package:dnose/detectors/ignored_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
 import 'package:dnose/detectors/resource_optimism_detector.dart';
+import 'package:dnose/detectors/sensitive_equality_detector.dart';
 import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
@@ -87,7 +88,8 @@ class DNose {
       EmptyTestDetector(),
       UnknownTestDetector(),
       ExceptionHandlingDetector(),
-      IgnoredTestDetector()
+      IgnoredTestDetector(),
+      SensitiveEqualityDetector()
     ];
 
     for (var d in detectors) {

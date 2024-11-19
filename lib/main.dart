@@ -233,7 +233,7 @@ Future<String> processarAll() async {
 
 Future<(List<TestSmell>, List<TestMetric>)> _processar(
     String pathProject) async {
-  Logger.root.level = Level.INFO; // defaults to Level.INFO
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
   // Logger.root.onRecord.listen((record) {
   //   print('${record.level.name}: ${record.time}: ${record.message}');
   // });
@@ -360,7 +360,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     int qtdLineTeste = ts.endTest - ts.startTest + 1;
 
     sink4.write("${ts.testClass.projectName}"
-        ";${ts.testName.replaceAll(";", ",")}"
+        ";${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")}"
         ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
         ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
         "$containsFor;$containsWhile;$containsIf;$containsSleep;"
@@ -370,9 +370,9 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
         "\n");
 
     sink.write(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
     _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
@@ -408,9 +408,9 @@ Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
       "project_name;test_name;module;path;metric;start;end;value;commit\n");
   for (var m in listaTotal) {
     sink.write(
-        "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n");
+        "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n");
     _logger.info(
-        "${m.testClass.projectName};${m.testName.replaceAll(";", ",")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}");
+        "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}");
     _logger.info("Code: ${m.code}");
   }
   sink.close();

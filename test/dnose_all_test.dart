@@ -105,4 +105,12 @@ void main() {
         qtd: 1,
         pathFile: "/test/samples/verbose_test.dart");
   });
+
+
+  test("Detect: Sensitive Equality", () {
+    verify(
+        name: "Sensitive Equality",
+        qtd: 2,
+        pathFile: "/test/samples/sensitive_equality_test.dart");
+  });
 }
