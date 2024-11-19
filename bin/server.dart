@@ -232,7 +232,7 @@ Handler init() {
     var lista = urls!.split("|");
 
     for(var url in lista){
-      var projectName = url!.split("/").last.replaceAll(".git", "");
+      var projectName = url.split("/").last.replaceAll(".git", "");
       String caminhoCompleto = "$folderHome/$projectName";
       await git.gitClone(repo: url, directory: caminhoCompleto);
       print(projectName);

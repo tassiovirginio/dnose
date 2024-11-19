@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dnose/dnose.dart';
-import 'package:dnose/main.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -18,7 +17,7 @@ Future<void> main() async {
 void mining(String path) async {
   final DNose dnose = DNose();
 
-  Set<String> setTest = <String>{};
+  // Set<String> setTest = <String>{};
 
   print('Current directory: $path');
 
