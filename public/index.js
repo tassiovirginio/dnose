@@ -190,6 +190,9 @@ function getSelectValues(select) {
 }
 
 function loadStatistics() {
+
+    var contador = 0;
+
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         var table = document.createElement("table");
@@ -208,12 +211,38 @@ function loadStatistics() {
                     td = document.createElement("td");
                 }
                 td.innerHTML = line[j];
-                if(j === 7) td.style.color = "blue";
+                if(j === 7) {
+                    td.style.color = "blue";
+                    if(i != 0){
+                        contador = contador + parseInt(line[j], 10);
+                    }
+                }
                 tr.appendChild(td);
             }
             linha1 = 1;
             table.appendChild(tr);
         }
+
+
+        td = document.createElement("td");
+        td.innerHTML = contador;
+        td.style.color = "blue";
+
+        td2 = document.createElement("td");
+        td2.innerHTML = "TOTAL";
+
+        let tr = document.createElement("tr");
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(td2);
+        tr.appendChild(td);
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        table.appendChild(tr);
 
         document.getElementById("qtdbytestsmellbytype").appendChild(table);
     };
