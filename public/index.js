@@ -1,7 +1,9 @@
 function loadProjectName() {
     const req3 = new XMLHttpRequest();
     req3.onload = (e) => {
-        document.getElementById("projectname").innerHTML = req3.response;
+        var lista = req3.response;
+        document.getElementById("projectname").innerHTML = lista;
+        document.getElementById("project_qts").innerHTML = lista.split(",").length;
     };
     req3.open("GET", "/projectnameatual", true);
     req3.send();
@@ -97,7 +99,7 @@ function loadSelectProjects() {
 }
 
 function process() {
-    document.getElementById("resultado").style.visibility = "hidden";
+    document.getElementById("resultado").style.visibility = "hidden";project_qts
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("resultado3").style.visibility = "hidden";
     document.getElementById("resultado4").style.visibility = "hidden";
