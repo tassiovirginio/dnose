@@ -64,7 +64,9 @@
         <article class="panel is-link block">
             <p class="panel-heading">Analyze Project</p>
             <div class="panel-block">
-                <label class="label">Path Project(s):</label>
+                <label class="label">Path Project(s):
+                    <label id="lista_project_qtd"></label>
+                </label>
                 <div class="select is-multiple" style="width: 100%; height: 100px;">
                     <select size="3" multiple class="input is-link" id="select_project"></select>
                 </div>
@@ -81,8 +83,10 @@
                 </div>
             </div>
             <div class="panel-block">
-                <label class="label">Project(s):</label>
-                <label id="project_qts" class="label">(1234)</label>
+                <label class="label">
+                    Project(s):
+                    <label id="project_qts" class="label"></label>
+                </label>
                 <div style="width: 23px;"></div>
                 <textarea style="height: 200px; width: 90%;" class="input is-link" id="projectname" ></textarea>
             </div>

@@ -87,6 +87,8 @@ function loadSelectProjects() {
         const lista_projetos = JSON.parse(req.response);
         const select_projects = document.getElementById("select_project");
 
+        document.getElementById("lista_project_qtd").innerHTML = lista_projetos.length;
+
         for (let i = 0; i < lista_projetos.length; i++) {
             const option = document.createElement("option");
             option.value = lista_projetos[i];
@@ -99,7 +101,7 @@ function loadSelectProjects() {
 }
 
 function process() {
-    document.getElementById("resultado").style.visibility = "hidden";project_qts
+    document.getElementById("resultado").style.visibility = "hidden";
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("resultado3").style.visibility = "hidden";
     document.getElementById("resultado4").style.visibility = "hidden";
