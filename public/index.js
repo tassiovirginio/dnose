@@ -34,7 +34,7 @@ function loadTestSmellsNames() {
     return names_;
 }
 
-function loadChart(id, names, values, msg) {
+function loadChart_noColor(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
     new Chart(ctx, {
@@ -56,6 +56,35 @@ function loadChart(id, names, values, msg) {
         }
     });
 }
+
+function loadChart(id, names, values, msg) {
+    const ctx = document.getElementById(id);
+
+    // Gerar cores automaticamente ou defina cores manualmente
+    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: names,
+            datasets: [{
+                label: msg,
+                data: values,
+                borderWidth: 1,
+                backgroundColor: colors, // Define cores diferentes para cada coluna
+                borderColor: colors // Opcional: usar mesma cor para a borda
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
 
 function loadResults() {
     const req2 = new XMLHttpRequest();

@@ -28,6 +28,16 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
         }
+
+        .scrollable {
+            max-height: calc(1.5em * 20); /* Limita a altura a 20 linhas (ajuste se necessário) */
+            overflow-y: auto; /* Adiciona barra de rolagem vertical */
+            padding: 0.5rem; /* Segue o espaçamento padrão de Bulma */
+            border: 1px solid #dbdbdb; /* Mantém consistência com o estilo Bulma */
+            background-color: #f5f5f5; /* Cor de fundo padrão Bulma */
+            border-radius: 4px; /* Bordas arredondadas padrão */
+        }
+
     </style>
     <script src="/projects.js"></script>
 </head>
@@ -98,7 +108,7 @@
         <article class="panel is-link block">
             <p class="panel-heading">Projetos</p>
             <div>
-                <div id="lista_projetos2">
+                <div id="lista_projetos2" class="scrollable">
                 </div>
             </div>
         </article>
