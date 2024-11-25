@@ -1,0 +1,164 @@
+/// Testes reais com Assertion Roulette
+
+void main() {
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp());
+
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  test('catching exceptions', () {
+    final result = Result.of(() => throw Exception());
+    expect(result, isA<Err>());
+  });
+
+  test('matching options', () {
+    var called = 0;
+    Option.some(3).match(
+      (v) {
+        expect(v, equals(3));
+        called++;
+      },
+      () => fail('oh no'),
+    );
+    expect(called, equals(1));
+    Option.none().match((v) => fail('oh no'), () => called++);
+    expect(called, equals(2));
+  });
+
+  testWidgets('Only builds currently selected item',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(buildListButtonScaffold());
+
+    expect(find.text(kShortString), findsNothing);
+    expect(find.text(kLongString), findsNothing);
+    expect(find.text(kPlaceholderString), findsOneWidget);
+
+    selectionController.selectedIndex = 0;
+    await tester.pump();
+    expect(find.text(kShortString), findsOneWidget);
+    expect(find.text(kLongString), findsNothing);
+    expect(find.text(kPlaceholderString), findsNothing);
+
+    selectionController.selectedIndex = 1;
+    await tester.pump();
+    expect(find.text(kShortString), findsNothing);
+    expect(find.text(kLongString), findsOneWidget);
+    expect(find.text(kPlaceholderString), findsNothing);
+  });
+
+  test(
+    'Push.future should throw if PhoenixChannel.onPushReply throws an exception',
+    () async {
+      final mockPhoenixSocket = MockPhoenixSocket();
+      final mockPhoenixChannel = MockPhoenixChannel();
+      when(mockPhoenixSocket.addChannel(topic: anyNamed('topic')))
+          .thenReturn(mockPhoenixChannel);
+      when(mockPhoenixChannel.socket).thenReturn(mockPhoenixSocket);
+      when(mockPhoenixChannel.loggerName).thenReturn('oui');
+      when(mockPhoenixChannel.onPushReply(any))
+          .thenAnswer((_) async => throw Exception());
+
+      var push = Push(
+        mockPhoenixChannel,
+        event: PhoenixChannelEvent.leave,
+        payload: () => {},
+        timeout: Duration.zero,
+      );
+
+      expectLater(() => push.future, throwsA(isA<Exception>()));
+      await push.send();
+    },
+  );
+
+  test('darkens the selected bars', () {
+    // Setup
+    final behavior = DomainHighlighter(SelectionModelType.info);
+    behavior.attachTo(_chart);
+    _setupSelection([_s1D2, _s2D2]);
+    final seriesList = [_series1, _series2];
+
+    // Act
+    _selectionModel.lastListener(_selectionModel);
+    verify(_chart.redraw(skipAnimation: true, skipLayout: true));
+    _chart.lastListener.onPostprocess(seriesList);
+
+    // Verify
+    final s1ColorFn = _series1.colorFn;
+    expect(s1ColorFn(0), equals(MaterialPalette.blue.shadeDefault));
+    expect(s1ColorFn(1), equals(MaterialPalette.blue.shadeDefault.darker));
+    expect(s1ColorFn(2), equals(MaterialPalette.blue.shadeDefault));
+
+    final s2ColorFn = _series2.colorFn;
+    expect(s2ColorFn(0), equals(MaterialPalette.red.shadeDefault));
+    expect(s2ColorFn(1), equals(MaterialPalette.red.shadeDefault.darker));
+    expect(s2ColorFn(2), equals(MaterialPalette.red.shadeDefault));
+  });
+
+  test('listens to other selection models', () {
+    // Setup
+    final behavior = DomainHighlighter(SelectionModelType.action);
+    when(_chart.getSelectionModel(SelectionModelType.action))
+        .thenReturn(_selectionModel);
+
+    // Act
+    behavior.attachTo(_chart);
+
+    // Verify
+    verify(_chart.getSelectionModel(SelectionModelType.action));
+    verifyNever(_chart.getSelectionModel(SelectionModelType.info));
+  });
+
+  test('initial values', () {
+    when(delegate.getKeys()).thenReturn(Set.from(['first', 'second']));
+    expect(preferences.getKeys(), emits(Set.from(['first', 'second'])));
+  });
+
+  test('default layout', () {
+    var layout = LayoutManagerImpl();
+    layout.measure(400, 300);
+
+    expect(layout.marginTop, equals(0));
+    expect(layout.marginRight, equals(0));
+    expect(layout.marginBottom, equals(0));
+    expect(layout.marginLeft, equals(0));
+  });
+
+  test('all fixed margin', () {
+    var layout = LayoutManagerImpl(
+      config: LayoutConfig(
+        topSpec: MarginSpec.fixedPixel(12),
+        rightSpec: MarginSpec.fixedPixel(11),
+        bottomSpec: MarginSpec.fixedPixel(10),
+        leftSpec: MarginSpec.fixedPixel(9),
+      ),
+    );
+    layout.measure(400, 300);
+
+    expect(layout.marginTop, equals(12));
+    expect(layout.marginRight, equals(11));
+    expect(layout.marginBottom, equals(10));
+    expect(layout.marginLeft, equals(9));
+  });
+
+  test('getKeys().getValue() - initial values', () {
+    when(delegate.getKeys()).thenReturn(Set.from(['first', 'second']));
+    expect(preferences.getKeys(), emits(Set.from(['first', 'second'])));
+  });
+
+  test('map null to null', () {
+    expect(typeSystem.mapToSqlLiteral(null), 'NULL');
+    expect(typeSystem.mapToSqlVariable(null), null);
+  });
+}
