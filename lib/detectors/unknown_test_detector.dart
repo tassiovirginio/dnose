@@ -19,7 +19,10 @@ class UnknownTestDetector implements AbstractDetector {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
-    if (e.toSource().contains("expect") == false) {
+    if (e.toSource().contains("expect") == false || 
+    e.toSource().contains("expectLater") == false || 
+    e.toSource().contains("verify") == false ||
+    e.toSource().contains("assert") == false) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,
