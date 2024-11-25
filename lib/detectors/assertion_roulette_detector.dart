@@ -14,6 +14,7 @@ class AssertionRouletteDetector implements AbstractDetector {
   int startTest = 0, endTest = 0;
 
   int cont = 0;
+  int contWithReason = 0;
 
   @override
   List<TestSmell> detect(
@@ -30,7 +31,9 @@ class AssertionRouletteDetector implements AbstractDetector {
         e.parent is MethodInvocation &&
         !e.toString().contains("reason:") &&
         e.parent!.childEntities.first.toString() == "expect") {
-      if (cont > 0) {
+          cont++;
+      if ((cont == 1 && contWithReason == 1) || (cont > 1 && contWithReason == 0) ||
+          (cont > 1 && contWithReason > 1)) {
         testSmells.add(TestSmell(
             name: testSmellName,
             testName: testName,
@@ -54,11 +57,33 @@ class AssertionRouletteDetector implements AbstractDetector {
         e.parent is MethodInvocation &&
         e.toString().contains("reason:") &&
         e.parent!.childEntities.first.toString() == "expect") {
-      cont++;
-    } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
+      contWithReason++;
+
+      if ((cont == 1 && contWithReason == 1) || (cont > 1 && contWithReason == 0) ||
+          (cont > 1 && contWithReason > 1)) {
+        testSmells.add(TestSmell(
+            name: testSmellName,
+            testName: testName,
+            testClass: testClass,
+            code: e.parent!.parent!.toSource(),
+            codeMD5: Util.MD5(e.parent!.parent!.toSource()),
+            start: testClass.lineNumber(e.offset),
+            end: testClass.lineNumber(e.end),
+            collumnStart: testClass.columnNumber(e.offset),
+            collumnEnd: testClass.columnNumber(e.end),
+            codeTest: codeTest,
+            codeTestMD5: Util.MD5(codeTest!),
+            startTest: startTest,
+            endTest: endTest,
+            offset: e.offset,
+            endOffset: e.end));
+      } else {
+        cont++;
+      }
     }
+
+    e.childEntities
+        .whereType<AstNode>()
+        .forEach((e) => _detect(e, testClass, testName));
   }
 }
