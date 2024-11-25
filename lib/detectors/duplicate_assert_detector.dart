@@ -24,16 +24,17 @@ class DuplicateAssertDetector implements AbstractDetector {
   }
 
   int cont = 0;
-  String code_1 = "";
+  List<String> list = [];
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is SimpleIdentifier) {
       if (e.toSource().trim() == "expect") {
+        String lineString = e.parent!.parent!.toSource().replaceAll(" ", "");
         if (cont == 0) {
           cont++;
-          code_1 = e.toSource();
-        } else if (cont == 1) {
+          list.add(lineString);
+        } else if (cont >= 1 && list.contains(lineString)) {
           cont++;
           testSmells.add(TestSmell(
               name: testSmellName,
