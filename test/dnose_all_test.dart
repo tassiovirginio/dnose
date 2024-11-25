@@ -20,7 +20,7 @@ void main() {
   test("Detect: Assertion Roullet", () {
     verify(
         name: "Assertion Roulette",
-        qtd: 3,
+        qtd: 5,
         pathFile: "/test/samples/assertion_roulette_test.dart");
   });
 

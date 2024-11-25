@@ -13,6 +13,8 @@ class AssertionRouletteDetector implements AbstractDetector {
   String? codeTest;
   int startTest = 0, endTest = 0;
 
+  int cont = 0;
+
   @override
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName) {
@@ -24,10 +26,11 @@ class AssertionRouletteDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-     if (e is ArgumentList &&
+    if (e is ArgumentList &&
         e.parent is MethodInvocation &&
         !e.toString().contains("reason:") &&
         e.parent!.childEntities.first.toString() == "expect") {
+      if (cont > 0) {
         testSmells.add(TestSmell(
             name: testSmellName,
             testName: testName,
@@ -43,8 +46,15 @@ class AssertionRouletteDetector implements AbstractDetector {
             startTest: startTest,
             endTest: endTest,
             offset: e.offset,
-            endOffset: e.end
-        ));
+            endOffset: e.end));
+      } else {
+        cont++;
+      }
+    } else if (e is ArgumentList &&
+        e.parent is MethodInvocation &&
+        e.toString().contains("reason:") &&
+        e.parent!.childEntities.first.toString() == "expect") {
+      cont++;
     } else {
       e.childEntities
           .whereType<AstNode>()

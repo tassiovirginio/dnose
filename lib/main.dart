@@ -34,7 +34,7 @@ Future<void> main(List<String> args) async {
   //   return;
   // }
 //
-  processar("/home/tassio/Desenvolvimento/dart/dnose");
+  processar("/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
 //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
@@ -508,7 +508,6 @@ String getStatists() {
     retorno +=
         "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
   }
-
   return retorno;
 }
 

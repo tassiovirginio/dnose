@@ -19,4 +19,19 @@ void main() {
     expect(1 + 2, 3, reason: "");//Melhorar a detecção para pegar esse tipo de erro
     expect(1 + 2, 3);
   });
+
+  test("AssertionRoulet", () {
+    expect(1 + 2, 3);
+    expect(1 + 2, 3);
+  });
+
+  test("AssertionRoulet", () {
+    expect(1 + 2, 3);
+    expect(1 + 2, 3);
+    expect(1 + 2, 3);
+  });
+
+  test("AssertionRoulet", () {
+    expect(1 + 2, 3);
+  });
 }
