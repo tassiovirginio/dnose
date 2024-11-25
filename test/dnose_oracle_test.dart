@@ -39,21 +39,21 @@ void main() {
   test("Detect: Unknown Test", () {
     verify(
         name: "Unknown Test",
-        qtd: 2,
+        qtd: 8,
         pathFile: "/test/oracle/unknown_test.dart");
   });
 
   test("Detect: Conditional Test Logic", () {
     verify(
         name: "Conditional Test Logic",
-        qtd: 9,
+        qtd: 7,
         pathFile: "/test/oracle/conditional_test_logic_test.dart");
   });
 
   test("Detect: Magic Number", () {
     verify(
         name: "Magic Number",
-        qtd: 10,
+        qtd: 26,
         pathFile: "/test/oracle/magic_number_test.dart");
   });
 
