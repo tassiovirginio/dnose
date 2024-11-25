@@ -1,13 +1,21 @@
-function loadProjectName() {
-    const req3 = new XMLHttpRequest();
-    req3.onload = (e) => {
-        var lista = req3.response;
-        document.getElementById("projectname").innerHTML = lista;
-        document.getElementById("project_qts").innerHTML = lista.split(",").length;
-    };
-    req3.open("GET", "/projectnameatual", true);
-    req3.send();
+async function loadProjectName() {
+    try {
+        const response = await fetch("/projectnameatual");
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar dados: ${response.statusText}`);
+        }
+
+        const lista = await response.text(); // Supondo que a resposta seja texto.
+        const projectElement = document.getElementById("projectname");
+        const projectCountElement = document.getElementById("project_qts");
+
+        projectElement.innerHTML = lista;
+        projectCountElement.innerHTML = lista.split(",").filter(Boolean).length; // Filtrando itens vazios.
+    } catch (error) {
+        console.error("Erro ao carregar os nomes dos projetos:", error);
+    }
 }
+
 
 function loadTestSmellsNames() {
     const req4 = new XMLHttpRequest();
@@ -34,7 +42,7 @@ function loadTestSmellsNames() {
     return names_;
 }
 
-function loadChart(id, names, values, msg) {
+function loadChart_noColor(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
     new Chart(ctx, {
@@ -57,29 +65,46 @@ function loadChart(id, names, values, msg) {
     });
 }
 
-function loadResults() {
-    const req2 = new XMLHttpRequest();
-    req2.onload = (e) => {
-        if (req2.response === "true") {
-            document.getElementById("resultado").style.visibility = "visible";
-            document.getElementById("resultado2").style.visibility = "visible";
-        } else {
-            document.getElementById("resultado").style.visibility = "hidden";
-            document.getElementById("resultado2").style.visibility = "hidden";
+function loadChart(id, names, values, msg) {
+    const ctx = document.getElementById(id);
+
+    // Gerar cores automaticamente ou defina cores manualmente
+    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: names,
+            datasets: [{
+                label: msg,
+                data: values,
+                borderWidth: 1,
+                backgroundColor: colors, // Define cores diferentes para cada coluna
+                borderColor: colors // Opcional: usar mesma cor para a borda
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-    };
-    req2.open("GET", "/result1exists", true);
-    req2.send();
+    });
 }
 
-function generatedb() {
-    const req2 = new XMLHttpRequest();
-    req2.onload = (e) => {
-        console.log(req2.response);
-    };
-    req2.open("GET", "/gerardb", true);
-    req2.send();
+
+async function loadResults() {
+    const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
+    ["resultado", "resultado2"].forEach(id => document.getElementById(id).style.visibility = visible);
 }
+
+
+async function generatedb() {
+    const response = await fetch("/gerardb");
+    console.log(await response.text());
+}
+
 
 function loadSelectProjects() {
     const req = new XMLHttpRequest();
@@ -252,7 +277,7 @@ function loadStatistics() {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function loadButtonDownloadDb() {
+function loadButtonDownloadDb_() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         if (req.response == "true") {
@@ -267,7 +292,13 @@ function loadButtonDownloadDb() {
 
 }
 
-function reloadStatistic() {
+async function loadButtonDownloadDb() {
+    const response = await fetch("/download.db.existe");
+    document.getElementById("resultado_db").style.visibility = (await response.text()) === "true" ? "visible" : "hidden";
+}
+
+
+function reloadStatistic_() {
     var div = document.getElementById("qtdbytestsmellbytype");
     div.innerHTML = "Loading...";
     const req = new XMLHttpRequest();
@@ -282,6 +313,26 @@ function reloadStatistic() {
     req.open("GET", "/gerardb", true);
     req.send();
 }
+
+async function reloadStatistic() {
+    const div = document.getElementById("qtdbytestsmellbytype");
+    div.innerHTML = "Loading...";
+
+    try {
+        const response = await fetch("/gerardb");
+        console.log(await response.text());
+
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Substitui o `sleep`
+        console.log("Carregando estatísticas");
+
+        div.innerHTML = "";
+        loadStatistics();
+    } catch (error) {
+        console.error("Erro ao recarregar estatísticas:", error);
+        div.innerHTML = "Erro ao carregar estatísticas.";
+    }
+}
+
 
 window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
