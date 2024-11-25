@@ -23,19 +23,15 @@ class DuplicateAssertDetector implements AbstractDetector {
     return testSmells;
   }
 
-  int cont = 0;
   List<String> list = [];
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     //Melhorar - encontrar somente quando setado em uma variável
     if (e is SimpleIdentifier) {
       if (e.toSource().trim() == "expect") {
-        String lineString = e.parent!.parent!.toSource().replaceAll(" ", "");
-        if (cont == 0) {
-          cont++;
-          list.add(lineString);
-        } else if (cont >= 1 && list.contains(lineString)) {
-          cont++;
+        String lineString = e.parent!.parent!.toSource().replaceAll(" ", "").replaceAll(";", "");
+        
+        if (list.contains(lineString)) {
           testSmells.add(TestSmell(
               name: testSmellName,
               testName: testName,
@@ -53,6 +49,8 @@ class DuplicateAssertDetector implements AbstractDetector {
               offset: e.offset,
               endOffset: e.end
           ));
+        }else{
+          list.add(lineString);
         }
       }
     }
