@@ -3,7 +3,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
-class VerboseTestLint extends DartLintRule {
+class UnknownTestLint extends DartLintRule {
   final Set<String> listTestNames = {
     "test",
     "testWidgets",
@@ -11,13 +11,12 @@ class VerboseTestLint extends DartLintRule {
     "isarTest"
   };
 
-  static const valueMaxLineVerbose = 30;
 
-  VerboseTestLint() : super(code: _code);
+  UnknownTestLint() : super(code: _code);
 
   static const _code = LintCode(
-    name: 'verbose_test_lint',
-    problemMessage: 'This test function is verbose.',
+    name: 'unknown_test_lint',
+    problemMessage: 'This test function is unkdown.',
   );
 
   @override
@@ -29,18 +28,19 @@ class VerboseTestLint extends DartLintRule {
     context.registry.addExpressionStatement((node) {
       if (node.beginToken.type == TokenType.IDENTIFIER &&
           listTestNames.contains(node.beginToken.toString())) {
-        int start =
-            lineNumber(node.root as CompilationUnit, node.parent!.offset);
-        int end = lineNumber(node.root as CompilationUnit, node.parent!.end);
-
-        if (end - start > valueMaxLineVerbose) {
-          reporter.atNode(node, code);
-        }
+        verifyTestSmell(node, reporter);
       }
       ;
     });
   }
 
-  int lineNumber(CompilationUnit cu, int offset) =>
-      cu.lineInfo.getLocation(offset).lineNumber;
+  void verifyTestSmell(node, reporter) {
+    if (node.toSource().contains("expect") == false &&
+        node.toSource().contains("expectLater") == false &&
+        node.toSource().contains("verify") == false &&
+        node.toSource().contains("assert") == false) {
+      reporter.atNode(node, code);
+    }
+  }
+
 }
