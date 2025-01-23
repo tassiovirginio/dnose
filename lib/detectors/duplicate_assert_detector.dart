@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
@@ -23,15 +25,31 @@ class DuplicateAssertDetector implements AbstractDetector {
     return testSmells;
   }
 
-  List<String> list = [];
+  Map<String, List<MethodInvocation>> mapMethodInvocation = <String, List<MethodInvocation>>{};
+
+  List<MethodInvocation> listMethodInvocation = List.empty(growable: true);
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    //Melhorar - encontrar somente quando setado em uma variável
-    if (e is SimpleIdentifier) {
-      if (e.toSource().trim() == "expect") {
-        String lineString = e.parent!.parent!.toSource().replaceAll(" ", "").replaceAll(";", "");
-        
-        if (list.contains(lineString)) {
+    // if( e is MethodInvocation && e.beginToken.toString() == "expect" && e.childEntities.elementAt(1) is ArgumentList){
+    listMethodInvocation.addAll(flow(e));
+    // }
+
+    for (var item2 in listMethodInvocation) {
+      String item = item2.methodName.name;
+      if (item != "test" && item != "expect") {
+        if (mapMethodInvocation.containsKey(item)) {
+          mapMethodInvocation[item]?.add(item2);
+        } else {
+          mapMethodInvocation[item] = List.empty(growable: true);
+          mapMethodInvocation[item]?.add(item2);
+        }
+      }
+    }
+
+    for (List<MethodInvocation> items in mapMethodInvocation.values) {
+      if (items.length > 1) {
+        items.removeLast();//Removendo o ultimo
+        for (var value in items) {
           testSmells.add(TestSmell(
               name: testSmellName,
               testName: testName,
@@ -42,20 +60,31 @@ class DuplicateAssertDetector implements AbstractDetector {
               codeTestMD5: Util.MD5(codeTest!),
               startTest: startTest,
               endTest: endTest,
-              start: testClass.lineNumber(e.offset),
-              end: testClass.lineNumber(e.end),
-              collumnStart: testClass.columnNumber(e.offset),
-              collumnEnd: testClass.columnNumber(e.end),
+              start: testClass.lineNumber(value.offset),
+              end: testClass.lineNumber(value.offset),
+              collumnStart: testClass.columnNumber(value.offset),
+              collumnEnd: testClass.columnNumber(value.offset),
               offset: e.offset,
-              endOffset: e.end
-          ));
-        }else{
-          list.add(lineString);
+              endOffset: e.end));
         }
       }
     }
-    e.childEntities
-        .whereType<AstNode>()
-        .forEach((e) => _detect(e, testClass, testName));
   }
+}
+
+List<MethodInvocation> flow(AstNode e) {
+  List<MethodInvocation> listMethods = List.empty(growable: true);
+
+  if (e is MethodInvocation) {
+    listMethods.add(e);
+  }
+
+  List lista = e.childEntities.toList();
+  for (var e2 in lista) {
+    if (e2 is AstNode) {
+      listMethods.addAll(flow(e2));
+    }
+  }
+
+  return listMethods;
 }
