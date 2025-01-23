@@ -53,7 +53,7 @@ void main() {
   test("Detect: Magic Number", () {
     verify(
         name: "Magic Number",
-        qtd: 10,
+        qtd: 15,
         pathFile: "/test/samples/magic_number_test.dart");
   });
 
