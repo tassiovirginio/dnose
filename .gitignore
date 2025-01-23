@@ -10,3 +10,5 @@
 *.zip
 *.txt
 pubspec.lock
+bin/server
+
