@@ -7,7 +7,7 @@ void main() {
   }
 
 
-  test("Exception Handling", () {
+  test("Exception Handling", () {//2
     try {
       throw Exception("Erro");
     } catch (e) {
@@ -15,11 +15,19 @@ void main() {
     }
   });
 
-  test("Exception Handling", () {
+  test("Exception Handling", () {//1
     try {
       testFunction();
     } catch (e) {
       expect(e.toString(), Exception("Erro").toString());
+    }
+  });
+
+  test("Exception Handling", () {//1
+    try {
+      testFunction();
+    } finally {
+      print("erro");
     }
   });
 

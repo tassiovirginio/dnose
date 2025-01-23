@@ -24,7 +24,7 @@ class ExceptionHandlingDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is CatchClause || e is ThrowExpression || e is TryStatement) {
+    if (e is ThrowExpression || e is TryStatement) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,

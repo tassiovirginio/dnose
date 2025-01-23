@@ -24,25 +24,32 @@ class IgnoredTestDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is NamedExpression && e.parent is ArgumentList
-        && e.toString().contains("skip: true")) {
-      testSmells.add(TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.toSource(),
-          codeMD5: Util.MD5(e.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.MD5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end
-      ));
+    if (e is NamedExpression &&
+        e.parent is ArgumentList &&
+        (e.toString().contains("skip: true") ||
+            e.toString().contains("skip:true") ||
+            e.toString().contains("skip: \""))) {
+      print("teste");
+
+      if (e is NamedExpression && e.childEntities.elementAt(0) is Label && e.childEntities.elementAt(0).toString() == "skip:"
+      && e.childEntities.elementAt(1).toString() != "false") {
+        testSmells.add(TestSmell(
+            name: testSmellName,
+            testName: testName,
+            testClass: testClass,
+            code: e.toSource(),
+            codeMD5: Util.MD5(e.toSource()),
+            codeTest: codeTest,
+            codeTestMD5: Util.MD5(codeTest!),
+            startTest: startTest,
+            endTest: endTest,
+            start: testClass.lineNumber(e.offset),
+            end: testClass.lineNumber(e.end),
+            collumnStart: testClass.columnNumber(e.offset),
+            collumnEnd: testClass.columnNumber(e.end),
+            offset: e.offset,
+            endOffset: e.end));
+      }
     } else {
       e.childEntities
           .whereType<AstNode>()

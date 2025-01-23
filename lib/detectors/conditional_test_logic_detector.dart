@@ -24,7 +24,7 @@ class ConditionalTestLogicDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is ForElement || e is IfElement || e is WhileStatement || e is SwitchStatement || (e is SimpleIdentifier && e.name == "forEach")) {
+    if (e is ForElement || e is ForStatement || e is IfElement || e is IfStatement ||e is WhileStatement || e is SwitchStatement || (e is SimpleIdentifier && e.name == "forEach")) {
       testSmells.add(TestSmell(
           name: testSmellName,
           testName: testName,

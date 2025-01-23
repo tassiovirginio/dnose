@@ -46,7 +46,7 @@ void main() {
   test("Detect: Conditional Test Logic", () {
     verify(
         name: "Conditional Test Logic",
-        qtd: 9,
+        qtd: 10,
         pathFile: "/test/samples/conditional_test_logic_test.dart");
   });
 
@@ -60,7 +60,7 @@ void main() {
   test("Detect: Duplicate Assert", () {
     verify(
         name: "Duplicate Assert",
-        qtd: 10,
+        qtd: 12,
         pathFile: "/test/samples/duplicate_assert_test.dart");
   });
 
@@ -88,14 +88,14 @@ void main() {
   test("Detect: Exception Handling", () {
     verify(
         name: "Exception Handling",
-        qtd: 5,
+        qtd: 4,
         pathFile: "/test/samples/exception_handling_test.dart");
   });
 
   test("Detect: Ignored Test", () {
     verify(
         name: "Ignored Test",
-        qtd: 1,
+        qtd: 4,
         pathFile: "/test/samples/ignored_test.dart");
   });
 
