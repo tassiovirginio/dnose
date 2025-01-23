@@ -25,7 +25,14 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is SimpleIdentifier &&
-        (e.name == "print" || e.name == "write" || e.name == "prints" || e.name == "writeln") &&
+        ( (e.name == "print" && e.parent.toString().contains(".print") == false) ||
+            (e.name == "write" &&
+                (e.parent?.beginToken.toString() == "stdout" ||
+                    e.parent?.beginToken.toString() == "stderr")) ||
+            (e.name == "prints" && e.parent.toString().contains(".print") == false) ||
+            (e.name == "writeln" &&
+                (e.parent?.beginToken.toString() == "stdout" ||
+                    e.parent?.beginToken.toString() == "stderr"))) &&
         e.parent is MethodInvocation) {
       testSmells.add(TestSmell(
           name: testSmellName,
@@ -42,8 +49,7 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end));
     }
     e.childEntities
         .whereType<AstNode>()
