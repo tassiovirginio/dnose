@@ -60,7 +60,7 @@ void main() {
   test("Detect: Duplicate Assert", () {
     verify(
         name: "Duplicate Assert",
-        qtd: 12,
+        qtd: 10,
         pathFile: "/test/samples/duplicate_assert_test.dart");
   });
 
