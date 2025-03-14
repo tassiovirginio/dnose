@@ -447,9 +447,9 @@ String getStatists() {
   var file = File('resultado.sqlite');
   if (!file.existsSync()) return "";
 
-  final sqlite3_ = FfiSqlite3(libsqlite3);
-  // final db = sqlite3.open('resultado.sqlite');
-  final db = sqlite3_.open('resultado.sqlite', mode: OpenMode.readOnly);
+  // final sqlite3_ = FfiSqlite3(libsqlite3);
+  final db = sqlite3.open('resultado.sqlite');
+  // final db = sqlite3_.open('resultado.sqlite', mode: OpenMode.readOnly);
 
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
