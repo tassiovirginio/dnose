@@ -96,7 +96,16 @@ function loadChart(id, names, values, msg) {
 
 async function loadResults() {
     const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
-    ["resultado", "resultado2"].forEach(id => document.getElementById(id).style.visibility = visible);
+    ["resultado", "resultado2", "resultado3", "resultado4"].forEach(id => document.getElementById(id).style.visibility = visible);
+
+    if (select_project.length === 0) {
+        document.getElementById("bt_process").disabled = true;
+        document.getElementById("bt_process_all").disabled = true;
+    }else{
+        document.getElementById("bt_process").disabled = false;
+        document.getElementById("bt_process_all").disabled = false;
+    }
+
 }
 
 
