@@ -19,7 +19,7 @@ RUN chmod +x /app/bin/server
 FROM alpine:latest
 # Instala sqlite, sqlite-libs, sqlite3 (CLI) e git
 RUN apk update && apk add --no-cache sqlite sqlite-libs sqlite-dev git
-RUN ln -s /usr/lib/libsqlite3.so.0 /usr/lib/libsqlite3.so   
+# RUN ln -s /usr/lib/libsqlite3.so.0 /usr/lib/libsqlite3.so   
 COPY --from=build /app/sqlite3 /app/sqlite3
 COPY --from=build /app/libsqlite3.so /app/libsqlite3.so
 COPY --from=build /runtime/ /
