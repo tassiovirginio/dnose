@@ -32,22 +32,7 @@ String? apiKeyChatGPT;
 String? ollamaModel;
 
 Future<List<String>> listaProjetos() async {
-  // List<String> projetosDart = List.empty(growable: true);
-
   var lista = Directory(folderHome).listSync().toList();
-
-  // for(var d in lista){
-  //   final dir = Directory(d.path);
-  //   final List<FileSystemEntity> entities = await dir.list().toList();
-  //   entities.forEach((element) {
-  //     //Só adiciona projetos com pubspec.yaml
-  //     if(element.toString().contains("pubspec.yaml")){
-  //       print(element);
-  //       projetosDart.add(d.path);
-  //     }
-  //   },);
-  // }
-
   return lista.map((e) => e.path).toList();
 }
 
@@ -67,7 +52,6 @@ Handler init() {
   ollamaModel = p.get('ollamaModel');
 
   var app = Router().plus;
-  // app.use(logRequests()); // liga o log
   app.use(corsHeaders()); // liga o cors
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
 
@@ -120,18 +104,6 @@ Handler init() {
     }
 
     return projetos;
-
-    // var currentprojectname = "NONE";
-    // var file = File(resultado);
-    // if (file.existsSync()) {
-    //   if(file.lengthSync() > 0){
-    //     var linhas = file.readAsLinesSync();
-    //     if(linhas.length > 1){
-    //       currentprojectname = linhas[1].split(";")[0];
-    //     }
-    //   }
-    // }
-    // return currentprojectname;
   }
 
   List<String> getLines() {
@@ -246,11 +218,6 @@ Handler init() {
     await Directory(path!).delete(recursive: true);
     return Response.ok("Projeto Excluído");
   });
-
-  // app.get('/gerardb', (Request request) async {
-  //   // createSqlite();
-  //   return Response.ok("Banco de dados gerado com sucesso!");
-  // });
 
   app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
 

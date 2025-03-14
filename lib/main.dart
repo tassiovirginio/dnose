@@ -34,8 +34,8 @@ Future<void> main(List<String> args) async {
   //   return;
   // }
 //
-  processar(
-      "/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
+  // processar(
+      // "/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
 //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
@@ -227,9 +227,6 @@ Future<String> processarAll() async {
 Future<(List<TestSmell>, List<TestMetric>)> _processar(
     String pathProject) async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
-  // Logger.root.onRecord.listen((record) {
-  //   print('${record.level.name}: ${record.time}: ${record.message}');
-  // });
 
   _logger.info("==============================================");
   _logger.info("========= Dart Test Smells Detector ==========");
@@ -289,13 +286,6 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
       }
     }
   }
-
-  // createCSV(listaTotal).then((value) {
-  //   _logger.info("CSV criado com sucesso.");
-  //   createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
-  // });
-  //
-  // _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
   return (listaTotal, listaTotalMetrics);
 }
@@ -374,7 +364,6 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
       somatorio[ts.name] = somatorio[ts.name]! + 1;
     }
   }
-  
 
   var file2 = File('resultado2.csv');
   if (file2.existsSync()) file2.deleteSync();

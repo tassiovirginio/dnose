@@ -65,7 +65,7 @@ function loadChart_noColor(id, names, values, msg) {
     });
 }
 
- var myChart;
+var myChart;
 
 function loadChart(id, names, values, msg) {
     const ctx = document.getElementById(id);
@@ -168,10 +168,8 @@ function process() {
     const path = document.getElementById("select_project");
 
     var lista = getSelectValues(path);
-
     var listaString = "";
-
-    lista.forEach((p) => listaString = listaString + ";" +p);
+    lista.forEach((p) => listaString = listaString + ";" + p);
 
     const req = new XMLHttpRequest();
     req.onload = async (e) => {
@@ -182,11 +180,8 @@ function process() {
         document.getElementById("resultado4").style.visibility = "visible";
         document.getElementById("resultado_db").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
-        
         await loadProjectName();
-
         await loadStatistics();
-
         await loadTestSmellsNames();
     };
 
@@ -216,11 +211,8 @@ function process_all() {
         document.getElementById("resultado4").style.visibility = "visible";
         document.getElementById("resultado_db").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
-
         document.getElementById("projectname").innerHTML = "ALL";
-        
-        // await sleep(2000);
-        // generatedb();
+        // await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
     };
@@ -234,7 +226,7 @@ function getSelectValues(select) {
     var options = select && select.options;
     var opt;
 
-    for (var i=0, iLen=options.length; i<iLen; i++) {
+    for (var i = 0, iLen = options.length; i < iLen; i++) {
         opt = options[i];
 
         if (opt.selected) {
@@ -266,9 +258,9 @@ function loadStatistics() {
                     td = document.createElement("td");
                 }
                 td.innerHTML = line[j];
-                if(j === 7) {
+                if (j === 7) {
                     td.style.color = "blue";
-                    if(i != 0){
+                    if (i != 0) {
                         contador = contador + parseInt(line[j], 10);
                     }
                 }
@@ -307,10 +299,6 @@ function loadStatistics() {
     req.send();
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
 function loadButtonDownloadDb_() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -319,11 +307,9 @@ function loadButtonDownloadDb_() {
         } else {
             document.getElementById("resultado_db").style.visibility = "hidden";
         }
-
     };
     req.open("GET", "/download.db.existe", true);
     req.send();
-
 }
 
 async function loadButtonDownloadDb() {
@@ -335,7 +321,6 @@ async function loadButtonDownloadDb() {
 async function reloadStatistic() {
     const div = document.getElementById("qtdbytestsmellbytype");
     div.innerHTML = "Loading...";
-
     try {
         div.innerHTML = "";
         await loadStatistics();
