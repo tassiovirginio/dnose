@@ -133,28 +133,9 @@ function loadChart2(id, names, values, msg) {
     });
 }
 
-function teste(){
-    console.log("teste");
-}
-
 async function loadResults() {
     const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
     ["resultado", "resultado2", "resultado3", "resultado4"].forEach(id => document.getElementById(id).style.visibility = visible);
-
-    if (select_project.length === 0) {
-        document.getElementById("bt_process").disabled = true;
-        document.getElementById("bt_process_all").disabled = true;
-    }else{
-        document.getElementById("bt_process").disabled = false;
-        document.getElementById("bt_process_all").disabled = false;
-    }
-
-}
-
-
-async function generatedb() {
-    const response = await fetch("/gerardb");
-    console.log(await response.text());
 }
 
 
@@ -205,25 +186,11 @@ function process() {
         document.getElementById("resultado_db").style.visibility = "visible";
         document.getElementById("loading").style.visibility = "hidden";
         
-        loadProjectName();
+        await loadProjectName();
 
-        await sleep(2000);
-        console.log("_Gerando DB");
-        generatedb();
+        await loadStatistics();
 
-        await sleep(2000);
-        console.log("_Recarregando estatísticas");
-        reloadStatistic();
-
-        // await sleep(8000);
-        // console.log("_Recarregando Gráficos");
-        loadTestSmellsNames();
-
-        await sleep(2000);
-        console.log("_Recarregando Projects Select");
-        loadSelectProjects();
-
-        loadProjectName();
+        await loadTestSmellsNames();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -257,9 +224,10 @@ function process_all() {
 
         document.getElementById("projectname").innerHTML = "ALL";
         
-        await sleep(2000);
-        generatedb();
-        loadStatistics();
+        // await sleep(2000);
+        // generatedb();
+        await loadStatistics();
+        await loadTestSmellsNames();
     };
 
     req.open("GET", "/processar_all", true);
@@ -336,7 +304,9 @@ function loadStatistics() {
         tr.appendChild(document.createElement("td"));
         table.appendChild(tr);
 
-        document.getElementById("qtdbytestsmellbytype").appendChild(table);
+        const div = document.getElementById("qtdbytestsmellbytype");
+        div.innerHTML = "";
+        div.appendChild(table);
     };
     req.open("GET", "/getstatistics", true);
     req.send();
@@ -367,35 +337,14 @@ async function loadButtonDownloadDb() {
 }
 
 
-function reloadStatistic_() {
-    var div = document.getElementById("qtdbytestsmellbytype");
-    div.innerHTML = "Loading...";
-    const req = new XMLHttpRequest();
-    req.onload = (e) => {
-        console.log(req.response);
-        sleep(5000).then(r => {
-            console.log("Carregando estatísticas");
-            div.innerHTML = "";
-            loadStatistics();
-        });
-    };
-    req.open("GET", "/gerardb", true);
-    req.send();
-}
-
 async function reloadStatistic() {
     const div = document.getElementById("qtdbytestsmellbytype");
     div.innerHTML = "Loading...";
 
     try {
-        const response = await fetch("/gerardb");
-        console.log(await response.text());
-
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Substitui o `sleep`
         console.log("Carregando estatísticas");
-
         div.innerHTML = "";
-        loadStatistics();
+        await loadStatistics();
     } catch (error) {
         console.error("Erro ao recarregar estatísticas:", error);
         div.innerHTML = "Erro ao carregar estatísticas.";

@@ -34,7 +34,8 @@ Future<void> main(List<String> args) async {
   //   return;
   // }
 //
-  processar("/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
+  processar(
+      "/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
 //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
@@ -188,14 +189,11 @@ Future<String> processar(String pathProjects) async {
     }
   }
 
-  await createCSV(listaTotal).then((value) {
-    _logger.info("CSV criado com sucesso.");
-    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
-  });
+  await createCSV(listaTotal);
 
-  await createMatricsCSV(listaTotalMetrics).then((value) {
-    _logger.info("CSV criado com sucesso.");
-  });
+  await createMatricsCSV(listaTotalMetrics);
+
+  await createSqlite();
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
@@ -217,14 +215,9 @@ Future<String> processarAll() async {
     listaTotalMetrics.addAll(listaTotalMetrics2);
   }
 
-  createCSV(listaTotal).then((value) {
-    _logger.info("CSV criado com sucesso.");
-    createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
-  });
-
-  createMatricsCSV(listaTotalMetrics).then((value) {
-    _logger.info("CSV criado com sucesso.");
-  });
+  await createCSV(listaTotal);
+  await createMatricsCSV(listaTotalMetrics);
+  await createSqlite();
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
@@ -381,7 +374,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
       somatorio[ts.name] = somatorio[ts.name]! + 1;
     }
   }
-  sink.close();
+  
 
   var file2 = File('resultado2.csv');
   if (file2.existsSync()) file2.deleteSync();
@@ -393,7 +386,10 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     sink2.write("$key;$value\n");
     _logger.info("$key;$value");
   });
-  sink2.close();
+
+  await sink.close();
+  await sink2.close();
+  await sink4.close();
 
   return true;
 }
@@ -429,8 +425,8 @@ Future<bool> createSqlite() async {
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMEtricsFilePath metrics"';
-  shell.run(command);
-  shell.run(command2);
+  await shell.run(command);
+  await shell.run(command2);
   return true;
 }
 
@@ -464,7 +460,7 @@ String getStatists() {
 
   final sqlite3_ = FfiSqlite3(libsqlite3);
   // final db = sqlite3.open('resultado.sqlite');
-  final db = sqlite3_.open('resultado.sqlite');
+  final db = sqlite3_.open('resultado.sqlite', mode: OpenMode.readOnly);
 
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');

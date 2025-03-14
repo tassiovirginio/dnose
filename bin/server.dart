@@ -247,10 +247,10 @@ Handler init() {
     return Response.ok("Projeto Excluído");
   });
 
-  app.get('/gerardb', (Request request) async {
-    createSqlite();
-    return Response.ok("Banco de dados gerado com sucesso!");
-  });
+  // app.get('/gerardb', (Request request) async {
+  //   // createSqlite();
+  //   return Response.ok("Banco de dados gerado com sucesso!");
+  // });
 
   app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
 
