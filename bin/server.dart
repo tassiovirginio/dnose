@@ -228,7 +228,6 @@ Handler init() {
   });
 
   app.get('/qtd_progress', () {
-    print("Teste");
     int valor = DNose.contProcessProject;
     return Response.ok(valor.toString());
   });
