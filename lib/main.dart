@@ -188,12 +188,12 @@ Future<String> processar(String pathProjects) async {
     }
   }
 
-  createCSV(listaTotal).then((value) {
+  await createCSV(listaTotal).then((value) {
     _logger.info("CSV criado com sucesso.");
     createSqlite().then((value) => _logger.info("SQLite criado com sucesso."));
   });
 
-  createMatricsCSV(listaTotalMetrics).then((value) {
+  await createMatricsCSV(listaTotalMetrics).then((value) {
     _logger.info("CSV criado com sucesso.");
   });
 

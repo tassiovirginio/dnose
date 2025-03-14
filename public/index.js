@@ -35,7 +35,7 @@ function loadTestSmellsNames() {
             }
         }
         loadChart('myChart', names_, values, '# of Test Smells');
-        loadChart('myChart2', names_, values2, '# of Test Smells (log))');
+        loadChart2('myChart2', names_, values2, '# of Test Smells (log))');
     };
     req4.open("GET", "/charts_data", true);
     req4.send();
@@ -65,13 +65,19 @@ function loadChart_noColor(id, names, values, msg) {
     });
 }
 
+ var myChart;
+
 function loadChart(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
     // Gerar cores automaticamente ou defina cores manualmente
     const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
 
-    new Chart(ctx, {
+    if (myChart) {
+        myChart.destroy();
+    }
+
+    myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: names,
@@ -93,6 +99,43 @@ function loadChart(id, names, values, msg) {
     });
 }
 
+var myChart2;
+
+function loadChart2(id, names, values, msg) {
+    const ctx = document.getElementById(id);
+
+    // Gerar cores automaticamente ou defina cores manualmente
+    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+
+    if (myChart2) {
+        myChart2.destroy();
+    }
+
+    myChart2 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: names,
+            datasets: [{
+                label: msg,
+                data: values,
+                borderWidth: 1,
+                backgroundColor: colors, // Define cores diferentes para cada coluna
+                borderColor: colors // Opcional: usar mesma cor para a borda
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function teste(){
+    console.log("teste");
+}
 
 async function loadResults() {
     const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
@@ -142,22 +185,6 @@ function process() {
     document.getElementById("resultado_db").style.visibility = "hidden";
     document.getElementById("loading").style.visibility = "visible";
     const path = document.getElementById("select_project");
-    const req = new XMLHttpRequest();
-    req.onload = (e) => {
-        const resultado = document.getElementById("resultado");
-        document.getElementById("resultado").style.visibility = "visible";
-        document.getElementById("resultado2").style.visibility = "visible";
-        document.getElementById("resultado3").style.visibility = "visible";
-        document.getElementById("resultado4").style.visibility = "visible";
-        document.getElementById("resultado_db").style.visibility = "visible";
-        document.getElementById("loading").style.visibility = "hidden";
-        loadProjectName();
-        sleep(5000).then(r => {
-            generatedb();
-            loadStatistics();
-        });
-    };
-
 
     var lista = getSelectValues(path);
 
@@ -166,6 +193,38 @@ function process() {
     lista.forEach((p) => listaString = listaString + ";" +p);
 
     console.log(listaString);
+
+
+    const req = new XMLHttpRequest();
+    req.onload = async (e) => {
+        const resultado = document.getElementById("resultado");
+        document.getElementById("resultado").style.visibility = "visible";
+        document.getElementById("resultado2").style.visibility = "visible";
+        document.getElementById("resultado3").style.visibility = "visible";
+        document.getElementById("resultado4").style.visibility = "visible";
+        document.getElementById("resultado_db").style.visibility = "visible";
+        document.getElementById("loading").style.visibility = "hidden";
+        
+        loadProjectName();
+
+        await sleep(2000);
+        console.log("_Gerando DB");
+        generatedb();
+
+        await sleep(2000);
+        console.log("_Recarregando estatísticas");
+        reloadStatistic();
+
+        // await sleep(8000);
+        // console.log("_Recarregando Gráficos");
+        loadTestSmellsNames();
+
+        await sleep(2000);
+        console.log("_Recarregando Projects Select");
+        loadSelectProjects();
+
+        loadProjectName();
+    };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
     req.send();
@@ -187,7 +246,7 @@ function process_all() {
 
     const req = new XMLHttpRequest();
 
-    req.onload = (e) => {
+    req.onload = async (e) => {
         const resultado = document.getElementById("resultado");
         document.getElementById("resultado").style.visibility = "visible";
         document.getElementById("resultado2").style.visibility = "visible";
@@ -198,10 +257,9 @@ function process_all() {
 
         document.getElementById("projectname").innerHTML = "ALL";
         
-        sleep(10000).then(r => {
-            generatedb();
-            loadStatistics();
-        });
+        await sleep(2000);
+        generatedb();
+        loadStatistics();
     };
 
     req.open("GET", "/processar_all", true);
@@ -284,7 +342,9 @@ function loadStatistics() {
     req.send();
 }
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 function loadButtonDownloadDb_() {
     const req = new XMLHttpRequest();
