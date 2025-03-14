@@ -420,9 +420,9 @@ Future<bool> createSqlite() async {
 }
 
 List<String> getQtdTestSmellsByType() {
-  final sqlite3_ = FfiSqlite3(libsqlite3);
-  // final db = sqlite3.open('resultado.sqlite');
-  final db = sqlite3_.open('resultado.sqlite');
+  // final sqlite3_ = FfiSqlite3(libsqlite3);
+  final db = sqlite3.open('resultado.sqlite');
+  // final db = sqlite3_.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
       'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
@@ -430,9 +430,9 @@ List<String> getQtdTestSmellsByType() {
 
 List<String> getProjects() {
   if (File("resultado.sqlite").existsSync()) {
-    final sqlite3_ = FfiSqlite3(libsqlite3);
-    // final db = sqlite3.open('resultado.sqlite');
-    final db = sqlite3_.open('resultado.sqlite');
+    // final sqlite3_ = FfiSqlite3(libsqlite3);
+    final db = sqlite3.open('resultado.sqlite');
+    // final db = sqlite3_.open('resultado.sqlite');
     // final db = sqlite3.open('resultado.sqlite');
 
     final ResultSet resultSet =
