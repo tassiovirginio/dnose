@@ -173,9 +173,6 @@ function process() {
 
     lista.forEach((p) => listaString = listaString + ";" +p);
 
-    console.log(listaString);
-
-
     const req = new XMLHttpRequest();
     req.onload = async (e) => {
         const resultado = document.getElementById("resultado");
@@ -200,8 +197,6 @@ function process() {
 
 
 function process_all() {
-    console.log("Processar todos....");
-
     document.getElementById("resultado").style.visibility = "hidden";
     document.getElementById("resultado2").style.visibility = "hidden";
     document.getElementById("resultado3").style.visibility = "hidden";
@@ -342,7 +337,6 @@ async function reloadStatistic() {
     div.innerHTML = "Loading...";
 
     try {
-        console.log("Carregando estatísticas");
         div.innerHTML = "";
         await loadStatistics();
     } catch (error) {
