@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.0
 
 dependencies:
+  sentiment_dart: ^0.0.5
   analyzer: ^6.7.0
   basics: ^0.10.0
   crypto: ^3.0.5
