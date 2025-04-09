@@ -7,6 +7,7 @@ import 'package:dnose/dnose.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/blame.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -272,6 +273,7 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
       _logger.info("Analyzing: ${file.path}");
       //contador de procentagem para a tela
       DNose.contProcessProject++;
+
       try {
         TestClass testClass = TestClass(
             commit: commitAtual,
@@ -279,6 +281,19 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
             moduleAtual: moduleAtual,
             projectName: projectName);
         var (testSmells, testMetrics) = dnose.scan(testClass);
+
+        //Blame
+        Map<String,BlameLine> fileBlame = blameFile(file.path, pathProject);
+        for(var ts in testSmells){
+          BlameLine? blameLine = fileBlame[ts.start.toString()];
+          ts.lineNumber = blameLine!.lineNumber;
+          ts.commitAuthor = blameLine.commit;
+          ts.author = blameLine.author;
+          ts.dateStr = blameLine.dateStr;
+          ts.timeStr = blameLine.timeStr;
+          ts.summary = blameLine.summary;
+        }
+
         listaTotal.addAll(testSmells);
         listaTotalMetrics.addAll(testMetrics);
       } catch (e) {
@@ -301,7 +316,8 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   if (file.existsSync()) file.deleteSync();
   file.createSync();
   var sink = file.openWrite();
-  sink.write("project_name;test_name;module;path;testsmell;start;end;commit\n");
+  sink.write("project_name;test_name;module;path;testsmell;start;end;commit;");
+  sink.write("lineNumber;commitAuthor;author;dateStr;timeStr;summary;\n");
 
   var file4 = File('metrics2.csv');
   if (file4.existsSync()) file4.deleteSync();
@@ -353,7 +369,12 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
         "\n");
 
     sink.write(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}\n");
+        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};"
+            "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};");
+    sink.write(
+        "${ts.lineNumber};${ts.commitAuthor};${ts.author};${ts.dateStr};"
+            "${ts.timeStr};${ts.summary};\n");
+
     _logger.info(
         "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
     _logger.info("Code: ${ts.code}");

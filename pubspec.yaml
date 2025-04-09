@@ -4,7 +4,7 @@ version: 1.0.0
 repository: https://github.com/tassiovirginio/dnose
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.4.0
 
 dependencies:
   sentiment_dart: ^0.0.5
@@ -12,7 +12,7 @@ dependencies:
   basics: ^0.10.0
   crypto: ^3.0.5
   csv: ^6.0.0
-  git: ^2.3.0
+  git: ^2.3.1
   git_clone: ^1.2.0
   google_generative_ai: ^0.4.5
   langchain: ^0.7.4

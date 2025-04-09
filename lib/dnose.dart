@@ -21,6 +21,7 @@ import 'package:dnose/metrics/lines_of_code_metric.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
+import 'package:dnose/utils/blame.dart';
 import 'package:dnose/utils/git_utils.dart';
 import 'package:git/git.dart';
 import 'package:logging/logging.dart';

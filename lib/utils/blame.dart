@@ -5,9 +5,9 @@ void main() async {
   String arquivo = '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
   String workingDirectory = '/home/tassio/Desenvolvimento/repo.git/dnose';
 
-  List<BlameLine> lista = runApp(arquivo, workingDirectory);
+  Map<String,BlameLine> lista = blameFile(arquivo, workingDirectory);
 
-  for (var linha in lista) {
+  for (var linha in lista.entries) {
     print(linha);
   }
 }
@@ -21,12 +21,16 @@ class BlameLine{
   }
 }
 
-List<BlameLine> runApp(String arquivo, String workingDirectory) {
+Map<String,BlameLine> blameFile(String arquivo, String workingDirectory) {
 
-  List<BlameLine> lista = List.empty(growable: true);
+
+  arquivo = arquivo.replaceAll("$workingDirectory/", "");
+
+  // List<BlameLine> lista = List.empty(growable: true);
+  Map<String,BlameLine> mapa = {};
 
   final check =
-      Process.runSync('git', ['ls-files', '--error-unmatch', arquivo]);
+      Process.runSync('git', ['ls-files', '--error-unmatch', arquivo], workingDirectory: workingDirectory);
   if (check.exitCode != 0) {
     print("Erro: O arquivo '$arquivo' não está sob controle do git.");
     exit(2);
@@ -68,11 +72,12 @@ List<BlameLine> runApp(String arquivo, String workingDirectory) {
     } else if (line.startsWith('\t')) {
       if ([commit, author, dateStr, timeStr, summary, lineNumber]
           .every((e) => e != null)) {
-        lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
+        // lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
+        mapa[lineNumber!] = BlameLine(lineNumber, commit, author, dateStr, timeStr, summary);
       }
       commit = author = dateStr = timeStr = summary = lineNumber = null;
     }
   }
 
-  return lista;
+  return mapa;
 }

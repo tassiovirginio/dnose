@@ -6,6 +6,7 @@ class TestSmell {
   String? codeTestMD5;
   TestClass testClass;
   int start, end, startTest, endTest, offset, endOffset, collumnStart, collumnEnd;
+  String? lineNumber, commitAuthor, author, dateStr, timeStr, summary;
 
   TestSmell({
     required this.name,
