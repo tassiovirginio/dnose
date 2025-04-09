@@ -147,8 +147,9 @@ Handler init() {
     final ResultSet result = db.select('''
       SELECT testsmell, SUM(score) AS total_score
       FROM testsmells
+      WHERE score < 0
       GROUP BY testsmell
-      ORDER BY total_score DESC;
+      ORDER BY total_score ASC;
     ''');
 
     db.dispose();
