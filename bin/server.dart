@@ -147,7 +147,7 @@ Handler init() {
       FROM testsmells
       GROUP BY author
       ORDER BY total_testsmells DESC
-      LIMIT 10;
+      LIMIT 15;
     ''');
 
     db.dispose();

@@ -16,7 +16,6 @@ async function loadProjectName() {
     }
 }
 
-
 function loadTestSmellsNames() {
     const req4 = new XMLHttpRequest();
     const names_ = [];
@@ -39,29 +38,26 @@ function loadTestSmellsNames() {
     };
     req4.open("GET", "/charts_data", true);
     req4.send();
-    return names_;
 }
 
 function loadTestSmellsNamesAuthors() {
-    const req4 = new XMLHttpRequest();
-    const names_ = [];
-    const values = [];
-    req4.onload = (e) => {
-        const lines = req4.response.split("\n");
-        for (let i = 1; i < lines.length; i++) {
-            const nome = lines[i].split(";")[0];
-            const value = lines[i].split(";")[1];
-            if (nome !== "") {
-                names_.push(nome);
-                const valueLog = Math.log(value);
-                values.push(value);
+    const req5_ = new XMLHttpRequest();
+    const names__ = [];
+    const values__ = [];
+    req5_.onload = (e) => {
+        const lines = req5_.response.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            const nome1 = lines[i].split(";")[0];
+            const value1 = lines[i].split(";")[1];
+            if (nome1 !== "") {
+                names__.push(nome1);
+                values__.push(value1);
             }
         }
-        loadChart('myChart3', names_, values, '# of Test Smells');
+        loadChart3('myChart3', names__, values__, '# of Test Smells');
     };
-    req4.open("GET", "/charts_data_author", true);
-    req4.send();
-    return names_;
+    req5_.open("GET", "/charts_data_author", false);
+    req5_.send();
 }
 
 function loadChart_noColor(id, names, values, msg) {
@@ -155,6 +151,40 @@ function loadChart2(id, names, values, msg) {
     });
 }
 
+var myChart3;
+
+function loadChart3(id, names, values, msg) {
+    const ctx = document.getElementById(id);
+
+    // Gerar cores automaticamente ou defina cores manualmente
+    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+
+    if (myChart3) {
+        myChart3.destroy();
+    }
+
+    myChart3 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: names,
+            datasets: [{
+                label: msg,
+                data: values,
+                borderWidth: 1,
+                backgroundColor: colors, // Define cores diferentes para cada coluna
+                borderColor: colors // Opcional: usar mesma cor para a borda
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
 async function loadResults() {
     const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
     ["resultado", "resultado2", "resultado3", "resultado4"].forEach(id => document.getElementById(id).style.visibility = visible);
@@ -205,7 +235,7 @@ function process() {
         await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
-        await loadTestSmellsNamesAuthors();
+        loadTestSmellsNamesAuthors();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -238,7 +268,7 @@ function process_all() {
         // await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
-        await loadTestSmellsNamesAuthors();
+        loadTestSmellsNamesAuthors();
 
     };
 
@@ -359,10 +389,10 @@ async function reloadStatistic() {
 window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
     loadProjectName();
-    loadTestSmellsNames();
-    loadTestSmellsNamesAuthors();
     loadResults();
     loadSelectProjects();
     loadStatistics();
     loadButtonDownloadDb();
+    loadTestSmellsNames();
+    loadTestSmellsNamesAuthors();
 };
