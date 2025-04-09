@@ -60,6 +60,26 @@ function loadTestSmellsNamesAuthors() {
     req5_.send();
 }
 
+function chartTestSmellsSentiments() {
+    const req5_ = new XMLHttpRequest();
+    const names__ = [];
+    const values__ = [];
+    req5_.onload = (e) => {
+        const lines = req5_.response.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            const nome1 = lines[i].split(";")[0];
+            const value1 = lines[i].split(";")[1];
+            if (nome1 !== "") {
+                names__.push(nome1);
+                values__.push(value1);
+            }
+        }
+        loadChart5('myChart5', names__, values__, '# of Test Smells x Sentiments (Sum score)');
+    };
+    req5_.open("GET", "/charts_data_testsmells_sentiments", false);
+    req5_.send();
+}
+
 function loadTestSmellsNamesAuthorsSentiments() {
     const req5_ = new XMLHttpRequest();
     const names__ = [];
@@ -238,6 +258,39 @@ function loadChart4(id, names, values, msg) {
     });
 }
 
+var myChart5;
+function loadChart5(id, names, values, msg) {
+    const ctx = document.getElementById(id);
+
+    // Gerar cores automaticamente ou defina cores manualmente
+    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+
+    if (myChart5) {
+        myChart5.destroy();
+    }
+
+    myChart5 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: names,
+            datasets: [{
+                label: msg,
+                data: values,
+                borderWidth: 1,
+                backgroundColor: colors, // Define cores diferentes para cada coluna
+                borderColor: colors // Opcional: usar mesma cor para a borda
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
 async function loadResults() {
     const visible = (await fetch("/result1exists").then(res => res.text())) === "true" ? "visible" : "hidden";
     ["resultado", "resultado2", "resultado3", "resultado4"].forEach(id => document.getElementById(id).style.visibility = visible);
@@ -290,6 +343,7 @@ function process() {
         await loadTestSmellsNames();
         loadTestSmellsNamesAuthors();
         loadTestSmellsNamesAuthorsSentiments();
+        chartTestSmellsSentiments();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -324,6 +378,7 @@ function process_all() {
         await loadTestSmellsNames();
         loadTestSmellsNamesAuthors();
         loadTestSmellsNamesAuthorsSentiments();
+        chartTestSmellsSentiments();
 
     };
 
@@ -451,4 +506,5 @@ window.onload = (event) => {
     loadTestSmellsNames();
     loadTestSmellsNamesAuthors();
     loadTestSmellsNamesAuthorsSentiments();
+    chartTestSmellsSentiments();
 };

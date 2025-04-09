@@ -139,6 +139,38 @@ Handler init() {
     }
   }
 
+
+
+  String chartDataTestSmellsSentiments(){
+    final db = sqlite3.open("resultado.sqlite");
+
+    final ResultSet result = db.select('''
+      SELECT testsmell, SUM(score) AS total_score
+      FROM testsmells
+      GROUP BY testsmell
+      ORDER BY total_score DESC;
+    ''');
+
+    db.dispose();
+
+    if (result.isEmpty) {
+      return 'Nenhum dado de score encontrado para os test smells.';
+    }
+
+    final buffer = StringBuffer();
+    for (final row in result) {
+      final smell = row['testsmell'];
+      final score = row['total_score'];
+      buffer.writeln('$smell;$score');
+    }
+
+    return buffer.toString();
+  }
+
+
+
+
+
   String chartDataAuthorSentiment() {
     final db = sqlite3.open("resultado.sqlite");
 
@@ -195,6 +227,7 @@ Handler init() {
   app.get('/charts_data', chartData);
   app.get('/charts_data_author', chartDataAuthor);
   app.get('/charts_data_author_sentiment', chartDataAuthorSentiment);
+  app.get('/charts_data_testsmells_sentiments', chartDataTestSmellsSentiments);
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
