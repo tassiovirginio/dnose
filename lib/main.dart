@@ -382,8 +382,8 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
         "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};"
             "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};");
     sink.write(
-        "${ts.lineNumber};${ts.commitAuthor};${ts.author};${ts.dateStr};"
-            "${ts.timeStr};${ts.summary};");
+        "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
+            "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".")};");
     sink.write(
         "${ts.score};${ts.comparative};${ts.words};\n");
 
