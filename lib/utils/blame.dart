@@ -1,18 +1,11 @@
 import 'dart:io';
 
-import 'package:build_runner/build_runner.dart';
-
 void main() async {
-  List<String> arguments = List.empty(growable: true);
-  arguments.add('/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart');
-  if (arguments.length != 1) {
-    print('Uso: dart git_better_blame.dart caminho/do/arquivo');
-    exit(1);
-  }
 
-  final arquivo = arguments[0];
+  String arquivo = '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
+  String workingDirectory = '/home/tassio/Desenvolvimento/repo.git/dnose';
 
-  List<BlameLine> lista = runApp(arquivo);
+  List<BlameLine> lista = runApp(arquivo, workingDirectory);
 
   for (var linha in lista) {
     print(linha);
@@ -28,7 +21,7 @@ class BlameLine{
   }
 }
 
-List<BlameLine> runApp(String arquivo) {
+List<BlameLine> runApp(String arquivo, String workingDirectory) {
 
   List<BlameLine> lista = List.empty(growable: true);
 
@@ -39,7 +32,7 @@ List<BlameLine> runApp(String arquivo) {
     exit(2);
   }
 
-  final result = Process.runSync('git', ['blame', '--line-porcelain', arquivo]);
+  final result = Process.runSync('git', ['blame', '--line-porcelain', arquivo], workingDirectory: workingDirectory);
   if (result.exitCode != 0) {
     print('Erro ao executar git blame.');
     exit(3);
