@@ -139,6 +139,33 @@ Handler init() {
     }
   }
 
+  String chartDataAuthorSentiment() {
+    final db = sqlite3.open("resultado.sqlite");
+
+    final ResultSet result = db.select('''
+      SELECT author, SUM(score) AS total_score
+      FROM testsmells
+      GROUP BY author
+      ORDER BY total_score ASC
+      LIMIT 10;
+    ''');
+
+    db.dispose();
+
+    if (result.isEmpty) {
+      return 'Nenhum dado de score encontrado.';
+    }
+
+    final buffer = StringBuffer();
+    for (final row in result) {
+      final autor = row['author'];
+      final score = row['total_score'];
+      buffer.writeln('$autor;$score');
+    }
+
+    return buffer.toString();
+  }
+
   String chartDataAuthor() {
     final db = sqlite3.open("resultado.sqlite");
 
@@ -167,6 +194,7 @@ Handler init() {
   app.get('/projectnameatual', currentprojectname);
   app.get('/charts_data', chartData);
   app.get('/charts_data_author', chartDataAuthor);
+  app.get('/charts_data_author_sentiment', chartDataAuthorSentiment);
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
@@ -230,13 +258,13 @@ Handler init() {
     String? urls = request.url.queryParameters['urls'];
     var lista = urls!.split("|");
 
-    for(var url in lista){
+    for (var url in lista) {
       var projectName = url.split("/").last.replaceAll(".git", "");
       String caminhoCompleto = "$folderHome/$projectName";
       await git.gitClone(repo: url, directory: caminhoCompleto);
       print(projectName);
     }
-    
+
     return Response.ok("Clonagem concluída");
   });
 
@@ -278,13 +306,13 @@ Handler init() {
             onMessage: (ws, data) => ws.send('You sent me: $data'),
             onClose: (ws) => ws.send('Bye!'),
           ));
-  
+
   app.get(
       '/timenow',
       () => WebSocketSession(
             onOpen: (ws) => ws.send('Iniciando...'),
-            onMessage: (ws, data){
-              for(int i = 0; i < 10; i++){
+            onMessage: (ws, data) {
+              for (int i = 0; i < 10; i++) {
                 ws.send('contador: $i');
                 sleep(Duration(seconds: 1));
               }
