@@ -12,15 +12,25 @@ void main() async {
 
   final arquivo = arguments[0];
 
-  List<String> lista = runApp(arquivo);
+  List<BlameLine> lista = runApp(arquivo);
 
   for (var linha in lista) {
     print(linha);
   }
 }
 
-List<String> runApp(String arquivo) {
-  List<String> retorno = List.empty(growable: true);
+class BlameLine{
+  String? lineNumber, commit, author, dateStr, timeStr, summary;
+  BlameLine(this.lineNumber, this.commit, this.author, this.dateStr, this.timeStr, this.summary);
+  @override
+  String toString() {
+    return '$lineNumber|$commit|$author|$dateStr|$timeStr|$summary';
+  }
+}
+
+List<BlameLine> runApp(String arquivo) {
+
+  List<BlameLine> lista = List.empty(growable: true);
 
   final check =
       Process.runSync('git', ['ls-files', '--error-unmatch', arquivo]);
@@ -65,12 +75,11 @@ List<String> runApp(String arquivo) {
     } else if (line.startsWith('\t')) {
       if ([commit, author, dateStr, timeStr, summary, lineNumber]
           .every((e) => e != null)) {
-        // print('$lineNumber|$commit|$author|$dateStr|$timeStr|$summary');
-        retorno.add('$lineNumber|$commit|$author|$dateStr|$timeStr|$summary');
+        lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
       }
       commit = author = dateStr = timeStr = summary = lineNumber = null;
     }
   }
 
-  return retorno;
+  return lista;
 }
