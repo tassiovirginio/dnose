@@ -42,6 +42,28 @@ function loadTestSmellsNames() {
     return names_;
 }
 
+function loadTestSmellsNamesAuthors() {
+    const req4 = new XMLHttpRequest();
+    const names_ = [];
+    const values = [];
+    req4.onload = (e) => {
+        const lines = req4.response.split("\n");
+        for (let i = 1; i < lines.length; i++) {
+            const nome = lines[i].split(";")[0];
+            const value = lines[i].split(";")[1];
+            if (nome !== "") {
+                names_.push(nome);
+                const valueLog = Math.log(value);
+                values.push(value);
+            }
+        }
+        loadChart('myChart3', names_, values, '# of Test Smells');
+    };
+    req4.open("GET", "/charts_data_author", true);
+    req4.send();
+    return names_;
+}
+
 function loadChart_noColor(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
@@ -183,6 +205,7 @@ function process() {
         await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
+        await loadTestSmellsNamesAuthors();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -215,6 +238,8 @@ function process_all() {
         // await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
+        await loadTestSmellsNamesAuthors();
+
     };
 
     req.open("GET", "/processar_all", true);
@@ -335,6 +360,7 @@ window.onload = (event) => {
     document.getElementById("loading").style.visibility = "hidden";
     loadProjectName();
     loadTestSmellsNames();
+    loadTestSmellsNamesAuthors();
     loadResults();
     loadSelectProjects();
     loadStatistics();

@@ -12,6 +12,7 @@ import 'package:langchain_ollama/langchain_ollama.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:properties/properties.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -138,8 +139,34 @@ Handler init() {
     }
   }
 
+  String chartDataAuthor() {
+    final db = sqlite3.open("resultado.sqlite");
+
+    final ResultSet result = db.select('''
+      SELECT author, COUNT(*) AS total_testsmells
+      FROM testsmells
+      GROUP BY author
+      ORDER BY total_testsmells DESC
+      LIMIT 10;
+    ''');
+
+    db.dispose();
+
+    if (result.isEmpty) {
+      return 'Nenhum test smell encontrado.';
+    }
+
+    final buffer = StringBuffer();
+    for (final row in result) {
+      buffer.writeln('${row['author']};${row['total_testsmells']}');
+    }
+
+    return buffer.toString();
+  }
+
   app.get('/projectnameatual', currentprojectname);
   app.get('/charts_data', chartData);
+  app.get('/charts_data_author', chartDataAuthor);
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
