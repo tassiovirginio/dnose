@@ -1,4 +1,5 @@
 import 'package:dnose/models/test_class.dart';
+import 'package:sentiment_dart/sentiment_dart.dart';
 
 class TestSmell {
   String name, testName, code, codeMD5;
@@ -7,6 +8,9 @@ class TestSmell {
   TestClass testClass;
   int start, end, startTest, endTest, offset, endOffset, collumnStart, collumnEnd;
   String? lineNumber, commitAuthor, author, dateStr, timeStr, summary;
+  //sentiment
+  double? score, comparative;
+  SentimentWordCategories? words;
 
   TestSmell({
     required this.name,
@@ -35,3 +39,4 @@ class TestSmell {
   }
 
 }
+

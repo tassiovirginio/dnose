@@ -19,6 +19,8 @@ import 'package:git/git.dart';
 
 import 'package:sqlite3/src/ffi/implementation.dart';
 
+import 'package:sentiment_dart/sentiment_dart.dart';
+
 // final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
 final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
@@ -292,7 +294,14 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
           ts.dateStr = blameLine.dateStr;
           ts.timeStr = blameLine.timeStr;
           ts.summary = blameLine.summary;
+          //sentiment
+          SentimentResult sentimentResult = Sentiment.analysis(blameLine.summary.toString(),emoji: true);
+          ts.score = sentimentResult.score;
+          ts.comparative = sentimentResult.comparative;
+          ts.words = sentimentResult.words;
         }
+
+        //Sentiment
 
         listaTotal.addAll(testSmells);
         listaTotalMetrics.addAll(testMetrics);
@@ -317,7 +326,8 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   file.createSync();
   var sink = file.openWrite();
   sink.write("project_name;test_name;module;path;testsmell;start;end;commit;");
-  sink.write("lineNumber;commitAuthor;author;dateStr;timeStr;summary;\n");
+  sink.write("lineNumber;commitAuthor;author;dateStr;timeStr;summary;");
+  sink.write("score;comparative;words;\n");
 
   var file4 = File('metrics2.csv');
   if (file4.existsSync()) file4.deleteSync();
@@ -373,7 +383,10 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
             "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};");
     sink.write(
         "${ts.lineNumber};${ts.commitAuthor};${ts.author};${ts.dateStr};"
-            "${ts.timeStr};${ts.summary};\n");
+            "${ts.timeStr};${ts.summary};");
+    sink.write(
+        "${ts.score};${ts.comparative};${ts.words};\n");
+
 
     _logger.info(
         "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
