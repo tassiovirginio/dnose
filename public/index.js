@@ -226,11 +226,15 @@ function loadChart3(id, names, values, msg) {
 }
 
 var myChart4;
+
 function loadChart4(id, names, values, msg) {
     const ctx = document.getElementById(id);
+    const chartHeight = ctx.height;
 
-    // Gerar cores automaticamente ou defina cores manualmente
-    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+    // Degradê vermelho vertical
+    const gradient = ctx.getContext('2d').createLinearGradient(0, chartHeight, 0, 0);
+    gradient.addColorStop(0, 'rgba(255, 100, 100, 0.7)');
+    gradient.addColorStop(1, 'rgba(200, 0, 0, 1)');
 
     if (myChart4) {
         myChart4.destroy();
@@ -244,17 +248,43 @@ function loadChart4(id, names, values, msg) {
                 label: msg,
                 data: values,
                 borderWidth: 1,
-                backgroundColor: colors, // Define cores diferentes para cada coluna
-                borderColor: colors // Opcional: usar mesma cor para a borda
+                backgroundColor: gradient,
+                borderColor: 'rgba(150, 0, 0, 1)'
             }]
         },
         options: {
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'start',
+                    color: '#000',
+                    font: {
+                        weight: 'bold'
+                    },
+                    // formatter: value => Math.abs(value) // mostra sem sinal
+                    formatter: value => value // mostra sem sinal
+                },
+                tooltip: {
+                    callbacks: {
+                        label: context => `${context.label}: ${context.raw}`
+                    }
+                }
+            },
             scales: {
                 y: {
-                    beginAtZero: true
+                    reverse: true,
+                    title: {
+                        display: true,
+                        text: 'Score negativo (quanto mais alto, pior)'
+                    },
+                    ticks: {
+                        // callback: value => Math.abs(value)
+                        callback: value => value
+                    }
                 }
             }
-        }
+        },
+        plugins: [ChartDataLabels] // Ativando o plugin
     });
 }
 
@@ -262,8 +292,10 @@ var myChart5;
 function loadChart5(id, names, values, msg) {
     const ctx = document.getElementById(id);
 
-    // Gerar cores automaticamente ou defina cores manualmente
-    const colors = values.map((_, index) => `hsl(${(index * 360 / values.length)}, 70%, 50%)`);
+    const chartHeight = ctx.height;
+    const colors = ctx.getContext('2d').createLinearGradient(0, chartHeight, 0, 0);
+    colors.addColorStop(0, 'rgba(255, 100, 100, 0.7)'); // base mais clara
+    colors.addColorStop(1, 'rgba(200, 0, 0, 1)');
 
     if (myChart5) {
         myChart5.destroy();
@@ -284,7 +316,8 @@ function loadChart5(id, names, values, msg) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    // beginAtZero: true
+                    reverse: true,
                 }
             }
         }
