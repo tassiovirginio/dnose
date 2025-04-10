@@ -377,6 +377,7 @@ function process() {
         loadTestSmellsNamesAuthors();
         loadTestSmellsNamesAuthorsSentiments();
         chartTestSmellsSentiments();
+        loadQtdFilesTests();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -412,6 +413,7 @@ function process_all() {
         loadTestSmellsNamesAuthors();
         loadTestSmellsNamesAuthorsSentiments();
         chartTestSmellsSentiments();
+        loadQtdFilesTests();
 
     };
 
@@ -497,6 +499,16 @@ function loadStatistics() {
     req.send();
 }
 
+function loadQtdFilesTests() {
+    const req = new XMLHttpRequest();
+    req.onload = (e) => {
+        console.log(req.response);
+        document.getElementById("qtd_test_files").innerHTML = req.response;
+    };
+    req.open("GET", "/qtd_test_files", true);
+    req.send();
+}
+
 function loadButtonDownloadDb_() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
@@ -540,4 +552,5 @@ window.onload = (event) => {
     loadTestSmellsNamesAuthors();
     loadTestSmellsNamesAuthorsSentiments();
     chartTestSmellsSentiments();
+    loadQtdFilesTests();
 };

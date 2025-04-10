@@ -139,6 +139,9 @@ Handler init() {
     }
   }
 
+  String qtdFilesTests(){
+    return getSizeTestFiles().toString();
+  }
 
 
   String chartDataTestSmellsSentiments(){
@@ -229,6 +232,7 @@ Handler init() {
   app.get('/charts_data_author', chartDataAuthor);
   app.get('/charts_data_author_sentiment', chartDataAuthorSentiment);
   app.get('/charts_data_testsmells_sentiments', chartDataTestSmellsSentiments);
+  app.get('/qtd_test_files', qtdFilesTests);
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
