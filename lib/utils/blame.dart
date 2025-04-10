@@ -33,13 +33,13 @@ Map<String,BlameLine> blameFile(String arquivo, String workingDirectory) {
       Process.runSync('git', ['ls-files', '--error-unmatch', arquivo], workingDirectory: workingDirectory);
   if (check.exitCode != 0) {
     print("Erro: O arquivo '$arquivo' não está sob controle do git.");
-    exit(2);
+    return mapa;
   }
 
   final result = Process.runSync('git', ['blame', '--line-porcelain', arquivo], workingDirectory: workingDirectory);
   if (result.exitCode != 0) {
     print('Erro ao executar git blame.');
-    exit(3);
+    return mapa;
   }
 
   String? commit;

@@ -234,6 +234,19 @@ Future<String> processarAll() async {
   return "OK";
 }
 
+List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
+  final dir = Directory(pathProject);
+
+  return dir
+      .listSync(recursive: true)
+      .where((entry) {
+    // Ignora qualquer coisa com diretórios ocultos no caminho
+    final parts = entry.path.split(Platform.pathSeparator);
+    return !parts.any((part) => part.startsWith('.'));
+  })
+      .toList();
+}
+
 Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
     String pathProject) async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -250,9 +263,10 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  Directory dir = Directory(pathProject);
+  // Directory dir = Directory(pathProject);
+  // List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
 
-  List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
+  final entries = listarSemPastasOcultas(pathProject);
 
   String projectName = pathProject.split("/").last;
 
@@ -261,6 +275,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   String diretorioAtual = "";
 
   for (var file in entries) {
+
     if (diretorioAtual.isEmpty) {
       diretorioAtual = file.parent.path;
     } else if (diretorioAtual != file.parent.path) {
