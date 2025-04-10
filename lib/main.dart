@@ -31,7 +31,7 @@ final folderHome = "$userFolder/dnose_projects";
 
 final Logger _logger = Logger('Main');
 
-Future<void> main(List<String> args) async {
+Future<void> main2(List<String> args) async {
   // if(args.length == 1){
   //   processar(args[0]);
   //   return;
@@ -181,20 +181,24 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
 Future<String> processar(String pathProjects) async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
+  List<String> listaArquivosTestes = List.empty(growable: true);
 
   var lista = pathProjects.split(";");
 
   for (final project in lista) {
     if (project.trim().isNotEmpty) {
-      var (listaTotal2, listaTotalMetrics2) = await _processar(project);
+      var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project);
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
+      listaArquivosTestes.addAll(listaArquivosTestes2);
     }
   }
 
   await createCSV(listaTotal);
 
   await createMatricsCSV(listaTotalMetrics);
+
+  await createListFilesTestsCSV(listaArquivosTestes);
 
   await createSqlite();
 
@@ -206,6 +210,7 @@ Future<String> processar(String pathProjects) async {
 Future<String> processarAll() async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
+  List<String> listaArquivosTestes = List.empty(growable: true);
 
   final directory = Directory(folderHome);
 
@@ -213,13 +218,15 @@ Future<String> processarAll() async {
       directory.listSync().where((entity) => entity is Directory);
 
   for (final folder in directories) {
-    var (listaTotal2, listaTotalMetrics2) = await _processar(folder.path);
+    var (listaTotal2, listaTotalMetrics2, listaArquivosTestes2) = await _processar(folder.path);
     listaTotal.addAll(listaTotal2);
     listaTotalMetrics.addAll(listaTotalMetrics2);
+    listaArquivosTestes.addAll(listaArquivosTestes2);
   }
 
   await createCSV(listaTotal);
   await createMatricsCSV(listaTotalMetrics);
+  await createListFilesTestsCSV(listaArquivosTestes);
   await createSqlite();
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
@@ -227,7 +234,7 @@ Future<String> processarAll() async {
   return "OK";
 }
 
-Future<(List<TestSmell>, List<TestMetric>)> _processar(
+Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
     String pathProject) async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
 
@@ -241,6 +248,7 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
 
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
+  List<String> listaArquivosTestes = List.empty(growable: true);
 
   Directory dir = Directory(pathProject);
 
@@ -272,6 +280,7 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
     }
 
     if (file.path.endsWith("_test.dart") == true) {
+      listaArquivosTestes.add(file.path);
       _logger.info("Analyzing: ${file.path}");
       //contador de procentagem para a tela
       DNose.contProcessProject++;
@@ -311,7 +320,7 @@ Future<(List<TestSmell>, List<TestMetric>)> _processar(
     }
   }
 
-  return (listaTotal, listaTotalMetrics);
+  return (listaTotal, listaTotalMetrics, listaArquivosTestes);
 }
 
 int qtd(String texto, String palavra) {
@@ -417,6 +426,22 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   return true;
 }
 
+Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
+  var file = File('list_files_tests.csv');
+  if (file.existsSync()) file.deleteSync();
+  file.createSync();
+
+  var sink = file.openWrite();
+  sink.write(
+      "pathFile\n");
+  for (var m in listFileTests) {
+    sink.write("$m\n");
+  }
+  sink.close();
+
+  return true;
+}
+
 Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
   var file = File('resultado_metrics.csv');
   if (file.existsSync()) file.deleteSync();
@@ -444,12 +469,16 @@ Future<bool> createSqlite() async {
   String dbPath = 'resultado.sqlite';
   String csvFilePath = 'resultado.csv';
   String csvMEtricsFilePath = 'resultado_metrics.csv';
+  String csvFileTests = 'list_files_tests.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMEtricsFilePath metrics"';
+  String command3 =
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFileTests filestests"';
   await shell.run(command);
   await shell.run(command2);
+  await shell.run(command3);
   return true;
 }
 
@@ -475,6 +504,18 @@ List<String> getProjects() {
   } else {
     return [];
   }
+}
+
+void main(){
+  print(getSizeTestFiles());
+}
+
+int getSizeTestFiles(){
+  final db = sqlite3.open('resultado.sqlite');
+  final ResultSet resultSet = db.select('SELECT COUNT(1) FROM filestests;');
+  final int count = resultSet.first.values.first as int;
+  db.dispose();
+  return count;
 }
 
 String getStatists() {
@@ -512,17 +553,27 @@ String getStatists() {
   for (var key in mapa.keys) {
     var listaValores = mapa[key];
 
-    var statistics = listaValores?.statistics;
+    int qtdTotalFilesTests = getSizeTestFiles();
 
-    var media = statistics?.mean;
-    var desvioPadrao = statistics?.standardDeviation;
-    var mediana = statistics?.median;
-    var squareMean = statistics?.squaresMean;
-    var sum = statistics?.sumBigInt;
-    var max = statistics?.max;
-    var min = statistics?.min;
-    var center = statistics?.center;
-    var squaresSum = statistics?.squaresSum;
+    int qtdSemTestSmells = qtdTotalFilesTests - listaValores!.length;
+
+    var arrayComZeros = List.filled(qtdSemTestSmells, 0);
+
+    listaValores.addAll(arrayComZeros);
+
+    listaValores.sort();
+
+    var statistics = listaValores.statistics;
+
+    var media = statistics.mean;
+    var desvioPadrao = statistics.standardDeviation;
+    var mediana = statistics.median;
+    var squareMean = statistics.squaresMean;
+    var sum = statistics.sumBigInt;
+    var max = statistics.max;
+    var min = statistics.min;
+    var center = statistics.center;
+    var squaresSum = statistics.squaresSum;
 
     retorno +=
         "$key;$media;$desvioPadrao;$mediana;$squareMean;$max;$min;$sum;$center;$squaresSum\n";
