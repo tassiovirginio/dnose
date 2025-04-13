@@ -14,14 +14,8 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:statistics/statistics.dart';
 import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:git/git.dart';
-// import 'package:git_clone/git_clone.dart' as git;
-// import 'package:csv/csv.dart';
-
-import 'package:sqlite3/src/ffi/implementation.dart';
-
 import 'package:sentiment_dart/sentiment_dart.dart';
 
-// final libsqlite3 = DynamicLibrary.open('/run/current-system/sw/lib/libsqlite3.so');
 final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
 final userFolder = (Platform.isMacOS || Platform.isLinux)
@@ -89,10 +83,7 @@ void cloandoProjetos() async {
     if (size == 5) {
       if (!set.contains(url)) {
         set.add(url);
-        // print("${cont++} - ${name} - ${size}  - ${url}");
         if (Directory(localPath + name).existsSync()) {
-          // print("${cont++},${name},${size},${url}");
-
           var listaArquivos = getFilesFromDirRecursive(localPath + name);
           int contDart = 0;
           int contTestDart = 0;
@@ -104,7 +95,6 @@ void cloandoProjetos() async {
               contTestDart = contTestDart + 1;
             }
           }
-          // if(contTestDart > 0)
           print(
               "$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
         } else {
@@ -325,8 +315,6 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
           ts.words = sentimentResult.words;
         }
 
-        //Sentiment
-
         listaTotal.addAll(testSmells);
         listaTotalMetrics.addAll(testMetrics);
       } catch (e) {
@@ -498,9 +486,7 @@ Future<bool> createSqlite() async {
 }
 
 List<String> getQtdTestSmellsByType() {
-  // final sqlite3_ = FfiSqlite3(libsqlite3);
   final db = sqlite3.open('resultado.sqlite');
-  // final db = sqlite3_.open('resultado.sqlite');
   final ResultSet resultSet = db.select(
       'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
@@ -508,11 +494,7 @@ List<String> getQtdTestSmellsByType() {
 
 List<String> getProjects() {
   if (File("resultado.sqlite").existsSync()) {
-    // final sqlite3_ = FfiSqlite3(libsqlite3);
     final db = sqlite3.open('resultado.sqlite');
-    // final db = sqlite3_.open('resultado.sqlite');
-    // final db = sqlite3.open('resultado.sqlite');
-
     final ResultSet resultSet =
         db.select('select distinct project_name from testsmells;');
     return resultSet.toList().map((e) => e.toString()).toList();
@@ -536,17 +518,11 @@ int getSizeTestFiles(){
 String getStatists() {
   var file = File('resultado.sqlite');
   if (!file.existsSync()) return "";
-
-  // final sqlite3_ = FfiSqlite3(libsqlite3);
   final db = sqlite3.open('resultado.sqlite');
-  // final db = sqlite3_.open('resultado.sqlite', mode: OpenMode.readOnly);
-
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
   var lista = resultSet.toList();
-
   var mapa = <String, List<int>>{};
-
   for (var item in lista) {
     var testeSmell = item["testsmell"];
     if (!mapa.containsValue(testeSmell)) {

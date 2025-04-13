@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:csv/csv.dart';
 
 void main() async {
   // 1. Ler o arquivo CSV

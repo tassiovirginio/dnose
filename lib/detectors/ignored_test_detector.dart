@@ -30,7 +30,7 @@ class IgnoredTestDetector implements AbstractDetector {
             e.toString().contains("skip:true") ||
             e.toString().contains("skip: \""))) {
 
-      if (e is NamedExpression && e.childEntities.elementAt(0) is Label && e.childEntities.elementAt(0).toString() == "skip:"
+      if (e.childEntities.elementAt(0) is Label && e.childEntities.elementAt(0).toString() == "skip:"
       && e.childEntities.elementAt(1).toString() != "false") {
         testSmells.add(TestSmell(
             name: testSmellName,
