@@ -1,13 +1,12 @@
 import 'package:test/test.dart';
 
 void main() {
-
   void testFunction() {
     throw Exception("Erro");
   }
 
-
-  test("Exception Handling1", () {//2
+  test("Exception Handling1", () {
+    //2
     try {
       throw Exception("Erro");
     } catch (e) {
@@ -15,7 +14,8 @@ void main() {
     }
   });
 
-  test("Exception Handling2", () {//1
+  test("Exception Handling2", () {
+    //1
     try {
       testFunction();
     } catch (e) {
@@ -23,13 +23,14 @@ void main() {
     }
   });
 
-  test("Exception Handling3", () {//1
+  test("Exception Handling3", () {
+    //1
     try {
       testFunction();
+    } catch (e) {
+      expect(e.toString(), Exception("Erro").toString());
     } finally {
       print("erro");
     }
   });
-
-
 }
