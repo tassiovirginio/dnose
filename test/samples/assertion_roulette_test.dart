@@ -1,47 +1,47 @@
 import 'package:test/test.dart';
 
 void main() {
-  test("AssertionRoulet", () {
+  test("AssertionRoulet1", () {
     // 0
     expect(1 + 2, 3, reason: "Verificando o valor");
     expect(1 + 2, 3, reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
     expect(1 + 2, 3);
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet2", () {
     // 0 
     expect(1 + 2, 3, reason: "Verificando o valor");
     expect(1 + 2, 3, reason: "Verificando o valor");
     expect(1 + 2, 3, reason: "Verificando o valor");
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet3", () {
     // 1
     expect(1 + 2, 3);
     expect(1 + 2, 3,reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
     expect(1 + 2, 3);
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet4", () {
     // 0
     expect(1 + 2, 3);
     expect(1 + 2, 3, reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet5", () {
     // 1
     expect(1 + 2, 3);
     expect(1 + 2, 3);
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet6", () {
     // 2
     expect(1 + 2, 3);
     expect(1 + 2, 3);
     expect(1 + 2, 3);
   });
 
-  test("AssertionRoulet", () {
+  test("AssertionRoulet7", () {
     // 0
     expect(1 + 2, 3);
   });

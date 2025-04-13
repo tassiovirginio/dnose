@@ -7,7 +7,7 @@ void main() {
   }
 
 
-  test("Exception Handling", () {//2
+  test("Exception Handling1", () {//2
     try {
       throw Exception("Erro");
     } catch (e) {
@@ -15,7 +15,7 @@ void main() {
     }
   });
 
-  test("Exception Handling", () {//1
+  test("Exception Handling2", () {//1
     try {
       testFunction();
     } catch (e) {
@@ -23,7 +23,7 @@ void main() {
     }
   });
 
-  test("Exception Handling", () {//1
+  test("Exception Handling3", () {//1
     try {
       testFunction();
     } finally {

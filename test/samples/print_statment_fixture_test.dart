@@ -4,12 +4,12 @@ import 'package:test/test.dart';
 void main() {
   var m = M();
   var mm = M();
-  test("PrintStatmentFixture", () => {m.print("teste1")});
-  test("PrintStatmentFixture", () => {mm.prints("teste1")});
-  test("PrintStatmentFixture", () => {print("teste1")});
-  test("PrintStatmentFixture", () => {prints("teste2")});
-  test("PrintStatmentFixture", () => {stdout.write("teste3")});
-  test("PrintStatmentFixture", () => {stderr.writeln("teste4")});
+  test("PrintStatmentFixture1", () => {m.print("teste1")});
+  test("PrintStatmentFixture2", () => {mm.prints("teste1")});
+  test("PrintStatmentFixture3", () => {print("teste1")});
+  test("PrintStatmentFixture4", () => {prints("teste2")});
+  test("PrintStatmentFixture5", () => {stdout.write("teste3")});
+  test("PrintStatmentFixture6", () => {stderr.writeln("teste4")});
 }
 
 

@@ -3,22 +3,22 @@ import 'dart:io';
 import 'package:test/test.dart';
 
 void main() {
-  test("DetectorResourceOptimism", () {
+  test("DetectorResourceOptimism1", () {
     // ignore: unused_local_variable
     var file = File('file.txt');
   });
 
-  test("DetectorResourceOptimism", () {
+  test("DetectorResourceOptimism2", () {
     // ignore: unused_local_variable
     var file = File('file.txt').exists();
   });
 
-  test("DetectorResourceOptimism", () {
+  test("DetectorResourceOptimism3", () {
     // ignore: unused_local_variable
     var file = File('file.txt').existsSync();
   });
 
-  test("DetectorResourceOptimism", () {
+  test("DetectorResourceOptimism4", () {
     if(File('file.txt').existsSync()){
       // ignore: unused_local_variable
       var file = File('file.txt');
