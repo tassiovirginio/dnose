@@ -1,7 +1,7 @@
 # DNose
 ## Dart Test Smells Detector
 
-- https://tassiovirginio.github.io/dnose.page/
+- https://dnose-ts.github.io/
 
 ## Demo
 
@@ -18,6 +18,7 @@
 - [x] **Magic Number**
 - [x] **Print Statement**
 - [x] **Resource Optimism**
+- [x] **Sensitive Equality**
 - [x] **Sleepy Test**
 - [x] **Test Without Description**
 - [x] **Unknow Test**
@@ -26,7 +27,8 @@
 
 ### Pré-requisito
 
-- sudo apt-get -y install sqlite3 libsqlite3-dev
+- Ubuntu -> sudo apt-get -y install sqlite3 libsqlite3-dev git dart
+- Arch -> pacman -S git sqlite3 libsqlite3 dart
 
 
 ### Docker
