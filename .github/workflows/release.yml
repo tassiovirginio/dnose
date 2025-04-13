@@ -27,7 +27,7 @@ jobs:
       - name: Copy static files
         run: |
           cp -r public target/
-          cp dnose.propertie target/
+          cp dnose.properties target/
 
       - name: Create ZIP file
         run: |
