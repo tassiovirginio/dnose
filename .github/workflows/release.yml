@@ -18,6 +18,9 @@ jobs:
       - name: Create target directory
         run: mkdir -p target
 
+      - name: Get dependencies
+        run: dart pub get
+
       - name: Compile Dart server
         run: dart compile exe bin/server.dart -o target/server
 
