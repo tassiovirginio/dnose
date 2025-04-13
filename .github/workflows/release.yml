@@ -1,0 +1,39 @@
+name: Build and Release
+
+on:
+  release:
+    types: main
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Create target directory
+        run: mkdir -p target
+
+      - name: Compile Dart server
+        run: dart compile exe bin/server.dart -o target/server
+
+      - name: Copy static files
+        run: |
+          cp -r public target/
+          cp dnose.propertie target/
+
+      - name: Create ZIP file
+        run: |
+          cd target
+          zip -r ../release.zip .
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
