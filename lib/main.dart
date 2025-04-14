@@ -18,6 +18,9 @@ import 'package:sentiment_dart/sentiment_dart.dart';
 
 final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
+final currentPath = Directory.current.path;
+final resultadoDbFile = "$currentPath/results/resultado.sqlite";
+
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
@@ -333,7 +336,7 @@ int qtd(String texto, String palavra) {
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var somatorio = <String, int>{};
 
-  var file = File('resultado.csv');
+  var file = File('results/resultado.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
   var sink = file.openWrite();
@@ -341,7 +344,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   sink.write("lineNumber;commitAuthor;author;dateStr;timeStr;summary;");
   sink.write("score;comparative;words;\n");
 
-  var file4 = File('metrics2.csv');
+  var file4 = File('results/metrics2.csv');
   if (file4.existsSync()) file4.deleteSync();
   file4.createSync();
   var sink4 = file4.openWrite();
@@ -411,7 +414,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     }
   }
 
-  var file2 = File('resultado2.csv');
+  var file2 = File('results/resultado2.csv');
   if (file2.existsSync()) file2.deleteSync();
   file2.createSync();
 
@@ -430,7 +433,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
 }
 
 Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
-  var file = File('list_files_tests.csv');
+  var file = File('results/list_files_tests.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
 
@@ -446,7 +449,7 @@ Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
 }
 
 Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
-  var file = File('resultado_metrics.csv');
+  var file = File('results/resultado_metrics.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
 
@@ -466,13 +469,13 @@ Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
 }
 
 Future<bool> createSqlite() async {
-  var file2 = File('resultado.sqlite');
+  var file2 = File(resultadoDbFile);
   if (file2.existsSync()) file2.deleteSync();
   var shell = Shell();
-  String dbPath = 'resultado.sqlite';
-  String csvFilePath = 'resultado.csv';
-  String csvMEtricsFilePath = 'resultado_metrics.csv';
-  String csvFileTests = 'list_files_tests.csv';
+  String dbPath = 'results/resultado.sqlite';
+  String csvFilePath = 'results/resultado.csv';
+  String csvMEtricsFilePath = 'results/resultado_metrics.csv';
+  String csvFileTests = 'results/list_files_tests.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =
@@ -486,15 +489,15 @@ Future<bool> createSqlite() async {
 }
 
 List<String> getQtdTestSmellsByType() {
-  final db = sqlite3.open('resultado.sqlite');
+  final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select(
       'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
 List<String> getProjects() {
-  if (File("resultado.sqlite").existsSync()) {
-    final db = sqlite3.open('resultado.sqlite');
+  if (File(resultadoDbFile).existsSync()) {
+    final db = sqlite3.open(resultadoDbFile);
     final ResultSet resultSet =
         db.select('select distinct project_name from testsmells;');
     return resultSet.toList().map((e) => e.toString()).toList();
@@ -508,7 +511,8 @@ void main(){
 }
 
 int getSizeTestFiles(){
-  final db = sqlite3.open('resultado.sqlite');
+  if(File(resultadoDbFile).existsSync() == false) return 0;
+  final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select('SELECT COUNT(1) FROM filestests;');
   final int count = resultSet.first.values.first as int;
   db.dispose();
@@ -516,9 +520,9 @@ int getSizeTestFiles(){
 }
 
 String getStatists() {
-  var file = File('resultado.sqlite');
-  if (!file.existsSync()) return "";
-  final db = sqlite3.open('resultado.sqlite');
+  var file = File(resultadoDbFile);
+  if (file.existsSync() == false) return "";
+  final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select(
       'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
   var lista = resultSet.toList();

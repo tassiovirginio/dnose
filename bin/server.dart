@@ -17,11 +17,12 @@ import 'package:sqlite3/sqlite3.dart';
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 final currentPath = Directory.current.path;
-final resultado = "$currentPath/resultado.csv";
-final resultado2 = "$currentPath/resultado2.csv";
-final resultadoMetrics = "$currentPath/resultado_metrics.csv";
-final resultadoMetrics2 = "$currentPath/metrics2.csv";
-final resultadoDbFile = "$currentPath/resultado.sqlite";
+final resultFolder = "$currentPath/results";
+final resultado = "$currentPath/results/resultado.csv";
+final resultado2 = "$currentPath/results/resultado2.csv";
+final resultadoMetrics = "$currentPath/results/resultado_metrics.csv";
+final resultadoMetrics2 = "$currentPath/results/metrics2.csv";
+final resultadoDbFile = "$currentPath/results/resultado.sqlite";
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
@@ -58,6 +59,9 @@ Handler init() {
 
   var existFolder = Directory(folderHome).existsSync();
   if (existFolder == false) Directory(folderHome).createSync();
+
+  var existFolder2 = Directory(resultFolder).existsSync();
+  if (existFolder2 == false) Directory(resultFolder).createSync();
 
   app.get('/list_projects', () => listaProjetos());
   app.get('/getstatistics', () => getStatists());
@@ -145,7 +149,8 @@ Handler init() {
 
 
   String chartDataTestSmellsSentiments(){
-    final db = sqlite3.open("resultado.sqlite");
+    if(File(resultadoDbFile).existsSync() == false) return "";
+    final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
       SELECT testsmell, SUM(score) AS total_score
@@ -176,7 +181,8 @@ Handler init() {
 
 
   String chartDataAuthorSentiment() {
-    final db = sqlite3.open("resultado.sqlite");
+    if(File(resultadoDbFile).existsSync() == false) return "";
+    final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
       SELECT author, SUM(score) AS total_score
@@ -203,7 +209,8 @@ Handler init() {
   }
 
   String chartDataAuthor() {
-    final db = sqlite3.open("resultado.sqlite");
+    if(File(resultadoDbFile).existsSync() == false) return "";
+    final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
       SELECT author, COUNT(*) AS total_testsmells

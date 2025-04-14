@@ -12,3 +12,5 @@
 pubspec.lock
 bin/server
 
+# FVM Version Cache
+.fvm/
