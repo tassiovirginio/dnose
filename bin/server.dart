@@ -265,27 +265,10 @@ Handler init() {
   app.get('/download.db', getResultadoDbFile, use: download());
   app.get('/download.db.existe', resultDbExist);
 
-
-  // app.get('/', () => File('public/index.html'));
-  // app.get('/index.js', () => File('public/index.js'));
-  // app.get('/projects', () => File('public/projects.html'));
-  // app.get('/projects.js', () => File('public/projects.js'));
-  // app.get('/solutions', () => File('public/solutions.html'));
-  // app.get('/solutions.js', () => File('public/solutions.js'));
-  // app.get('/mining', () => File('public/mining.html'));
-  // app.get('/mining.js', () => File('public/mining.js'));
-  // app.get('/config', () => File('public/config.html'));
-  // app.get('/config.js', () => File('public/config.js'));
-  // app.get('/about', () => File('public/about.html'));
-  // app.get('/bulma.min.css', () => File('public/bulma.min.css'));
-  // app.get('/logo.png', () => File('public/logo.png'));
-  // app.get('/chart.js', () => File('public/chart.js'));
-
   final handler = Cascade()
       .add(createStaticHandler('public', defaultDocument: 'index.html'))
       .add(app.call)
       .handler;
-
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
