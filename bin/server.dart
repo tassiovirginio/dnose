@@ -97,7 +97,7 @@ Handler init() {
   String result1exists() => File(resultado).existsSync().toString();
   app.get('/result1exists', result1exists);
 
-  String currentprojectname() {
+  String currentProjectName() {
     sleep(Duration(seconds: 1));
     var lista = getProjects();
     String projetos = "";
@@ -150,7 +150,6 @@ Handler init() {
     return getSizeTestFiles().toString();
   }
 
-
   String chartDataTestSmellsSentiments(){
     if(File(resultadoDbFile).existsSync() == false) return "";
     final db = sqlite3.open(resultadoDbFile);
@@ -178,9 +177,6 @@ Handler init() {
 
     return buffer.toString();
   }
-
-
-
 
 
   String chartDataAuthorSentiment() {
@@ -237,7 +233,7 @@ Handler init() {
     return buffer.toString();
   }
 
-  app.get('/projectnameatual', currentprojectname);
+  app.get('/projectnameatual', currentProjectName);
   app.get('/charts_data', chartData);
   app.get('/charts_data_author', chartDataAuthor);
   app.get('/charts_data_author_sentiment', chartDataAuthorSentiment);
