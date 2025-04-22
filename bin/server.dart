@@ -46,6 +46,8 @@ void main() => shelfRun(
     );
 
 Handler init() {
+  print('Versão do Dart: ${Platform.version}');
+
   DNose.contProcessProject = 0;
 
   Properties p = Properties.fromFile(filepath);
