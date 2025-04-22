@@ -29,7 +29,7 @@ class SleepTestLint extends DartLintRule {
       if (node.beginToken.type == TokenType.IDENTIFIER &&
           listTestNames.contains(node.beginToken.toString())) {
         verifyTestSmell(node, reporter);
-      };
+      }
     });
   }
 

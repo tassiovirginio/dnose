@@ -208,7 +208,7 @@ Future<String> processarAll() async {
   final directory = Directory(folderHome);
 
   final directories =
-      directory.listSync().where((entity) => entity is Directory);
+      directory.listSync().whereType<Directory>();
 
   for (final folder in directories) {
     var (listaTotal2, listaTotalMetrics2, listaArquivosTestes2) = await _processar(folder.path);

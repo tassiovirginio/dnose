@@ -28,7 +28,6 @@ class EmptyTestLint extends DartLintRule {
           listTestNames.contains(node.beginToken.toString())) {
         verifyTestSmell(node, reporter);
       }
-      ;
     });
   }
 

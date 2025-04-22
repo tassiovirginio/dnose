@@ -1,4 +1,4 @@
-import 'package:analyzer/src/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/ast.dart' show ExpressionStatement;
 import 'package:dnose/metrics/abstract_metric.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
-import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:statistics/statistics.dart';
 
 Future<void> main() async {
@@ -37,15 +37,15 @@ class Util {
     }
   }
 
-  static String MD5(String code) {
+  static String md5(String code) {
     code = code.replaceAll("\n", "").replaceAll("\r", "").replaceAll(" ", "");
-    return md5.convert(utf8.encode(code)).toString();
+    return crypto.md5.convert(utf8.encode(code)).toString();
   }
 
-  static String date(String timestamp_gmt) {
+  static String date(String timestampGmt) {
 
-    int timestamp = timestamp_gmt.trim().split(" ").first.toInt();
-    double gmt = (timestamp_gmt.trim().split(" ").last.toInt())/100;// Timestamp Unix em segundos
+    int timestamp = timestampGmt.trim().split(" ").first.toInt();
+    double gmt = (timestampGmt.trim().split(" ").last.toInt())/100;// Timestamp Unix em segundos
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true);
 
     // Ajuste para o fuso horário +0200

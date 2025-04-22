@@ -47,22 +47,22 @@ void detectar01(var astnode) {
       // int end = lineNumber(astnode.parent!.end);
 
 
-      print("Linha start: " + lineNumber(astnode.parent!.offset).toString());
-      print("Linha end: " + astnode.parent!.end.lineNumber.toString());
-      print("Linha end: " + astnode.parent!.lineNumberEnd().toString());
-      print("1 => " + astnode.childEntities.isEmpty.toString());
-      print("1 => " + astnode.toString());
-      print("1.1 => " + (astnode.toString().replaceAll(" ", "") == "{}").toString());
-      print("1 => " + astnode.runtimeType.toString());
-      print("2 => " + astnode.parent.toString());
-      print("2 => " + astnode.parent.runtimeType.toString());
-      print("3 => " + astnode.parent!.parent.toString());
-      print("3 => " + astnode.parent!.parent.runtimeType.toString());
-      print("4 => " + astnode.parent!.parent!.parent.toString());
-      print("4 => " + astnode.parent!.parent!.parent.runtimeType.toString());
-      print("5 => " + astnode.parent!.parent!.parent!.parent.toString());
-      print("5 => " + astnode.parent!.parent!.parent!.parent.runtimeType.toString());
-      print("6 => " + astnode.parent!.parent!.parent!.parent!.childEntities.first.toString());
+      print("Linha start: ${lineNumber(astnode.parent!.offset)}");
+      print("Linha end: ${astnode.parent!.end.lineNumber}");
+      print("Linha end: ${astnode.parent!.lineNumberEnd()}");
+      print("1 => ${astnode.childEntities.isEmpty}");
+      print("1 => $astnode");
+      print("1.1 => ${astnode.toString().replaceAll(" ", "") == "{}"}");
+      print("1 => ${astnode.runtimeType}");
+      print("2 => ${astnode.parent}");
+      print("2 => ${astnode.parent.runtimeType}");
+      print("3 => ${astnode.parent!.parent}");
+      print("3 => ${astnode.parent!.parent.runtimeType}");
+      print("4 => ${astnode.parent!.parent!.parent}");
+      print("4 => ${astnode.parent!.parent!.parent.runtimeType}");
+      print("5 => ${astnode.parent!.parent!.parent!.parent}");
+      print("5 => ${astnode.parent!.parent!.parent!.parent.runtimeType}");
+      print("6 => ${astnode.parent!.parent!.parent!.parent!.childEntities.first}");
       // print("X => " + astnode.root.runtimeType.toString());
     }
 

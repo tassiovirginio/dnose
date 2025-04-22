@@ -37,7 +37,6 @@ class VerboseTestLint extends DartLintRule {
           reporter.atNode(node, code);
         }
       }
-      ;
     });
   }
 

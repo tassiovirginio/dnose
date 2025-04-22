@@ -104,7 +104,7 @@ Handler init() {
       if (projetos.isEmpty) {
         projetos = p.split(":")[1].trim();
       } else {
-        projetos = projetos + ", " + p.split(":")[1].trim();
+        projetos = "$projetos, ${p.split(":")[1].trim()}";
       }
     }
 
@@ -322,8 +322,8 @@ Handler init() {
   app.get('/qtdbytestsmellbytype', getQtdTestSmellsByType);
 
   app.get('/qtd_commits', (Request request) async {
-    String? path_project = request.url.queryParameters['path_project'];
-    final size = Util.getQtyFilesWithTestSuffix(path_project);
+    String? pathProject = request.url.queryParameters['path_project'];
+    final size = Util.getQtyFilesWithTestSuffix(pathProject);
     return Response.ok(size.toString());
   });
 

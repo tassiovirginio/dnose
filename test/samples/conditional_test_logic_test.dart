@@ -33,7 +33,9 @@ void main() {
 
   test("Conditional Test Logic forEach", () {//1
     List<int> list = [1,2,3];
-    list.forEach((number)=> print(number));
+    for (var number in list) {
+      print(number);
+    }
   });
 
 }

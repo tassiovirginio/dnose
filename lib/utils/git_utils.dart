@@ -89,7 +89,7 @@ void mining(String path) async {
 
             // intera sobre a lista de testsmells
             for (var ts in testSmells) {
-              String codeMD5 = Util.MD5(ts.code);
+              String codeMD5 = Util.md5(ts.code);
               int qtd = mapUtil.add(ts.codeTestMD5!, codeMD5);
 
 
@@ -115,7 +115,7 @@ void mining(String path) async {
 
 
               // gera o identificador UNICO para o testsmell
-              String md5TestSmell = Util.MD5(
+              String md5TestSmell = Util.md5(
                   ts.codeTestMD5! +
                   ts.codeMD5 + ts.collumnStart.toString()
               );
