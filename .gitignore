@@ -14,3 +14,4 @@ bin/server
 
 # FVM Version Cache
 .fvm/
+server
