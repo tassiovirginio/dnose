@@ -42,22 +42,22 @@ const index_js = _$index_js;
 @EmbedBinary('../public/logo.png')
 const logo_png = _$logo_png;
 
-@EmbedBinary('../public/mining.html')
+@EmbedStr('../public/mining.html')
 const mining_html = _$mining_html;
 
-@EmbedBinary('../public/mining.js')
+@EmbedStr('../public/mining.js')
 const mining_js = _$mining_js;
 
-@EmbedBinary('../public/projects.html')
+@EmbedStr('../public/projects.html')
 const projects_html = _$projects_html;
 
-@EmbedBinary('../public/projects.js')
+@EmbedStr('../public/projects.js')
 const projects_js = _$projects_js;
 
-@EmbedBinary('../public/solutions.html')
+@EmbedStr('../public/solutions.html')
 const solutions_html = _$solutions_html;
 
-@EmbedBinary('../public/solutions.js')
+@EmbedStr('../public/solutions.js')
 const solutions_js = _$solutions_js;
 
 final ip = InternetAddress.anyIPv4;
