@@ -11,6 +11,7 @@
 *.txt
 pubspec.lock
 bin/server
+*.g.dart
 
 # FVM Version Cache
 .fvm/
