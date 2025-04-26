@@ -14,8 +14,6 @@ import 'package:shelf_plus/shelf_plus.dart';
 import 'package:properties/properties.dart';
 import 'package:sqlite3/sqlite3.dart';
 
-import 'dart:convert';
-import 'package:embed/embed.dart';
 import 'package:embed_annotation/embed_annotation.dart';
 
 part 'server.g.dart';
@@ -108,7 +106,7 @@ void rJs(var app, String url, var jsContent) {
 }
 void main() => shelfRun(
       init,
-      defaultEnableHotReload: true,
+      defaultEnableHotReload: false,
       defaultBindPort: port,
       defaultBindAddress: ip,
     );
