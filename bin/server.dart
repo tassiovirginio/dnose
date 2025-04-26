@@ -14,6 +14,53 @@ import 'package:shelf_plus/shelf_plus.dart';
 import 'package:properties/properties.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'dart:convert';
+import 'package:embed/embed.dart';
+import 'package:embed_annotation/embed_annotation.dart';
+
+part 'server.g.dart';
+
+@EmbedStr('../public/about.html')
+const about_html = _$about_html;
+
+@EmbedStr('../public/bulma.min.css')
+const bulma_min_css = _$bulma_min_css;
+
+@EmbedStr('../public/chart.js')
+const chart_js = _$chart_js;
+
+@EmbedStr('../public/config.html')
+const config_html = _$config_html;
+
+@EmbedStr('../public/config.js')
+const config_js = _$config_js;
+
+@EmbedStr('../public/index.html')
+const index_html = _$index_html;
+
+@EmbedStr('../public/index.js')
+const index_js = _$index_js;
+
+@EmbedBinary('../public/logo.png')
+const logo_png = _$logo_png;
+
+@EmbedBinary('../public/mining.html')
+const mining_html = _$mining_html;
+
+@EmbedBinary('../public/mining.js')
+const mining_js = _$mining_js;
+
+@EmbedBinary('../public/projects.html')
+const projects_html = _$projects_html;
+
+@EmbedBinary('../public/projects.js')
+const projects_js = _$projects_js;
+
+@EmbedBinary('../public/solutions.html')
+const solutions_html = _$solutions_html;
+
+@EmbedBinary('../public/solutions.js')
+const solutions_js = _$solutions_js;
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -39,9 +86,29 @@ Future<List<String>> listaProjetos() async {
   return lista.map((e) => e.path).toList();
 }
 
+void rPage(var app, String url, var obj){
+  app.get(url, () => Response.ok(
+    obj,
+    headers: {'Content-Type': 'text/html; charset=utf-8'},
+  ));
+}
+
+void rCss(var app, String url, var cssContent) {
+  app.get(url, () => Response.ok(
+    cssContent,
+    headers: {'Content-Type': 'text/css; charset=utf-8'},
+  ));
+}
+
+void rJs(var app, String url, var jsContent) {
+  app.get(url, () => Response.ok(
+    jsContent,
+    headers: {'Content-Type': 'application/javascript; charset=utf-8'},
+  ));
+}
 void main() => shelfRun(
       init,
-      defaultEnableHotReload: false,
+      defaultEnableHotReload: true,
       defaultBindPort: port,
       defaultBindAddress: ip,
     );
@@ -56,8 +123,35 @@ Handler init() {
   apiKeyChatGPT = p.get('apiKeyChatGPT');
   ollamaModel = p.get('ollamaModel');
 
+
+
   var app = Router().plus;
   app.use(corsHeaders()); // liga o cors
+
+
+
+  app.get('/logo.png', () => Response.ok(
+    logo_png,
+    headers: {'Content-Type': 'image/png'},
+  ));
+
+  rPage(app, "/about.html", about_html);
+  rCss(app, "/bulma.min.css", bulma_min_css);
+  rJs(app, "/chart.js", chart_js);
+  rPage(app, "/config.html", config_html);
+  rJs(app, "/config.js", config_js);
+  rPage(app, "/", index_html);
+  rJs(app, "/index.js", index_js);
+  rPage(app, "/mining.html", mining_html);
+  rJs(app, "/mining.js", mining_js);
+  rPage(app, "/projects.html", projects_html);
+  rJs(app, "/projects.js", projects_js);
+  rPage(app, "/solutions.html", solutions_html);
+  rJs(app, "/solutions.js", solutions_js);
+
+
+
+
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
 
   var existFolder = Directory(folderHome).existsSync();
@@ -265,10 +359,10 @@ Handler init() {
   app.get('/download.db', getResultadoDbFile, use: download());
   app.get('/download.db.existe', resultDbExist);
 
-  final handler = Cascade()
-      .add(createStaticHandler('public', defaultDocument: 'index.html'))
-      .add(app.call)
-      .handler;
+  // final handler = Cascade()
+  //     .add(createStaticHandler('public', defaultDocument: 'index.html'))
+  //     .add(app.call)
+  //     .handler;
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
@@ -357,8 +451,8 @@ Handler init() {
           ));
 
 
-  // return corsHeaders() >> app.call;
-  return corsHeaders() >> handler;
+  return corsHeaders() >> app.call;
+  // return corsHeaders() >> handler;
 }
 
 Future<String> getChatGptResponse(String prompt) async {
