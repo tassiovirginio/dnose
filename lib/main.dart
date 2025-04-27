@@ -8,6 +8,7 @@ import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/blame.dart';
+import 'package:dnose/utils/git_log.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -178,6 +179,9 @@ Future<String> processar(String pathProjects) async {
 
   var lista = pathProjects.split(";");
 
+  var file = File('results/commits.csv');
+  if (file.existsSync()) file.deleteSync();
+
   for (final project in lista) {
     if (project.trim().isNotEmpty) {
       var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project);
@@ -209,6 +213,9 @@ Future<String> processarAll() async {
 
   final directories =
       directory.listSync().whereType<Directory>();
+
+  var file = File('results/commits.csv');
+  if (file.existsSync()) file.deleteSync();
 
   for (final folder in directories) {
     var (listaTotal2, listaTotalMetrics2, listaArquivosTestes2) = await _processar(folder.path);
@@ -249,6 +256,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   _logger.info("==============================================");
 
   String commitAtual = await getCommit(pathProject);
+  final csvFile2 = await generateGitLogCsv(pathProject,"results");
 
   DNose dnose = DNose();
 
@@ -476,15 +484,19 @@ Future<bool> createSqlite() async {
   String csvFilePath = 'results/resultado.csv';
   String csvMEtricsFilePath = 'results/resultado_metrics.csv';
   String csvFileTests = 'results/list_files_tests.csv';
+  String csvCommits = 'results/commits.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMEtricsFilePath metrics"';
   String command3 =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFileTests filestests"';
+  String command4 =
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvCommits commits"';
   await shell.run(command);
   await shell.run(command2);
   await shell.run(command3);
+  await shell.run(command4);
   return true;
 }
 
