@@ -22,7 +22,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   print('🔄 Extraindo commits do repositório...');
   final process = await Process.run(
     'git',
-    ['log', '--pretty=format:%H||%an||%ad||%s', '--date=iso'],
+    ['log', '--pretty=format:%H|||%an|||%ad|||%s', '--date=iso'],
     workingDirectory: repoPath,
   );
 
@@ -34,7 +34,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   print('✏️ Formatando CSV...');
   var output = process.stdout.toString();
   output = output.replaceAll(";", ".").replaceAll('"', "").replaceAll(",", ".");
-  output = output.replaceAll("||", ";");
+  output = output.replaceAll("|||", ";");
   final lines = output.split('\n');
   final csvContent = StringBuffer()
     ..writeln('project;hash;author;date;message');  // Cabeçalho
