@@ -256,7 +256,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   _logger.info("==============================================");
 
   String commitAtual = await getCommit(pathProject);
-  final csvFile2 = await generateGitLogCsv(pathProject,"results");
+  await generateGitLogCsv(pathProject,"results");
 
   DNose dnose = DNose();
 

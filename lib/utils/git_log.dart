@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:path/path.dart' as path;
 
 Future<File> generateGitLogCsv(repoPath, outputDir) async {
@@ -63,13 +62,13 @@ String _getProjectName(String repoPath) {
 
 void main() async {
   // Caminhos especificados
-  const repoPath = '/home/tassio/dnose_projects/flutter';
-  const outputDir = '/home/tassio/Desenvolvimento/repo.git/dnose/results';
+  // const repoPath = '/home/tassio/dnose_projects/flutter';
+  // const outputDir = '/home/tassio/Desenvolvimento/repo.git/dnose/results';
 
-  final csvFile = await generateGitLogCsv(repoPath,outputDir);
+  // final csvFile = await generateGitLogCsv(repoPath,outputDir);
 
-  const repoPath2 = '/home/tassio/dnose_projects/get';
-  final csvFile2 = await generateGitLogCsv(repoPath2,outputDir);
+  // const repoPath2 = '/home/tassio/dnose_projects/get';
+  // final csvFile2 = await generateGitLogCsv(repoPath2,outputDir);
 
 }
 
