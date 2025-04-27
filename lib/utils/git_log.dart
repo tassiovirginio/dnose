@@ -33,7 +33,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   // Processa a saída e adiciona o nome do projeto
   print('✏️ Formatando CSV...');
   var output = process.stdout.toString();
-  output = output.replaceAll(",", ".").replaceAll(" ; ", " . ");
+  output = output.replaceAll(",", ".").replaceAll(" ; ", " . ").replaceAll('"', "");
   final lines = output.split('\n');
   final csvContent = StringBuffer()
     ..writeln('project;hash;author;date;message');  // Cabeçalho

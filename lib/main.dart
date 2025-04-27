@@ -406,7 +406,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
             "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};");
     sink.write(
         "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
-            "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".")};");
+            "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".").replaceAll('"', "")};");
     sink.write(
         "${ts.score};${ts.comparative};${ts.words};\n");
 
