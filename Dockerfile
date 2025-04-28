@@ -15,10 +15,10 @@ RUN dart pub get
 # Copy app source code (except anything in .dockerignore) and AOT compile app.
 COPY . .
 RUN dart run build_runner build
-RUN dart compile exe bin/server.dart -o bin/server
+RUN dart compile exe bin/dnose.dart -o bin/dnose
 
 # Ensure binary has execute permissions
-RUN chmod +x /app/bin/server
+RUN chmod +x /app/bin/dnose
 
 # Use Alpine as a minimal base image
 
@@ -29,7 +29,7 @@ RUN apk update && apk add --no-cache sqlite sqlite-libs sqlite-dev git
 COPY --from=build /app/sqlite3 /app/sqlite3
 COPY --from=build /app/libsqlite3.so /app/libsqlite3.so
 COPY --from=build /runtime/ /
-COPY --from=build /app/bin/server /app/bin/
+COPY --from=build /app/bin/dnose /app/bin/
 COPY --from=build /app/dnose.properties /app/
 COPY --from=build /app/lib /app/lib
 COPY --from=build /app/public /app/public
@@ -37,4 +37,4 @@ COPY --from=build /app/public /app/public
 # Start server.
 EXPOSE 8080
 WORKDIR /app
-CMD ["/app/bin/server"]
+CMD ["/app/bin/dnose"]
