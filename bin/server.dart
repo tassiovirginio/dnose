@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dnose/dnose.dart';
+import 'package:dnose/dnose_core.dart';
 import 'package:dnose/main.dart';
 import 'package:dnose/utils/git_utils.dart';
 import 'package:dnose/utils/util.dart';
@@ -47,7 +47,7 @@ void main() => shelfRun(
 Handler init() {
   print('Versão do Dart: ${Platform.version}');
 
-  DNose.contProcessProject = 0;
+  DNoseCore.contProcessProject = 0;
 
   //criando diretorios
   if(dirDNose.existsSync() == false) dirDNose.createSync();
@@ -80,7 +80,7 @@ Handler init() {
 
   app.get('/list_projects', () => listaProjetos());
   app.get('/getstatistics', () => getStatists());
-  app.get('/testsmellsnames', () => DNose.listTestSmellsNames);
+  app.get('/testsmellsnames', () => DNoseCore.listTestSmellsNames);
 
   app.post('/solution', (Request request) async {
     String prompt = await request.readAsString();
@@ -145,7 +145,7 @@ Handler init() {
   app.get('/getfiletext', (Request request) async {
     String? pathFile = request.url.queryParameters['path'];
     String? testDescription = request.url.queryParameters['test'];
-    DNose dnose = DNose();
+    DNoseCore dnose = DNoseCore();
     String code = dnose.getCodeTestByDescription(pathFile!, testDescription!);
     code = code.replaceAll(";", ";\n");
     return Response.ok(code);
@@ -325,7 +325,7 @@ Handler init() {
   });
 
   app.get('/qtd_progress', () {
-    int valor = DNose.contProcessProject;
+    int valor = DNoseCore.contProcessProject;
     return Response.ok(valor.toString());
   });
 

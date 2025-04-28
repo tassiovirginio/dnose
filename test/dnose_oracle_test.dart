@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:dnose/dnose.dart';
+import 'package:dnose/dnose_core.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final dnose = DNose();
+  final dnose = DNoseCore();
   final path = Directory.current.path;
 
   void verify(

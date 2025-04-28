@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dnose/dnose.dart';
+import 'package:dnose/dnose_core.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -15,14 +15,13 @@ Future<void> main() async {
 }
 
 void mining(String path) async {
-  final DNose dnose = DNose();
+  final DNoseCore dnoseCore = DNoseCore();
 
   // Set<String> setTest = <String>{};
 
   print('Current directory: $path');
 
   if (await GitDir.isGitDir(path)) {
-
     final db = initializeDatabase();
 
     final gitDir = await GitDir.fromExisting(path);
@@ -48,8 +47,10 @@ void mining(String path) async {
           c.content.split(" ")[1].replaceAll("tree", "").trim();
 
       // pega a lista de arquivos que foram modificados no commit
-      final List<String> retorno_ =
-          await GitUtil.getFileChangeCommit(path, commit);
+      final List<String> retorno_ = await GitUtil.getFileChangeCommit(
+        path,
+        commit,
+      );
 
       //cria uma lista vazia
       final List<String> listaArquivos = [];
@@ -63,7 +64,6 @@ void mining(String path) async {
 
       //verifica se a lista esta vazia
       if (listaArquivos.isNotEmpty) {
-
         // muda para o commit - checkout commit
         await gitDir.runCommand(['checkout', commit]);
 
@@ -72,14 +72,16 @@ void mining(String path) async {
           try {
             // cria uma testclass
             TestClass testClass = TestClass(
-                commit: commit,
-                path: "$path/$file",
-                moduleAtual: "",
-                projectName: path.split("/").last);
+              commit: commit,
+              path: "$path/$file",
+              moduleAtual: "",
+              projectName: path.split("/").last,
+            );
 
             // cria um MAP com a lista de testsmells encontrados e as métricas
-            final (List<TestSmell>, List<TestMetric>) mapa =
-                dnose.scan(testClass);
+            final (List<TestSmell>, List<TestMetric>) mapa = dnoseCore.scan(
+              testClass,
+            );
 
             // Map utilizado para controlar as ocorrencias 'duplicadas'
             final mapUtil = MapUtil();
@@ -92,10 +94,10 @@ void mining(String path) async {
               String codeMD5 = Util.md5(ts.code);
               int qtd = mapUtil.add(ts.codeTestMD5!, codeMD5);
 
-
               //dados que podem ser utilizados para gerar o identificados único
               print(
-                  "#####################################################################");
+                "#####################################################################",
+              );
               print("TestSmell: ${ts.name}");
               print("TestSmell.codeTest: ${ts.codeTest}");
               print("TestSmell.codeTestMD5: ${ts.codeTestMD5}");
@@ -113,16 +115,17 @@ void mining(String path) async {
               print("TestSmell.collumnEnd: ${ts.collumnEnd}");
               print("QTD: $qtd");
 
-
               // gera o identificador UNICO para o testsmell
               String md5TestSmell = Util.md5(
-                  ts.codeTestMD5! +
-                  ts.codeMD5 + ts.collumnStart.toString()
+                ts.codeTestMD5! + ts.codeMD5 + ts.collumnStart.toString(),
               );
 
               print("TestSmell.MD5TS: $md5TestSmell");
 
-              String msgFilter = c.message.replaceAll(";", "-").replaceAll("\n", " ").replaceAll("\r", " ");
+              String msgFilter = c.message
+                  .replaceAll(";", "-")
+                  .replaceAll("\n", " ")
+                  .replaceAll("\r", " ");
 
               String commitUserName = c.author.split("<").first;
               String commitDate = c.author.split(">").last;
@@ -142,26 +145,26 @@ void mining(String path) async {
 
                 // Insere dados na tabela TestSmells
                 insertTestSmell(
-                    db,
-                    projectName: testClass.projectName,
-                    testName: ts.testName,
-                    path: '$path/$file',
-                    testsmell: ts.name,
-                    commitHash: commit,
-                    author: commitUserName,
-                    date: commitDateFormatted,
-                    message: msgFilter,
-                    md5TestSmell: md5TestSmell
+                  db,
+                  projectName: testClass.projectName,
+                  testName: ts.testName,
+                  path: '$path/$file',
+                  testsmell: ts.name,
+                  commitHash: commit,
+                  author: commitUserName,
+                  date: commitDateFormatted,
+                  message: msgFilter,
+                  md5TestSmell: md5TestSmell,
                 );
               }
             }
 
             print(
-                "$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}");
+              "$commit -> $file -> Quantidade de Test Smells: ${mapa.$1.length}",
+            );
           } catch (e) {
             print("Erro ao analisar arquivo: $file");
           }
-
         }
       }
 
@@ -174,7 +177,6 @@ void mining(String path) async {
   } else {
     print('Not a Git directory');
   }
-
 }
 
 class GitUtil {
@@ -200,10 +202,17 @@ class GitUtil {
   }
 
   static Future<List<String>> getFileChangeCommit(
-      String path, String commit) async {
+    String path,
+    String commit,
+  ) async {
     final gitDir = await GitDir.fromExisting(path);
-    final retorno = await gitDir
-        .runCommand(['show', '--name-only', '--pretty=' '', commit]);
+    final retorno = await gitDir.runCommand([
+      'show',
+      '--name-only',
+      '--pretty='
+          '',
+      commit,
+    ]);
     String files = retorno.stdout.toString();
     final lista = files.split('\n');
     return lista;
@@ -236,7 +245,6 @@ void openCSV() {
   sink.close();
 }
 
-
 // Inicializa o banco de dados e cria a tabela se necessário
 Database initializeDatabase() {
   final dbPath = path.join(Directory.current.path, 'mining.db');
@@ -262,7 +270,8 @@ Database initializeDatabase() {
 }
 
 // Método para inserir dados na tabela TestSmells
-void insertTestSmell(Database db, {
+void insertTestSmell(
+  Database db, {
   required String projectName,
   required String testName,
   required String path,
@@ -273,31 +282,37 @@ void insertTestSmell(Database db, {
   required String message,
   required String md5TestSmell,
 }) {
-  db.execute('''
+  db.execute(
+    '''
     INSERT INTO TestSmells (
       projectName, testName, path, testsmell, commitHash, author, date, message, md5TestSmell
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  ''', [
-    projectName,
-    testName,
-    path,
-    testsmell,
-    commitHash,
-    author,
-    date,
-    message,
-    md5TestSmell
-  ]);
+  ''',
+    [
+      projectName,
+      testName,
+      path,
+      testsmell,
+      commitHash,
+      author,
+      date,
+      message,
+      md5TestSmell,
+    ],
+  );
 
   print('Dados inseridos com sucesso!');
 }
 
 bool checkIfMd5TestSmellExists(Database db, String md5TestSmell) {
-  final result = db.select('''
+  final result = db.select(
+    '''
     SELECT COUNT(*) AS count
     FROM TestSmells
     WHERE md5TestSmell = ?
-  ''', [md5TestSmell]);
+  ''',
+    [md5TestSmell],
+  );
 
   // Retorna true se encontrar um ou mais registros, caso contrário, false
   return result.isNotEmpty && result.first['count'] > 0;
@@ -305,11 +320,14 @@ bool checkIfMd5TestSmellExists(Database db, String md5TestSmell) {
 
 // Método para atualizar apenas a coluna 'date' de um registro com base no 'md5TestSmell'
 void updateDate(Database db, String md5TestSmell, String dateUpdate) {
-  db.execute('''
+  db.execute(
+    '''
     UPDATE TestSmells
     SET date_update = ?
     WHERE md5TestSmell = ?
-  ''', [dateUpdate, md5TestSmell]);
+  ''',
+    [dateUpdate, md5TestSmell],
+  );
 
   print('Data atualizada com sucesso para o md5TestSmell $md5TestSmell.');
 }

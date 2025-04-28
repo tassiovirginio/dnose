@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart' show md5;
-import 'package:dnose/dnose.dart';
+import 'package:dnose/dnose_core.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -262,7 +262,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   String commitAtual = await getCommit(pathProject);
   await generateGitLogCsv(pathProject, dirResults.path);
 
-  DNose dnose = DNose();
+  DNoseCore dnoseCore = DNoseCore();
 
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
@@ -303,7 +303,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
       listaArquivosTestes.add(file.path);
       _logger.info("Analyzing: ${file.path}");
       //contador de procentagem para a tela
-      DNose.contProcessProject++;
+      DNoseCore.contProcessProject++;
 
       try {
         TestClass testClass = TestClass(
@@ -311,7 +311,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
             path: file.path,
             moduleAtual: moduleAtual,
             projectName: projectName);
-        var (testSmells, testMetrics) = dnose.scan(testClass);
+        var (testSmells, testMetrics) = dnoseCore.scan(testClass);
 
         //Blame
         Map<String,BlameLine> fileBlame = blameFile(file.path, pathProject);

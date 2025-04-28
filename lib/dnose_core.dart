@@ -25,7 +25,7 @@ import 'package:dnose/utils/git_utils.dart';
 import 'package:git/git.dart';
 import 'package:logging/logging.dart';
 
-class DNose {
+class DNoseCore {
   static final Logger _logger = Logger('DNose');
 
   static int contProcessProject = 0;
