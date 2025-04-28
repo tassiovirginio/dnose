@@ -9,6 +9,7 @@ RUN dart pub get
 
 # Copy app source code (except anything in .dockerignore) and AOT compile app.
 COPY . .
+RUN dart run build_runner build
 RUN dart compile exe bin/server.dart -o bin/server
 
 # Ensure binary has execute permissions
