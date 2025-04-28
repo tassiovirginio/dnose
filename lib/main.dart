@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart' show md5;
@@ -17,15 +16,17 @@ import 'package:yaml/yaml.dart' show loadYaml;
 import 'package:git/git.dart';
 import 'package:sentiment_dart/sentiment_dart.dart';
 
-final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
+// final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
-final currentPath = Directory.current.path;
-final resultadoDbFile = "$currentPath/results/resultado.sqlite";
-
+// final currentPath = Directory.current.path;
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
-final folderHome = "$userFolder/dnose_projects";
+final Directory dirUser = Directory(userFolder);
+final Directory dirDNose = Directory("${dirUser.path}/.dnose");
+final Directory dirProjects = Directory("${dirDNose.path}/projects");
+final Directory dirResults = Directory("${dirDNose.path}/results");
+final String resultadoDbFile = "${dirResults.path}/resultado.sqlite";
 
 final Logger _logger = Logger('Main');
 
@@ -172,14 +173,14 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
   return result;
 }
 
-Future<String> processar(String pathProjects) async {
+Future<String> processar(String listPathProjects) async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  var lista = pathProjects.split(";");
+  var lista = listPathProjects.split(";");
 
-  var file = File('results/commits.csv');
+  var file = File('${dirResults.path}/commits.csv');
   if (file.existsSync()) file.deleteSync();
 
   for (final project in lista) {
@@ -209,12 +210,10 @@ Future<String> processarAll() async {
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  final directory = Directory(folderHome);
-
   final directories =
-      directory.listSync().whereType<Directory>();
+  dirProjects.listSync().whereType<Directory>();
 
-  var file = File('results/commits.csv');
+  var file = File('${dirResults.path}/commits.csv');
   if (file.existsSync()) file.deleteSync();
 
   for (final folder in directories) {
@@ -240,9 +239,14 @@ List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
   return dir
       .listSync(recursive: true)
       .where((entry) {
-    // Ignora qualquer coisa com diretórios ocultos no caminho
-    final parts = entry.path.split(Platform.pathSeparator);
-    return !parts.any((part) => part.startsWith('.'));
+    // Ignora se tiver diretório oculto no caminho
+    // final parts = entry.path.split(Platform.pathSeparator);
+    // final temDiretorioOculto = parts.any((part) => part.startsWith('.'));
+
+    // Só queremos arquivos .dart
+    final ehArquivoDart = entry is File && entry.path.endsWith('.dart');
+
+    return ehArquivoDart;
   })
       .toList();
 }
@@ -256,7 +260,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   _logger.info("==============================================");
 
   String commitAtual = await getCommit(pathProject);
-  await generateGitLogCsv(pathProject,"results");
+  await generateGitLogCsv(pathProject, dirResults.path);
 
   DNose dnose = DNose();
 
@@ -344,7 +348,7 @@ int qtd(String texto, String palavra) {
 Future<bool> createCSV(List<TestSmell> listaTotal) async {
   var somatorio = <String, int>{};
 
-  var file = File('results/resultado.csv');
+  var file = File('${dirResults.path}/resultado.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
   var sink = file.openWrite();
@@ -352,7 +356,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   sink.write("lineNumber;commitAuthor;author;dateStr;timeStr;summary;");
   sink.write("score;comparative;words;\n");
 
-  var file4 = File('results/metrics2.csv');
+  var file4 = File('${dirResults.path}/metrics2.csv');
   if (file4.existsSync()) file4.deleteSync();
   file4.createSync();
   var sink4 = file4.openWrite();
@@ -422,7 +426,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     }
   }
 
-  var file2 = File('results/resultado2.csv');
+  var file2 = File('${dirResults.path}/resultado2.csv');
   if (file2.existsSync()) file2.deleteSync();
   file2.createSync();
 
@@ -441,7 +445,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
 }
 
 Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
-  var file = File('results/list_files_tests.csv');
+  var file = File('${dirResults.path}/list_files_tests.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
 
@@ -457,7 +461,7 @@ Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
 }
 
 Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
-  var file = File('results/resultado_metrics.csv');
+  var file = File('${dirResults.path}/resultado_metrics.csv');
   if (file.existsSync()) file.deleteSync();
   file.createSync();
 
@@ -480,11 +484,11 @@ Future<bool> createSqlite() async {
   var file2 = File(resultadoDbFile);
   if (file2.existsSync()) file2.deleteSync();
   var shell = Shell();
-  String dbPath = 'results/resultado.sqlite';
-  String csvFilePath = 'results/resultado.csv';
-  String csvMEtricsFilePath = 'results/resultado_metrics.csv';
-  String csvFileTests = 'results/list_files_tests.csv';
-  String csvCommits = 'results/commits.csv';
+  String dbPath = '${dirResults.path}/resultado.sqlite';
+  String csvFilePath = '${dirResults.path}/resultado.csv';
+  String csvMEtricsFilePath = '${dirResults.path}/resultado_metrics.csv';
+  String csvFileTests = '${dirResults.path}/list_files_tests.csv';
+  String csvCommits = '${dirResults.path}/commits.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =

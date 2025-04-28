@@ -12,33 +12,29 @@ import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_ollama/langchain_ollama.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
-import 'package:properties/properties.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:dotenv/dotenv.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
-final currentPath = Directory.current.path;
-final resultFolder = "$currentPath/results";
-final resultado = "$currentPath/results/resultado.csv";
-final resultado2 = "$currentPath/results/resultado2.csv";
-final resultadoMetrics = "$currentPath/results/resultado_metrics.csv";
-final resultadoMetrics2 = "$currentPath/results/metrics2.csv";
-final resultadoDbFile = "$currentPath/results/resultado.sqlite";
-final userFolder =
-    (Platform.isMacOS || Platform.isLinux)
-        ? Platform.environment['HOME']!
-        : Platform.environment['UserProfile']!;
-final folderHome = "$userFolder/dnose_projects";
-// final filepath = "dnose.properties";
 
-// String? apiKeyGemini;
-// String? apiKeyChatGPT;
-// String? ollamaModel;
+final userFolder = (Platform.isMacOS || Platform.isLinux)
+    ? Platform.environment['HOME']!
+    : Platform.environment['UserProfile']!;
+final Directory dirUser = Directory(userFolder);
+final Directory dirDNose = Directory("${dirUser.path}/.dnose");
+final Directory dirProjects = Directory("${dirDNose.path}/projects");
+final Directory dirResults = Directory("${dirDNose.path}/results");
+
+final resultado = "${dirResults.path}/resultado.csv";
+final resultado2 = "${dirResults.path}/resultado2.csv";
+final resultadoMetrics = "${dirResults.path}/resultado_metrics.csv";
+final resultadoMetrics2 = "${dirResults.path}/metrics2.csv";
+final resultadoDbFile = "${dirResults.path}/resultado.sqlite";
 
 Future<List<String>> listaProjetos() async {
-  var lista = Directory(folderHome).listSync().toList();
-  return lista.map((e) => e.path).toList();
+  var list = dirProjects.listSync().toList();
+  return list.map((e) => e.path).toList();
 }
 
 void main() => shelfRun(
@@ -52,6 +48,11 @@ Handler init() {
   print('Versão do Dart: ${Platform.version}');
 
   DNose.contProcessProject = 0;
+
+  //criando diretorios
+  if(dirDNose.existsSync() == false) dirDNose.createSync();
+  if(dirProjects.existsSync() == false) dirProjects.createSync();
+  if(dirResults.existsSync() == false) dirResults.createSync();
 
   var env = DotEnv(includePlatformEnvironment: true)..load();
 
@@ -71,11 +72,11 @@ Handler init() {
 
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
 
-  var existFolder = Directory(folderHome).existsSync();
-  if (existFolder == false) Directory(folderHome).createSync();
+  var existFolder = dirProjects.existsSync();
+  if (existFolder == false) dirProjects.createSync();
 
-  var existFolder2 = Directory(resultFolder).existsSync();
-  if (existFolder2 == false) Directory(resultFolder).createSync();
+  var existFolder2 = dirResults.existsSync();
+  if (existFolder2 == false) dirResults.createSync();
 
   app.get('/list_projects', () => listaProjetos());
   app.get('/getstatistics', () => getStatists());
@@ -290,7 +291,7 @@ Handler init() {
   app.get('/clonar', (Request request) async {
     String? url = request.url.queryParameters['url'];
     var projectName = url!.split("/").last.replaceAll(".git", "");
-    String caminhoCompleto = "$folderHome/$projectName";
+    String caminhoCompleto = "${dirProjects.path}/$projectName";
     await git.gitClone(repo: url, directory: caminhoCompleto);
     return Response.ok("Clonagem concluída");
   });
@@ -301,7 +302,7 @@ Handler init() {
 
     for (var url in lista) {
       var projectName = url.split("/").last.replaceAll(".git", "");
-      String caminhoCompleto = "$folderHome/$projectName";
+      String caminhoCompleto = "${dirProjects.path}/$projectName";
       await git.gitClone(repo: url, directory: caminhoCompleto);
       print(projectName);
     }
