@@ -9,7 +9,7 @@ ENV OLLAMA_MODEL="llama3"
 # Resolve app dependencies.
 WORKDIR /app
 COPY pubspec.* ./
-COPY dnose.properties ./
+#COPY dnose.properties ./
 RUN dart pub get
 
 # Copy app source code (except anything in .dockerignore) and AOT compile app.
@@ -30,9 +30,9 @@ COPY --from=build /app/sqlite3 /app/sqlite3
 COPY --from=build /app/libsqlite3.so /app/libsqlite3.so
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/dnose /app/bin/
-COPY --from=build /app/dnose.properties /app/
-COPY --from=build /app/lib /app/lib
-COPY --from=build /app/public /app/public
+#COPY --from=build /app/dnose.properties /app/
+#COPY --from=build /app/lib /app/lib
+#COPY --from=build /app/public /app/public
 
 # Start server.
 EXPOSE 8080
