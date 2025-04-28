@@ -24,9 +24,10 @@ final resultado2 = "$currentPath/results/resultado2.csv";
 final resultadoMetrics = "$currentPath/results/resultado_metrics.csv";
 final resultadoMetrics2 = "$currentPath/results/metrics2.csv";
 final resultadoDbFile = "$currentPath/results/resultado.sqlite";
-final userFolder = (Platform.isMacOS || Platform.isLinux)
-    ? Platform.environment['HOME']!
-    : Platform.environment['UserProfile']!;
+final userFolder =
+    (Platform.isMacOS || Platform.isLinux)
+        ? Platform.environment['HOME']!
+        : Platform.environment['UserProfile']!;
 final folderHome = "$userFolder/dnose_projects";
 final filepath = "dnose.properties";
 
@@ -40,11 +41,11 @@ Future<List<String>> listaProjetos() async {
 }
 
 void main() => shelfRun(
-      init,
-      defaultEnableHotReload: false,
-      defaultBindPort: port,
-      defaultBindAddress: ip,
-    );
+  init,
+  defaultEnableHotReload: false,
+  defaultBindPort: port,
+  defaultBindAddress: ip,
+);
 
 Handler init() {
   print('Versão do Dart: ${Platform.version}');
@@ -58,30 +59,8 @@ Handler init() {
   var app = Router().plus;
   app.use(corsHeaders()); // liga o cors
 
+  //carregar as páginas no sistema
   loadPages(app);
-
-
-  // app.get('/logo.png', () => Response.ok(
-  //   logo_png,
-  //   headers: {'Content-Type': 'image/png'},
-  // ));
-
-  // rPage(app, "/about.html", about_html);
-  // rCss(app, "/bulma.min.css", bulma_min_css);
-  // rJs(app, "/chart.js", chart_js);
-  // rPage(app, "/config.html", config_html);
-  // rJs(app, "/config.js", config_js);
-  // rPage(app, "/", index_html);
-  // rJs(app, "/index.js", index_js);
-  // rPage(app, "/mining.html", mining_html);
-  // rJs(app, "/mining.js", mining_js);
-  // rPage(app, "/projects.html", projects_html);
-  // rJs(app, "/projects.js", projects_js);
-  // rPage(app, "/solutions.html", solutions_html);
-  // rJs(app, "/solutions.js", solutions_js);
-
-
-
 
   final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
 
@@ -144,10 +123,11 @@ Handler init() {
     if (result1exists() == "true") {
       var file = File(resultado);
       return file.readAsLinesSync().sublist(
-          1,
-          file.readAsLinesSync().length < 300
-              ? file.readAsLinesSync().length
-              : 300);
+        1,
+        file.readAsLinesSync().length < 300
+            ? file.readAsLinesSync().length
+            : 300,
+      );
     }
     return lista;
   }
@@ -171,12 +151,12 @@ Handler init() {
     }
   }
 
-  String qtdFilesTests(){
+  String qtdFilesTests() {
     return getSizeTestFiles().toString();
   }
 
-  String chartDataTestSmellsSentiments(){
-    if(File(resultadoDbFile).existsSync() == false) return "";
+  String chartDataTestSmellsSentiments() {
+    if (File(resultadoDbFile).existsSync() == false) return "";
     final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
@@ -203,9 +183,8 @@ Handler init() {
     return buffer.toString();
   }
 
-
   String chartDataAuthorSentiment() {
-    if(File(resultadoDbFile).existsSync() == false) return "";
+    if (File(resultadoDbFile).existsSync() == false) return "";
     final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
@@ -233,7 +212,7 @@ Handler init() {
   }
 
   String chartDataAuthor() {
-    if(File(resultadoDbFile).existsSync() == false) return "";
+    if (File(resultadoDbFile).existsSync() == false) return "";
     final db = sqlite3.open(resultadoDbFile);
 
     final ResultSet result = db.select('''
@@ -289,11 +268,6 @@ Handler init() {
   app.get('/download_metrics2', getResultado4, use: download());
   app.get('/download.db', getResultadoDbFile, use: download());
   app.get('/download.db.existe', resultDbExist);
-
-  // final handler = Cascade()
-  //     .add(createStaticHandler('public', defaultDocument: 'index.html'))
-  //     .add(app.call)
-  //     .handler;
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
@@ -360,27 +334,28 @@ Handler init() {
   });
 
   app.get(
-      '/websocket',
-      () => WebSocketSession(
-            onOpen: (ws) => ws.send('Hello!'),
-            onMessage: (ws, data) => ws.send('You sent me: $data'),
-            onClose: (ws) => ws.send('Bye!'),
-          ));
+    '/websocket',
+    () => WebSocketSession(
+      onOpen: (ws) => ws.send('Hello!'),
+      onMessage: (ws, data) => ws.send('You sent me: $data'),
+      onClose: (ws) => ws.send('Bye!'),
+    ),
+  );
 
   app.get(
-      '/timenow',
-      () => WebSocketSession(
-            onOpen: (ws) => ws.send('Iniciando...'),
-            onMessage: (ws, data) {
-              for (int i = 0; i < 10; i++) {
-                ws.send('contador: $i');
-                sleep(Duration(seconds: 1));
-              }
-              ws.send('You sent me: $data');
-            },
-            onClose: (ws) => ws.send('Bye!'),
-          ));
-
+    '/timenow',
+    () => WebSocketSession(
+      onOpen: (ws) => ws.send('Iniciando...'),
+      onMessage: (ws, data) {
+        for (int i = 0; i < 10; i++) {
+          ws.send('contador: $i');
+          sleep(Duration(seconds: 1));
+        }
+        ws.send('You sent me: $data');
+      },
+      onClose: (ws) => ws.send('Bye!'),
+    ),
+  );
 
   return corsHeaders() >> app.call;
   // return corsHeaders() >> handler;
@@ -391,19 +366,16 @@ Future<String> getChatGptResponse(String prompt) async {
     apiKey: apiKeyChatGPT,
     defaultOptions: const OpenAIOptions(temperature: 0.9),
   );
-  final LLMResult res = await llm.invoke(
-    PromptValue.string(prompt),
-  );
+  final LLMResult res = await llm.invoke(PromptValue.string(prompt));
   return res.output;
 }
 
 Future<String> getOllamaResponse(String prompt) async {
   final llm = Ollama(
-      defaultOptions: OllamaOptions(
-    model: ollamaModel, //phi3
-  ));
-  final LLMResult res = await llm.invoke(
-    PromptValue.string(prompt),
+    defaultOptions: OllamaOptions(
+      model: ollamaModel, //phi3
+    ),
   );
+  final LLMResult res = await llm.invoke(PromptValue.string(prompt));
   return res.output;
 }
