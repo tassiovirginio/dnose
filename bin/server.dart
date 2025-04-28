@@ -14,6 +14,7 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:properties/properties.dart';
 import 'package:sqlite3/sqlite3.dart';
+import 'package:dotenv/dotenv.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -29,11 +30,11 @@ final userFolder =
         ? Platform.environment['HOME']!
         : Platform.environment['UserProfile']!;
 final folderHome = "$userFolder/dnose_projects";
-final filepath = "dnose.properties";
+// final filepath = "dnose.properties";
 
-String? apiKeyGemini;
-String? apiKeyChatGPT;
-String? ollamaModel;
+// String? apiKeyGemini;
+// String? apiKeyChatGPT;
+// String? ollamaModel;
 
 Future<List<String>> listaProjetos() async {
   var lista = Directory(folderHome).listSync().toList();
@@ -52,10 +53,16 @@ Handler init() {
 
   DNose.contProcessProject = 0;
 
-  Properties p = Properties.fromFile(filepath);
-  apiKeyGemini = p.get('apiKeyGemini');
-  apiKeyChatGPT = p.get('apiKeyChatGPT');
-  ollamaModel = p.get('ollamaModel');
+  var env = DotEnv(includePlatformEnvironment: true)..load();
+
+  final apiKeyGemini = env['API_KEY_GEMINI'];
+  final apiKeyChatGPT = env['API_KEY_CHATGPT'];
+  final ollamaModel = env['OLLAMA_MODEL'];
+
+  // Properties p = Properties.fromFile(filepath);
+  // apiKeyGemini = p.get('apiKeyGemini');
+  // apiKeyChatGPT = p.get('apiKeyChatGPT');
+  // ollamaModel = p.get('ollamaModel');
   var app = Router().plus;
   app.use(corsHeaders()); // liga o cors
 
@@ -87,14 +94,14 @@ Handler init() {
   app.post('/solution2', (Request request) async {
     String prompt = await request.readAsString();
     prompt = prompt.replaceAll("_", " ");
-    String response = await getChatGptResponse(prompt);
+    String response = await getChatGptResponse(prompt,apiKeyChatGPT);
     return Response.ok(response);
   });
 
   app.post('/solution3', (Request request) async {
     String prompt = await request.readAsString();
     prompt = prompt.replaceAll("_", " ");
-    String response = await getOllamaResponse(prompt);
+    String response = await getOllamaResponse(prompt, ollamaModel);
     return Response.ok(response);
   });
 
@@ -361,7 +368,7 @@ Handler init() {
   // return corsHeaders() >> handler;
 }
 
-Future<String> getChatGptResponse(String prompt) async {
+Future<String> getChatGptResponse(String prompt, apiKeyChatGPT) async {
   final llm = OpenAI(
     apiKey: apiKeyChatGPT,
     defaultOptions: const OpenAIOptions(temperature: 0.9),
@@ -370,7 +377,7 @@ Future<String> getChatGptResponse(String prompt) async {
   return res.output;
 }
 
-Future<String> getOllamaResponse(String prompt) async {
+Future<String> getOllamaResponse(String prompt, ollamaModel) async {
   final llm = Ollama(
     defaultOptions: OllamaOptions(
       model: ollamaModel, //phi3

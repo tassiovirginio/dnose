@@ -1,6 +1,11 @@
 # Use latest stable channel SDK.
 FROM dart:stable AS build
 
+# Defina o ambiente
+ENV API_KEY_GEMINI="AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM"
+ENV API_KEY_CHATGPT="sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa"
+ENV OLLAMA_MODEL="llama3"
+
 # Resolve app dependencies.
 WORKDIR /app
 COPY pubspec.* ./
