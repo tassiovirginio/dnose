@@ -4,18 +4,18 @@ import 'package:path/path.dart' as path;
 Future<File> generateGitLogCsv(repoPath, outputDir) async {
   // Obtém o nome do projeto
   final projectName = _getProjectName(repoPath);
-  print('📁 Projeto: $projectName');
+  // print('📁 Projeto: $projectName');
 
   // Cria diretório de saída se não existir
   final dir = Directory(outputDir);
   if (!await dir.exists()) {
-    print('📂 Criando diretório de saída...');
+    // print('📂 Criando diretório de saída...');
     await dir.create(recursive: true);
   }
 
   // Caminho completo do arquivo CSV
   final csvPath = path.join(outputDir, 'commits.csv');
-  print('💾 Arquivo de saída: $csvPath');
+  // print('💾 Arquivo de saída: $csvPath');
 
   // Executa o comando git log
   print('🔄 Extraindo commits do repositório...');
@@ -30,7 +30,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   }
 
   // Processa a saída e adiciona o nome do projeto
-  print('✏️ Formatando CSV...');
+  // print('✏️ Formatando CSV...');
   var output = process.stdout.toString();
   output = output.replaceAll(";", ".").replaceAll('"', "").replaceAll(",", ".");
   output = output.replaceAll("|||", ";");
@@ -45,7 +45,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   }
 
   // Salva o arquivo
-  print('💿 Salvando arquivo...');
+  // print('💿 Salvando arquivo...');
   final csvFile = File(csvPath);
   final writeMode = await csvFile.exists() ? FileMode.append : FileMode.write;
   await csvFile.writeAsString(
@@ -60,17 +60,6 @@ String _getProjectName(String repoPath) {
   return path.basename(repoPath.replaceAll(RegExp(r'[/\\]+$'), ''));
 }
 
-void main() async {
-  // Caminhos especificados
-  // const repoPath = '/home/tassio/dnose_projects/flutter';
-  // const outputDir = '/home/tassio/Desenvolvimento/repo.git/dnose/results';
-
-  // final csvFile = await generateGitLogCsv(repoPath,outputDir);
-
-  // const repoPath2 = '/home/tassio/dnose_projects/get';
-  // final csvFile2 = await generateGitLogCsv(repoPath2,outputDir);
-
-}
 
 
 
