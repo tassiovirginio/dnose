@@ -47,95 +47,95 @@ Future<void> main2(List<String> args) async {
   // verificandoProjetosComAPasta();
 }
 
-void verificandoProjetosComAPasta() {
-  var file =
-      File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
-  var lista = file.readAsLinesSync();
-  var localPath = "/home/tassio/dnose_projects/";
+// void verificandoProjetosComAPasta() {
+//   var file =
+//       File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
+//   var lista = file.readAsLinesSync();
+//   var localPath = "/home/tassio/dnose_projects/";
+//
+//   var lista2 = lista
+//       .map((e) => e.split(",")[2].toString().split("/").last.toString())
+//       .toList();
+//
+//   var listaDir = Directory(localPath).listSync();
+//   for (var dir in listaDir) {
+//     var name = dir.path.split("/").last;
+//
+//     if (lista2.contains(name)) {
+//       // print("Tem -> ${name}");
+//     } else {
+//       print(name);
+//     }
+//   }
+// }
 
-  var lista2 = lista
-      .map((e) => e.split(",")[2].toString().split("/").last.toString())
-      .toList();
+// void cloandoProjetos() async {
+//   var file =
+//       File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
+//   var lista = file.readAsLinesSync();
+//
+//   var localPath = "/home/tassio/dnose_projects/";
+//
+//   // int cont = 1;
+//
+//   var set = <String>{};
+//
+//   for (var linha in lista) {
+//     var name = linha.split(",")[2].split("/").last;
+//     var size = linha.split("/").length;
+//     var url = linha.split(",")[2];
+//
+//     if (size == 5) {
+//       if (!set.contains(url)) {
+//         set.add(url);
+//         if (Directory(localPath + name).existsSync()) {
+//           var listaArquivos = getFilesFromDirRecursive(localPath + name);
+//           int contDart = 0;
+//           int contTestDart = 0;
+//           for (FileSystemEntity file in listaArquivos) {
+//             if (file.path.contains(".dart")) {
+//               contDart = contDart + 1;
+//             }
+//             if (file.path.contains("_test.dart")) {
+//               contTestDart = contTestDart + 1;
+//             }
+//           }
+//           print(
+//               "$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
+//         } else {
+//           // print("${cont++},${name},${size},${url}");
+//           // await git.gitClone(repo: url, directory: localPath + name);
+//         }
+//       }
+//     } else {
+//       // print("${name}, ${size}, ${url}, ${getURLBaseGithubProject(url)}");
+//     }
+//   }
+// }
 
-  var listaDir = Directory(localPath).listSync();
-  for (var dir in listaDir) {
-    var name = dir.path.split("/").last;
-
-    if (lista2.contains(name)) {
-      // print("Tem -> ${name}");
-    } else {
-      print(name);
-    }
-  }
-}
-
-void cloandoProjetos() async {
-  var file =
-      File("/home/tassio/Desenvolvimento/dart/dnose/dataset_dart_projects.csv");
-  var lista = file.readAsLinesSync();
-
-  var localPath = "/home/tassio/dnose_projects/";
-
-  // int cont = 1;
-
-  var set = <String>{};
-
-  for (var linha in lista) {
-    var name = linha.split(",")[2].split("/").last;
-    var size = linha.split("/").length;
-    var url = linha.split(",")[2];
-
-    if (size == 5) {
-      if (!set.contains(url)) {
-        set.add(url);
-        if (Directory(localPath + name).existsSync()) {
-          var listaArquivos = getFilesFromDirRecursive(localPath + name);
-          int contDart = 0;
-          int contTestDart = 0;
-          for (FileSystemEntity file in listaArquivos) {
-            if (file.path.contains(".dart")) {
-              contDart = contDart + 1;
-            }
-            if (file.path.contains("_test.dart")) {
-              contTestDart = contTestDart + 1;
-            }
-          }
-          print(
-              "$name,$contDart,$contTestDart,$url,$getURLBaseGithubProject(url)");
-        } else {
-          // print("${cont++},${name},${size},${url}");
-          // await git.gitClone(repo: url, directory: localPath + name);
-        }
-      }
-    } else {
-      // print("${name}, ${size}, ${url}, ${getURLBaseGithubProject(url)}");
-    }
-  }
-}
-
-void cloandoProjetos2() async {
-  var localPath = "/home/tassio/dnose_projects/";
-
-  var listaPastas = Directory(localPath).listSync();
-
-  for (var pasta in listaPastas) {
-    String nome = pasta.path.split("/").last;
-
-    var listaArquivos = getFilesFromDirRecursive(pasta.path);
-    int contDart = 0;
-    int contTestDart = 0;
-    for (FileSystemEntity file in listaArquivos) {
-      if (file.path.contains(".dart")) {
-        contDart = contDart + 1;
-      }
-      if (file.path.contains("_test.dart")) {
-        contTestDart = contTestDart + 1;
-      }
-    }
-    // if(contTestDart > 0)
-    print("$nome,$contDart,$contTestDart");
-  }
-}
+// void cloandoProjetos2() async {
+//   var localPath = "/home/tassio/dnose_projects/";
+//
+//   var listaPastas = Directory(localPath).listSync();
+//
+//   for (var pasta in listaPastas) {
+//     String nome = pasta.path.split("/").last;
+//
+//     var listaArquivos = getFilesFromDirRecursive(pasta.path);
+//     int contDart = 0;
+//     int contTestDart = 0;
+//     for (FileSystemEntity file in listaArquivos) {
+//       if (file.path.contains(".dart")) {
+//         contDart = contDart + 1;
+//       }
+//       if (file.path.contains("_test.dart")) {
+//         contTestDart = contTestDart + 1;
+//       }
+//     }
+//     // if(contTestDart > 0)
+//     print("$nome,$contDart,$contTestDart");
+//   }
+// }
 
 String getURLBaseGithubProject(String url) {
   var urlList = url.split("/");

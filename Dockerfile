@@ -34,7 +34,7 @@ COPY --from=build /app/bin/dnose /app/bin/
 #COPY --from=build /app/lib /app/lib
 #COPY --from=build /app/public /app/public
 
-# Start server.
+# Start DNose.
 EXPOSE 8080
 WORKDIR /app
 CMD ["/app/bin/dnose"]

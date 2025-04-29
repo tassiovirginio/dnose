@@ -54,16 +54,15 @@ Handler init() {
   if(dirProjects.existsSync() == false) dirProjects.createSync();
   if(dirResults.existsSync() == false) dirResults.createSync();
 
-  var env = DotEnv(includePlatformEnvironment: true)..load();
+  DotEnv env = DotEnv(includePlatformEnvironment: true)..load();
+  final apiKeyGemini = env['API_KEY_GEMINI'] ?? 'AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM';
+  final apiKeyChatGPT = env['API_KEY_CHATGPT'] ?? 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa';
+  final ollamaModel = env['OLLAMA_MODEL'] ?? 'llama3';
 
-  final apiKeyGemini = env['API_KEY_GEMINI'];
-  final apiKeyChatGPT = env['API_KEY_CHATGPT'];
-  final ollamaModel = env['OLLAMA_MODEL'];
+  // print("API_KEY_GEMINI: $apiKeyGemini");
+  // print("API_KEY_CHATGPT: $apiKeyChatGPT");
+  // print("OLLAMA_MODEL: $ollamaModel");
 
-  // Properties p = Properties.fromFile(filepath);
-  // apiKeyGemini = p.get('apiKeyGemini');
-  // apiKeyChatGPT = p.get('apiKeyChatGPT');
-  // ollamaModel = p.get('ollamaModel');
   var app = Router().plus;
   app.use(corsHeaders()); // liga o cors
 
