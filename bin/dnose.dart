@@ -37,15 +37,28 @@ Future<List<String>> listaProjetos() async {
   return list.map((e) => e.path).toList();
 }
 
-void main() => shelfRun(
-  init,
-  defaultEnableHotReload: false,
-  defaultBindPort: port,
-  defaultBindAddress: ip,
-);
+void main() async{
+  print(
+      '''
+  ██████╗ ███╗   ██╗ ██████╗ ███████╗███████╗
+  ██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔════╝
+  ██║  ██║██╔██╗ ██║██║   ██║███████╗█████╗  
+  ██║  ██║██║╚██╗██║██║   ██║╚════██║██╔══╝  
+  ██████╔╝██║ ╚████║╚██████╔╝███████║███████╗
+  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚══════╝
+  '''
+  );
+  await shelfRun(
+    init,
+    defaultEnableHotReload: false,
+    defaultBindPort: port,
+    defaultBindAddress: ip,
+  );
+  print("open -> http://127.0.0.1:$port");
+}
 
 Handler init() {
-  print('Versão do Dart: ${Platform.version}');
+  // print('Versão do Dart: ${Platform.version}');
 
   DNoseCore.contProcessProject = 0;
 
@@ -365,7 +378,6 @@ Handler init() {
   );
 
   return corsHeaders() >> app.call;
-  // return corsHeaders() >> handler;
 }
 
 Future<String> getChatGptResponse(String prompt, apiKeyChatGPT) async {
