@@ -40,6 +40,54 @@ function loadTestSmellsNames() {
     req4.send();
 }
 
+function listAuthorStartEnd() {
+    const req4 = new XMLHttpRequest();
+    req4.onload = (e) => {
+        const lines = req4.response.split("\n");
+        const div_listAuthorStartEnd = document.getElementById('listAuthorStartEnd');
+        lines.forEach(linha => {
+            const itemLi = document.createElement("div");
+            itemLi.textContent = linha;
+            div_listAuthorStartEnd.appendChild(itemLi);
+        });
+    };
+    req4.open("GET", "/list_author_start_end", true);
+    req4.send();
+}
+
+
+function listAuthorQtdCommit() {
+    const req4 = new XMLHttpRequest();
+    req4.onload = (e) => {
+        const lines = req4.response.split("\n");
+        const div_listAuthorQtdCommit = document.getElementById('listAuthorQtdCommit');
+
+        const div_table = document.createElement('table');
+
+        lines.forEach(linha => {
+            linha = linha.split(";");
+            var project = linha[0];
+            var autor = linha[1];
+            var qtd = linha[2];
+            const tr = document.createElement("tr");
+            const td1 = document.createElement("td");
+            td1.textContent = project;
+            const td2 = document.createElement("td");
+            td2.textContent = autor;
+            const td3 = document.createElement("td");
+            td3.textContent = qtd;
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            div_table.appendChild(tr);
+        });
+
+        div_listAuthorQtdCommit.appendChild(div_table);
+    };
+    req4.open("GET", "/list_author_qtd_commit", true);
+    req4.send();
+}
+
 function loadTestSmellsNamesAuthors() {
     const req5_ = new XMLHttpRequest();
     const names__ = [];
@@ -378,6 +426,8 @@ function process() {
         loadTestSmellsNamesAuthorsSentiments();
         chartTestSmellsSentiments();
         loadQtdFilesTests();
+        listAuthorStartEnd();
+        listAuthorQtdCommit();
     };
 
     req.open("GET", "/processar?path_project=" + listaString, true);
@@ -414,6 +464,8 @@ function process_all() {
         loadTestSmellsNamesAuthorsSentiments();
         chartTestSmellsSentiments();
         loadQtdFilesTests();
+        listAuthorStartEnd();
+        listAuthorQtdCommit();
 
     };
 
@@ -553,4 +605,6 @@ window.onload = (event) => {
     loadTestSmellsNamesAuthorsSentiments();
     chartTestSmellsSentiments();
     loadQtdFilesTests();
+    listAuthorStartEnd();
+    listAuthorQtdCommit();
 };

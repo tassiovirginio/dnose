@@ -231,6 +231,71 @@ Handler init() {
     return buffer.toString();
   }
 
+  String listAuthorStartEnd() {
+    if (File(resultadoDbFile).existsSync() == false) return "";
+    final db = sqlite3.open(resultadoDbFile);
+
+    final ResultSet result = db.select('''
+      SELECT 
+        project,
+        author,
+        MIN(date) AS start_date,
+        MAX(date) AS end_date
+      FROM commits
+      GROUP BY project, author
+      ORDER BY project, author;
+    ''');
+
+    db.dispose();
+
+    if (result.isEmpty) {
+      return 'Nenhum dado de score encontrado.';
+    }
+
+    final buffer = StringBuffer();
+    for (final row in result) {
+      final project = row['project'];
+      final author = row['author'];
+      final start_date = row['start_date'];
+      final end_date = row['end_date'];
+      buffer.writeln('$project;$author;$start_date;$end_date');
+    }
+
+    return buffer.toString();
+  }
+
+
+  String listAuthorQtdCommit() {
+    if (File(resultadoDbFile).existsSync() == false) return "";
+    final db = sqlite3.open(resultadoDbFile);
+
+    final ResultSet result = db.select('''
+      SELECT 
+        project,
+        author,
+        count(1) as qtd
+      FROM commits
+      GROUP BY project, author
+      ORDER BY qtd desc;
+    ''');
+
+    db.dispose();
+
+    if (result.isEmpty) {
+      return 'Nenhum dado de score encontrado.';
+    }
+
+    final buffer = StringBuffer();
+    for (final row in result) {
+      final project = row['project'];
+      final author = row['author'];
+      final qtd = row['qtd'];
+      buffer.writeln('$project;$author;$qtd');
+    }
+
+    return buffer.toString();
+  }
+
   String chartDataAuthor() {
     if (File(resultadoDbFile).existsSync() == false) return "";
     final db = sqlite3.open(resultadoDbFile);
@@ -263,6 +328,9 @@ Handler init() {
   app.get('/charts_data_author_sentiment', chartDataAuthorSentiment);
   app.get('/charts_data_testsmells_sentiments', chartDataTestSmellsSentiments);
   app.get('/qtd_test_files', qtdFilesTests);
+
+  app.get('/list_author_start_end', listAuthorStartEnd);
+  app.get('/list_author_qtd_commit', listAuthorQtdCommit);
 
   File getResultado1() => File(resultado);
   File getResultado2() => File(resultado2);
