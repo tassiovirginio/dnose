@@ -14,7 +14,8 @@ RUN dart pub get
 
 # Copy app source code (except anything in .dockerignore) and AOT compile app.
 COPY . .
-RUN dart run build_runner build
+RUN dart run build_runner clean
+RUN dart run build_runner build --delete-conflicting-outputs
 RUN dart compile exe bin/dnose.dart -o bin/dnose
 
 # Ensure binary has execute permissions
