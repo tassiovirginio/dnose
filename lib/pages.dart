@@ -3,46 +3,46 @@ import 'package:shelf_plus/shelf_plus.dart';
 
 part 'pages.g.dart';
 
-@EmbedStr('../public/about.html')
+@EmbedStr('/public/about.html')
 const about_html = _$about_html;
 
-@EmbedStr('../public/bulma.min.css')
+@EmbedStr('/public/bulma.min.css')
 const bulma_min_css = _$bulma_min_css;
 
-@EmbedStr('../public/chart.js')
+@EmbedStr('/public/chart.js')
 const chart_js = _$chart_js;
 
-@EmbedStr('../public/config.html')
+@EmbedStr('/public/config.html')
 const config_html = _$config_html;
 
-@EmbedStr('../public/config.js')
+@EmbedStr('/public/config.js')
 const config_js = _$config_js;
 
-@EmbedStr('../public/index.html')
+@EmbedStr('/public/index.html')
 const index_html = _$index_html;
 
-@EmbedStr('../public/index.js')
+@EmbedStr('/public/index.js')
 const index_js = _$index_js;
 
-@EmbedBinary('../public/logo.png')
+@EmbedBinary('/public/logo.png')
 const logo_png = _$logo_png;
 
-@EmbedStr('../public/mining.html')
+@EmbedStr('/public/mining.html')
 const mining_html = _$mining_html;
 
-@EmbedStr('../public/mining.js')
+@EmbedStr('/public/mining.js')
 const mining_js = _$mining_js;
 
-@EmbedStr('../public/projects.html')
+@EmbedStr('/public/projects.html')
 const projects_html = _$projects_html;
 
-@EmbedStr('../public/projects.js')
+@EmbedStr('/public/projects.js')
 const projects_js = _$projects_js;
 
-@EmbedStr('../public/solutions.html')
+@EmbedStr('/public/solutions.html')
 const solutions_html = _$solutions_html;
 
-@EmbedStr('../public/solutions.js')
+@EmbedStr('/public/solutions.js')
 const solutions_js = _$solutions_js;
 
 void loadPages(app){
