@@ -82,7 +82,7 @@ Handler init() {
   //carregar as páginas no sistema
   loadPages(app);
 
-  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini!);
+  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini);
 
   var existFolder = dirProjects.existsSync();
   if (existFolder == false) dirProjects.createSync();
