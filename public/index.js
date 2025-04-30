@@ -63,6 +63,7 @@ function listAuthorQtdCommit() {
         const div_listAuthorQtdCommit = document.getElementById('listAuthorQtdCommit');
 
         const div_table = document.createElement('table');
+        div_table.style = "width: 100%;"
 
         lines.forEach(linha => {
             linha = linha.split(";");
