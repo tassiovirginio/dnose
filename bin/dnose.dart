@@ -14,6 +14,7 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:dotenv/dotenv.dart';
+import 'package:intl/intl.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -254,15 +255,22 @@ Handler init() {
 
     final buffer = StringBuffer();
     for (final row in result) {
-      final project = row['project'];
-      final author = row['author'];
-      final start_date = row['start_date'];
-      final end_date = row['end_date'];
-      buffer.writeln('$project;$author;$start_date;$end_date');
+      try {
+        final project = row['project'];
+        final author = row['author'];
+        final start_date = row['start_date'];
+        final end_date = row['end_date'];
+        int dias = diferencaEmDias(start_date, end_date);
+        buffer.writeln('$project;$author;$start_date;$end_date;$dias');
+      }finally{
+        continue;
+      }
     }
 
     return buffer.toString();
   }
+
+
 
 
   String listAuthorQtdCommit() {
@@ -465,4 +473,19 @@ Future<String> getOllamaResponse(String prompt, ollamaModel) async {
   );
   final LLMResult res = await llm.invoke(PromptValue.string(prompt));
   return res.output;
+}
+
+int diferencaEmDias(String dataHora1, String dataHora2) {
+  // Define o formato para parse das datas
+  final formato = DateFormat('yyyy-MM-dd HH:mm:ss Z');
+
+  // Converte as strings para DateTime
+  final dt1 = formato.parse(dataHora1);
+  final dt2 = formato.parse(dataHora2);
+
+  // Calcula a diferença entre as datas
+  final diferenca = dt1.difference(dt2);
+
+  // Retorna a diferença em dias (valor absoluto)
+  return diferenca.inDays.abs();
 }

@@ -45,11 +45,39 @@ function listAuthorStartEnd() {
     req4.onload = (e) => {
         const lines = req4.response.split("\n");
         const div_listAuthorStartEnd = document.getElementById('listAuthorStartEnd');
+
+        const div_table = document.createElement('table');
+        div_table.style = "width: 100%;"
+
         lines.forEach(linha => {
-            const itemLi = document.createElement("div");
-            itemLi.textContent = linha;
-            div_listAuthorStartEnd.appendChild(itemLi);
+            linha = linha.split(";");
+            var project = linha[0];
+            var autor = linha[1];
+            var data1 = linha[2];
+            var data2 = linha[3];
+            var dias = linha[4];
+            const tr = document.createElement("tr");
+            const td1 = document.createElement("td");
+            td1.textContent = project;
+            td1.style = "width: 20%;";
+            const td2 = document.createElement("td");
+            td2.textContent = autor;
+            td2.style = "width: 20%;";
+            const td3 = document.createElement("td");
+            td3.textContent = data1;
+            const td4 = document.createElement("td");
+            td4.textContent = data2;
+            const td5 = document.createElement("td");
+            td5.textContent = dias;
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            tr.appendChild(td5);
+            div_table.appendChild(tr);
         });
+
+        div_listAuthorStartEnd.appendChild(div_table);
     };
     req4.open("GET", "/list_author_start_end", true);
     req4.send();
