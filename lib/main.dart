@@ -8,6 +8,7 @@ import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/blame.dart';
 import 'package:dnose/utils/git_log.dart';
+import 'package:dnose/utils/progresso.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -202,6 +203,8 @@ Future<String> processar(String listPathProjects) async {
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
+  Progresso.finalizado();
+
   return "OK";
 }
 
@@ -229,6 +232,8 @@ Future<String> processarAll() async {
   await createSqlite();
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
+
+  Progresso.finalizado();
 
   return "OK";
 }
@@ -275,11 +280,14 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
 
   String projectName = pathProject.split("/").last;
 
+  Progresso.setProject(projectName);
+
   String moduleAtual = "";
 
   String diretorioAtual = "";
 
   for (var file in entries) {
+    Progresso.adicionarBloco();
 
     if (diretorioAtual.isEmpty) {
       diretorioAtual = file.parent.path;
@@ -483,16 +491,16 @@ Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
 Future<bool> createSqlite() async {
   var file2 = File(resultadoDbFile);
   if (file2.existsSync()) file2.deleteSync();
-  var shell = Shell();
+  var shell = Shell(verbose: false);
   String dbPath = '${dirResults.path}/resultado.sqlite';
   String csvFilePath = '${dirResults.path}/resultado.csv';
-  String csvMEtricsFilePath = '${dirResults.path}/resultado_metrics.csv';
+  String csvMetricsFilePath = '${dirResults.path}/resultado_metrics.csv';
   String csvFileTests = '${dirResults.path}/list_files_tests.csv';
   String csvCommits = '${dirResults.path}/commits.csv';
   String command =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFilePath testsmells"';
   String command2 =
-      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMEtricsFilePath metrics"';
+      'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvMetricsFilePath metrics"';
   String command3 =
       'sqlite3 $dbPath ".mode csv" ".separator ;" ".import $csvFileTests filestests"';
   String command4 =

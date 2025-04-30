@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dnose/utils/progresso.dart';
 import 'package:path/path.dart' as path;
 
 Future<File> generateGitLogCsv(repoPath, outputDir) async {
@@ -7,6 +8,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   // print('📁 Projeto: $projectName');
 
   // Cria diretório de saída se não existir
+  Progresso.adicionarBloco();
   final dir = Directory(outputDir);
   if (!await dir.exists()) {
     // print('📂 Criando diretório de saída...');
@@ -18,7 +20,8 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
   // print('💾 Arquivo de saída: $csvPath');
 
   // Executa o comando git log
-  print('🔄 Extraindo commits do repositório...');
+  Progresso.adicionarBloco();
+  // print('🔄 Extraindo commits do repositório...');
   final process = await Process.run(
     'git',
     ['log', '--pretty=format:%H|||%an|||%ad|||%s', '--date=iso'],
@@ -31,6 +34,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
 
   // Processa a saída e adiciona o nome do projeto
   // print('✏️ Formatando CSV...');
+  Progresso.adicionarBloco();
   var output = process.stdout.toString();
   output = output.replaceAll(";", ".").replaceAll('"', "").replaceAll(",", ".");
   output = output.replaceAll("|||", ";");
@@ -46,6 +50,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
 
   // Salva o arquivo
   // print('💿 Salvando arquivo...');
+  Progresso.adicionarBloco();
   final csvFile = File(csvPath);
   final writeMode = await csvFile.exists() ? FileMode.append : FileMode.write;
   await csvFile.writeAsString(
@@ -59,6 +64,7 @@ Future<File> generateGitLogCsv(repoPath, outputDir) async {
 String _getProjectName(String repoPath) {
   return path.basename(repoPath.replaceAll(RegExp(r'[/\\]+$'), ''));
 }
+
 
 
 
