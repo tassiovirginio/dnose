@@ -241,10 +241,11 @@ Handler init() {
         project,
         author,
         MIN(date) AS start_date,
-        MAX(date) AS end_date
+        MAX(date) AS end_date,
+        CAST(julianday(SUBSTR(MAX(date), 1, 19)) - julianday(SUBSTR(MIN(date), 1, 19)) AS INTEGER) as dias
       FROM commits
       GROUP BY project, author
-      ORDER BY project, author;
+      ORDER BY dias desc;
     ''');
 
     db.dispose();
@@ -260,7 +261,7 @@ Handler init() {
         final author = row['author'];
         final start_date = row['start_date'];
         final end_date = row['end_date'];
-        int dias = diferencaEmDias(start_date, end_date);
+        final dias = row['dias'];
         buffer.writeln('$project;$author;$start_date;$end_date;$dias');
       }finally{
         continue;
@@ -475,17 +476,3 @@ Future<String> getOllamaResponse(String prompt, ollamaModel) async {
   return res.output;
 }
 
-int diferencaEmDias(String dataHora1, String dataHora2) {
-  // Define o formato para parse das datas
-  final formato = DateFormat('yyyy-MM-dd HH:mm:ss Z');
-
-  // Converte as strings para DateTime
-  final dt1 = formato.parse(dataHora1);
-  final dt2 = formato.parse(dataHora2);
-
-  // Calcula a diferença entre as datas
-  final diferenca = dt1.difference(dt2);
-
-  // Retorna a diferença em dias (valor absoluto)
-  return diferenca.inDays.abs();
-}

@@ -51,11 +51,11 @@ function listAuthorStartEnd() {
 
         lines.forEach(linha => {
             linha = linha.split(";");
-            var project = linha[0];
-            var autor = linha[1];
-            var data1 = linha[2];
-            var data2 = linha[3];
-            var dias = linha[4];
+            const project = linha[0];
+            const autor = linha[1];
+            const data1 = linha[2];
+            const data2 = linha[3];
+            const dias = linha[4];
             const tr = document.createElement("tr");
             const td1 = document.createElement("td");
             td1.textContent = project;
