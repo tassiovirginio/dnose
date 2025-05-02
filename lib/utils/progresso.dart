@@ -32,8 +32,10 @@ class Progresso {
     final porcentagem = '${_progresso.toString().padLeft(3)}%';
 
     if (_coresDisponiveis) {
+      _limparLinha();
       stdout.write('\r\x1B[36m$project\x1B[0m [\x1B[32m$_barra\x1B[0m$espacos] $porcentagem');
     } else {
+      _limparLinha();
       stdout.write('\r$project [$_barra$espacos] $porcentagem');
     }
   }
@@ -42,6 +44,7 @@ class Progresso {
     _barra = '';
     _progresso = 0;
     _finalizado = false;
+    _limparLinha();
     stdout.write('\r${' ' * (project.length + _tamanhoBarra + 10)}\r');
   }
 
@@ -53,16 +56,23 @@ class Progresso {
     _barra = '█' * _tamanhoBarra;
 
     // Limpa a linha atual
+    _limparLinha();
     stdout.write('\r${' ' * (project.length + _tamanhoBarra + 10)}\r');
 
     if (_coresDisponiveis) {
       // Versão colorida
+      _limparLinha();
       stdout.write('\r\x1B[32m✓ Processamento concluído com sucesso!\x1B[0m');
     } else {
       // Versão sem cores
+      _limparLinha();
       stdout.write('\r✓ Processamento concluído com sucesso!');
     }
 
     _finalizado = true;
+  }
+
+  static void _limparLinha() {
+    stdout.write('\r${' ' * (100)}\r');
   }
 }
