@@ -4,66 +4,66 @@ import 'package:shelf_plus/shelf_plus.dart';
 part 'pages.g.dart';
 
 @EmbedStr('/public/about.html')
-const about_html = _$about_html;
+const aboutHtml = _$about_html;
 
 @EmbedStr('/public/bulma.min.css')
-const bulma_min_css = _$bulma_min_css;
+const bulmaMinCss = _$bulma_min_css;
 
 @EmbedStr('/public/chart.js')
-const chart_js = _$chart_js;
+const chartJs = _$chart_js;
 
 @EmbedStr('/public/config.html')
-const config_html = _$config_html;
+const configHtml = _$config_html;
 
 @EmbedStr('/public/config.js')
-const config_js = _$config_js;
+const configJs = _$config_js;
 
 @EmbedStr('/public/index.html')
-const index_html = _$index_html;
+const indexHtml = _$index_html;
 
 @EmbedStr('/public/index.js')
-const index_js = _$index_js;
+const indexJs = _$index_js;
 
 @EmbedBinary('/public/logo.png')
-const logo_png = _$logo_png;
+const logoPng = _$logo_png;
 
 @EmbedStr('/public/mining.html')
-const mining_html = _$mining_html;
+const miningHtml = _$mining_html;
 
 @EmbedStr('/public/mining.js')
-const mining_js = _$mining_js;
+const miningJs = _$mining_js;
 
 @EmbedStr('/public/projects.html')
-const projects_html = _$projects_html;
+const projectsHtml = _$projects_html;
 
 @EmbedStr('/public/projects.js')
-const projects_js = _$projects_js;
+const projectsJs = _$projects_js;
 
 @EmbedStr('/public/solutions.html')
-const solutions_html = _$solutions_html;
+const solutionsHtml = _$solutions_html;
 
 @EmbedStr('/public/solutions.js')
-const solutions_js = _$solutions_js;
+const solutionsJs = _$solutions_js;
 
 void loadPages(app){
   app.get('/logo.png', () => Response.ok(
-    logo_png,
+    logoPng,
     headers: {'Content-Type': 'image/png'},
   ));
 
-  rPage(app, "/about.html", about_html);
-  rCss(app, "/bulma.min.css", bulma_min_css);
-  rJs(app, "/chart.js", chart_js);
-  rPage(app, "/config.html", config_html);
-  rJs(app, "/config.js", config_js);
-  rPage(app, "/", index_html);
-  rJs(app, "/index.js", index_js);
-  rPage(app, "/mining.html", mining_html);
-  rJs(app, "/mining.js", mining_js);
-  rPage(app, "/projects.html", projects_html);
-  rJs(app, "/projects.js", projects_js);
-  rPage(app, "/solutions.html", solutions_html);
-  rJs(app, "/solutions.js", solutions_js);
+  rPage(app, "/about.html", aboutHtml);
+  rCss(app, "/bulma.min.css", bulmaMinCss);
+  rJs(app, "/chart.js", chartJs);
+  rPage(app, "/config.html", configHtml);
+  rJs(app, "/config.js", configJs);
+  rPage(app, "/", indexHtml);
+  rJs(app, "/index.js", indexJs);
+  rPage(app, "/mining.html", miningHtml);
+  rJs(app, "/mining.js", miningJs);
+  rPage(app, "/projects.html", projectsHtml);
+  rJs(app, "/projects.js", projectsJs);
+  rPage(app, "/solutions.html", solutionsHtml);
+  rJs(app, "/solutions.js", solutionsJs);
 }
 
 void rPage(var app, String url, var obj){

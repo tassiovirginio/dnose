@@ -258,10 +258,10 @@ Handler init() {
       try {
         final project = row['project'];
         final author = row['author'];
-        final start_date = row['start_date'];
-        final end_date = row['end_date'];
+        final startDate = row['start_date'];
+        final endDate = row['end_date'];
         final dias = row['dias'];
-        buffer.writeln('$project;$author;$start_date;$end_date;$dias');
+        buffer.writeln('$project;$author;$startDate;$endDate;$dias');
       }finally{
         continue;
       }
