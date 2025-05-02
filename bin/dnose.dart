@@ -14,7 +14,6 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:dotenv/dotenv.dart';
-import 'package:intl/intl.dart';
 
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
