@@ -4,46 +4,46 @@ import 'package:shelf_plus/shelf_plus.dart';
 part 'pages.g.dart';
 
 @EmbedStr('/public/about.html')
-const aboutHtml = _$about_html;
+const aboutHtml = _$aboutHtml;
 
 @EmbedStr('/public/bulma.min.css')
-const bulmaMinCss = _$bulma_min_css;
+const bulmaMinCss = _$bulmaMinCss;
 
 @EmbedStr('/public/chart.js')
-const chartJs = _$chart_js;
+const chartJs = _$chartJs;
 
 @EmbedStr('/public/config.html')
-const configHtml = _$config_html;
+const configHtml = _$configHtml;
 
 @EmbedStr('/public/config.js')
-const configJs = _$config_js;
+const configJs = _$configJs;
 
 @EmbedStr('/public/index.html')
-const indexHtml = _$index_html;
+const indexHtml = _$indexHtml;
 
 @EmbedStr('/public/index.js')
-const indexJs = _$index_js;
+const indexJs = _$indexJs;
 
 @EmbedBinary('/public/logo.png')
-const logoPng = _$logo_png;
+const logoPng = _$logoPng;
 
 @EmbedStr('/public/mining.html')
-const miningHtml = _$mining_html;
+const miningHtml = _$miningHtml;
 
 @EmbedStr('/public/mining.js')
-const miningJs = _$mining_js;
+const miningJs = _$miningJs;
 
 @EmbedStr('/public/projects.html')
-const projectsHtml = _$projects_html;
+const projectsHtml = _$projectsHtml;
 
 @EmbedStr('/public/projects.js')
-const projectsJs = _$projects_js;
+const projectsJs = _$projectsJs;
 
 @EmbedStr('/public/solutions.html')
-const solutionsHtml = _$solutions_html;
+const solutionsHtml = _$solutionsHtml;
 
 @EmbedStr('/public/solutions.js')
-const solutionsJs = _$solutions_js;
+const solutionsJs = _$solutionsJs;
 
 void loadPages(app){
   app.get('/logo.png', () => Response.ok(
