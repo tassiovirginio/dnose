@@ -62,11 +62,11 @@ class Progresso {
     if (_coresDisponiveis) {
       // Versão colorida
       _limparLinha();
-      stdout.write('\r\x1B[32m✓ Processamento concluído com sucesso!\x1B[0m');
+      stdout.write('\r\x1B[32m✓ Process completed successfully!\x1B[0m');
     } else {
       // Versão sem cores
       _limparLinha();
-      stdout.write('\r✓ Processamento concluído com sucesso!');
+      stdout.write('\r✓ Process completed successfully!');
     }
 
     _finalizado = true;
