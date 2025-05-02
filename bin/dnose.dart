@@ -262,7 +262,7 @@ Handler init() {
         final endDate = row['end_date'];
         final dias = row['dias'];
         buffer.writeln('$project;$author;$startDate;$endDate;$dias');
-      }finally{
+      } catch (e) {
         continue;
       }
     }
