@@ -220,8 +220,8 @@ function loadChart(id, names, values, msg) {
                 label: msg,
                 data: values,
                 borderWidth: 1,
-                backgroundColor: colors, // Define cores diferentes para cada coluna
-                borderColor: colors // Opcional: usar mesma cor para a borda
+                // backgroundColor: colors, // Define cores diferentes para cada coluna
+                // borderColor: colors // Opcional: usar mesma cor para a borda
             }]
         },
         options: {
@@ -254,8 +254,8 @@ function loadChart2(id, names, values, msg) {
                 label: msg,
                 data: values,
                 borderWidth: 1,
-                backgroundColor: colors, // Define cores diferentes para cada coluna
-                borderColor: colors // Opcional: usar mesma cor para a borda
+                // backgroundColor: colors, // Define cores diferentes para cada coluna
+                // borderColor: colors // Opcional: usar mesma cor para a borda
             }]
         },
         options: {
@@ -288,8 +288,8 @@ function loadChart3(id, names, values, msg) {
                 label: msg,
                 data: values,
                 borderWidth: 1,
-                backgroundColor: colors, // Define cores diferentes para cada coluna
-                borderColor: colors // Opcional: usar mesma cor para a borda
+                // backgroundColor: colors, // Define cores diferentes para cada coluna
+                // borderColor: colors // Opcional: usar mesma cor para a borda
             }]
         },
         options: {
@@ -386,8 +386,8 @@ function loadChart5(id, names, values, msg) {
                 label: msg,
                 data: values,
                 borderWidth: 1,
-                backgroundColor: colors, // Define cores diferentes para cada coluna
-                borderColor: colors // Opcional: usar mesma cor para a borda
+                // backgroundColor: colors, // Define cores diferentes para cada coluna
+                // borderColor: colors // Opcional: usar mesma cor para a borda
             }]
         },
         options: {
