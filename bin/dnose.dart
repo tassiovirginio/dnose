@@ -21,16 +21,17 @@ final port = int.parse(Platform.environment['PORT'] ?? '8080');
 final userFolder = (Platform.isMacOS || Platform.isLinux)
     ? Platform.environment['HOME']!
     : Platform.environment['UserProfile']!;
+final b = Platform.pathSeparator;
 final Directory dirUser = Directory(userFolder);
-final Directory dirDNose = Directory("${dirUser.path}/.dnose");
-final Directory dirProjects = Directory("${dirDNose.path}/projects");
-final Directory dirResults = Directory("${dirDNose.path}/results");
+final Directory dirDNose = Directory("${dirUser.path}${b}.dnose");
+final Directory dirProjects = Directory("${dirDNose.path}${b}projects");
+final Directory dirResults = Directory("${dirDNose.path}${b}results");
 
-final resultado = "${dirResults.path}/resultado.csv";
-final resultado2 = "${dirResults.path}/resultado2.csv";
-final resultadoMetrics = "${dirResults.path}/resultado_metrics.csv";
-final resultadoMetrics2 = "${dirResults.path}/metrics2.csv";
-final resultadoDbFile = "${dirResults.path}/resultado.sqlite";
+final resultado = "${dirResults.path}${b}resultado.csv";
+final resultado2 = "${dirResults.path}${b}resultado2.csv";
+final resultadoMetrics = "${dirResults.path}${b}resultado_metrics.csv";
+final resultadoMetrics2 = "${dirResults.path}${b}metrics2.csv";
+final resultadoDbFile = "${dirResults.path}${b}resultado.sqlite";
 
 Future<List<String>> listaProjetos() async {
   var list = dirProjects.listSync().toList();
