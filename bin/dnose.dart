@@ -71,7 +71,7 @@ Handler init() {
   DotEnv env = DotEnv(includePlatformEnvironment: true)..load();
   final apiKeyGemini = env['API_KEY_GEMINI'] ?? 'AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM';
   final apiKeyChatGPT = env['API_KEY_CHATGPT'] ?? 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa';
-  final ollamaModel = env['OLLAMA_MODEL'] ?? 'llama3';
+  final ollamaModel = env['OLLAMA_MODEL'] ?? 'deepcoder:1.5b';
 
   // print("API_KEY_GEMINI: $apiKeyGemini");
   // print("API_KEY_CHATGPT: $apiKeyChatGPT");
@@ -83,7 +83,7 @@ Handler init() {
   //carregar as páginas no sistema
   loadPages(app);
 
-  final gemini = ai.GenerativeModel(model: 'gemini-pro', apiKey: apiKeyGemini);
+  final gemini = ai.GenerativeModel(model: 'gemini-1.5-flash-latest', apiKey: apiKeyGemini);
 
   var existFolder = dirProjects.existsSync();
   if (existFolder == false) dirProjects.createSync();

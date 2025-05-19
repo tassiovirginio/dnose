@@ -14,7 +14,7 @@ dependencies:
   csv: ^6.0.0
   git: ^2.3.1
   git_clone: ^1.2.0
-  google_generative_ai: ^0.4.5
+  google_generative_ai: ^0.4.7
   langchain: ^0.7.4
   langchain_ollama: ^0.3.0
   langchain_openai: ^0.7.0
