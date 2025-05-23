@@ -30,7 +30,17 @@
 
 - Ubuntu -> sudo apt-get -y install sqlite3 libsqlite3-dev git dart
 - Arch -> pacman -S git sqlite3 libsqlite3 dart
+- Windows -> dart sdk, git, SQLite 3 - All bin in your PATH
 
+
+### For running the LLMs
+- create file .env 
+- input in the file this codes:
+```
+API_KEY_GEMINI="YOUR_API_KEY_GEMINI"
+API_KEY_CHATGPT="YOUR_API_KEY_OPENAI"
+OLLAMA_MODEL="llama3"
+```
 
 ### Running in Docker
 
