@@ -69,8 +69,8 @@ Handler init() {
   if(dirResults.existsSync() == false) dirResults.createSync();
 
   DotEnv env = DotEnv(includePlatformEnvironment: true)..load();
-  final apiKeyGemini = env['API_KEY_GEMINI'] ?? 'AIzaSyAeYV6fJV5KjxN8g1Zjlfw0CCeUYtloFjM';
-  final apiKeyChatGPT = env['API_KEY_CHATGPT'] ?? 'sk-proj-ASl8dAsovhX3OAq6AGvGT3BlbkFJV9MB869wapMddLlRvLDa';
+  final apiKeyGemini = env['API_KEY_GEMINI'] ?? '';
+  final apiKeyChatGPT = env['API_KEY_CHATGPT'] ?? '';
   final ollamaModel = env['OLLAMA_MODEL'] ?? 'deepcoder:1.5b';
 
   // print("API_KEY_GEMINI: $apiKeyGemini");

@@ -39,7 +39,7 @@
 ```
 API_KEY_GEMINI="YOUR_API_KEY_GEMINI"
 API_KEY_CHATGPT="YOUR_API_KEY_OPENAI"
-OLLAMA_MODEL="llama3"
+OLLAMA_MODEL="deepcoder:1.5b"
 ```
 
 ### Running in Docker
