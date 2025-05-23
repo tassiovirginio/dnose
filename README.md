@@ -36,3 +36,13 @@
 
 - docker build -t dnose .
 - docker run -it --rm -p 8080:8080 --name dnose dnose
+
+
+## Local Running - Linux
+- dart run bin/dnose.dart
+
+
+## Compile e Execute - Linux
+- dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs
+- dart compile exe bin/dnose.dart -o dnose.exe
+- ./dnose.exe
