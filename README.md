@@ -8,7 +8,7 @@
 - https://dnose.onrender.com/
 
 
-### List Test Smells Detected
+### List of Detected Test Smells
 
 - [x] **Assertion Roulette**
 - [x] **Conditional Test Logic**
@@ -22,7 +22,7 @@
 - [x] **Sensitive Equality**
 - [x] **Sleepy Test**
 - [x] **Test Without Description**
-- [x] **Unknow Test**
+- [x] **Unknown Test**
 - [x] **Verbose Test**
 
 
@@ -38,11 +38,18 @@
 - docker run -it --rm -p 8080:8080 --name dnose dnose
 
 
-## Local Running - Linux
+## Running Locally (Linux and Windows)
 - dart run bin/dnose.dart
 
 
-## Compile e Execute - Linux
+## Compile and Execute - Linux (running in Linux)
 - dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs
 - dart compile exe bin/dnose.dart -o dnose.exe
 - ./dnose.exe
+
+
+## Compile and Execute - Windows (running in Windows)
+- dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs
+- dart compile exe bin/dnose.dart --target-os=windows --target-arch=x64 -o dnose_win.exe
+  - or dart compile exe bin/dnose.dart --target-os=windows -o dnose_win.exe
+- dnose_win.exe
