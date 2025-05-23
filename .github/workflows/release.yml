@@ -24,12 +24,12 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Compile Dart server
-        run: dart compile exe bin/dnose.dart -o target/dnose_linux_amd64.exe
+        run: dart compile exe bin/dnose.dart -o dnose_linux_amd64.exe
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
         with:
-          files: target/dnose_linux_amd64.exe
+          files: dnose_linux_amd64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
