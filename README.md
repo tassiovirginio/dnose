@@ -26,13 +26,13 @@
 - [x] **Verbose Test**
 
 
-### Pré-requisito
+### Prerequisites
 
 - Ubuntu -> sudo apt-get -y install sqlite3 libsqlite3-dev git dart
 - Arch -> pacman -S git sqlite3 libsqlite3 dart
 
 
-### Docker
+### Running in Docker
 
 - docker build -t dnose .
 - docker run -it --rm -p 8080:8080 --name dnose dnose
