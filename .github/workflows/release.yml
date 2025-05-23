@@ -17,9 +17,6 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
-      - name: Create target directory
-        run: mkdir -p target
-
       - name: Get dependencies
         run: dart pub get
 
@@ -28,16 +25,6 @@ jobs:
 
       - name: Compile Dart server
         run: dart compile exe bin/dnose.dart -o target/dnose_linux_amd64.exe
-
-      # - name: Copy static files
-      #   run: |
-      #     cp -r public target/
-      #     cp dnose.properties target/
-
-      # - name: Create ZIP file
-      #   run: |
-      #     cd target
-      #     zip -r ../release.zip .
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
