@@ -8,6 +8,11 @@
 - https://dnose.onrender.com/
 
 
+## Download Executables (Linux and Windows*) - *Alfa
+
+- [Last Realease](https://github.com/tassiovirginio/dnose/releases/latest)
+
+
 ### List of Detected Test Smells
 
 - [x] **Assertion Roulette**
