@@ -22,22 +22,22 @@ jobs:
         run: dart pub get
 
       - name: Compile Dart server
-        run: dart compile exe bin/server.dart -o target/server
+        run: dart compile exe bin/dnose.dart -o target/dnose_linux_amd64.exe
 
-      - name: Copy static files
-        run: |
-          cp -r public target/
-          cp dnose.properties target/
+      # - name: Copy static files
+      #   run: |
+      #     cp -r public target/
+      #     cp dnose.properties target/
 
-      - name: Create ZIP file
-        run: |
-          cd target
-          zip -r ../release.zip .
+      # - name: Create ZIP file
+      #   run: |
+      #     cd target
+      #     zip -r ../release.zip .
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
         with:
-          files: release.zip
+          files: target/dnose_linux_amd64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
 
