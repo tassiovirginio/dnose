@@ -15,7 +15,10 @@ class ExceptionHandlingDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -25,7 +28,8 @@ class ExceptionHandlingDetector implements AbstractDetector {
 
   void _detect(AstNode e, TestClass testClass, String testName) {
     if (e is ThrowExpression || e is TryStatement) {
-      testSmells.add(TestSmell(
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -40,11 +44,60 @@ class ExceptionHandlingDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end,
+        ),
+      );
     }
-    e.childEntities
-        .whereType<AstNode>()
-        .forEach((e) => _detect(e, testClass, testName));
+    e.childEntities.whereType<AstNode>().forEach(
+      (e) => _detect(e, testClass, testName),
+    );
+  }
+
+  @override
+  String getDescription() {
+    return '''
+    This smell occurs when a test method explicitly a passing or failing of a test method 
+    is dependent on the production method throwing an exception. Developers should utilize 
+    JUnit's exception handling to automatically pass/fail the test instead of writing custom 
+    exception handling code or throwing an exception.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    void testFunction() {
+    throw Exception("Erro");
+  }
+
+  test("Exception Handling1", () {
+    //2
+    try {
+      throw Exception("Erro");
+    } catch (e) {
+      print(e);
+    }
+  });
+
+  test("Exception Handling2", () {
+    //1
+    try {
+      testFunction();
+    } catch (e) {
+      expect(e.toString(), Exception("Erro").toString());
+    }
+  });
+
+  test("Exception Handling3", () {
+    //1
+    try {
+      testFunction();
+    } catch (e) {
+      expect(e.toString(), Exception("Erro").toString());
+    } finally {
+      print("erro");
+    }
+  });
+    ''';
   }
 }

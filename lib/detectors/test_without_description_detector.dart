@@ -51,4 +51,24 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
           .forEach((e) => _detect(e, testClass, testName));
     }
   }
+
+  @override
+  String getDescription() {
+    return '''
+    type of test smell that occurs when a test case lacks a description. In the example below,
+    the test block lacks a description, which can result in a lack of
+    understanding and difficulty in maintenance. It is relevant to provide clear and concise 
+    descriptions for each test to ensure they are understandable and easy to maintain.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    const sum = require('./sum');
+    test('', () => {
+    expect(sum(1, 2)).toBe(3);
+    });
+    ''';
+  }
 }

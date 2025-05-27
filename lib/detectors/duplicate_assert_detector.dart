@@ -15,7 +15,10 @@ class DuplicateAssertDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -23,7 +26,8 @@ class DuplicateAssertDetector implements AbstractDetector {
     return testSmells;
   }
 
-  Map<String, List<MethodInvocation>> mapMethodInvocation = <String, List<MethodInvocation>>{};
+  Map<String, List<MethodInvocation>> mapMethodInvocation =
+      <String, List<MethodInvocation>>{};
 
   List<MethodInvocation> listMethodInvocation = List.empty(growable: true);
 
@@ -46,9 +50,10 @@ class DuplicateAssertDetector implements AbstractDetector {
 
     for (List<MethodInvocation> items in mapMethodInvocation.values) {
       if (items.length > 1) {
-        items.removeLast();//Removendo o ultimo
+        items.removeLast(); //Removendo o ultimo
         for (var value in items) {
-          testSmells.add(TestSmell(
+          testSmells.add(
+            TestSmell(
               name: testSmellName,
               testName: testName,
               testClass: testClass,
@@ -63,11 +68,77 @@ class DuplicateAssertDetector implements AbstractDetector {
               collumnStart: testClass.columnNumber(value.offset),
               collumnEnd: testClass.columnNumber(value.offset),
               offset: e.offset,
-              endOffset: e.end));
+              endOffset: e.end,
+            ),
+          );
         }
       }
     }
   }
+
+  @override
+  String getDescription() {
+    return
+    '''
+    This smell occurs when a test method tests for the same condition multiple times 
+    within the same test method. If the test method needs to test the same condition 
+    using different values, a new test method should be utilized; the name of the test 
+    method should be an indication of the test being performed. Possible situations that 
+    would give rise to this smell include: (1) developers grouping multiple conditions 
+    to test a single method; (2) developers performing debugging activities; and (3) 
+    an accidental copy-paste of code.
+    '''
+    ;
+  }
+
+
+  @override
+  String getExample() {
+    return
+        '''
+        test("Duplicate Assert1", () { // 2
+    expect(sum(1,2), 3, reason: "Verificando o valor");
+    expect(sum(1,2), 3, reason: "Verificando o valor");
+    expect(sum(1,2), 3, reason: "Verificando o valor");
+  });
+
+
+  test("Duplicate Assert2", () { // 2
+    expect(sum(1,2), 3, reason: "Verificando o valor");
+    expect(sum(2,2), 4, reason: "Verificando o valor");
+    expect(sum(2,3), 5, reason: "Verificando o valor");
+  });
+
+
+  test("Duplicate Assert3", () { // 2
+    expect(sum(1,2), 3, reason: "Verificando o valor 123");
+    expect(sum(1,2), 3, reason: "Verificando o valor 321");
+    expect(sum(1,2), 3, reason: "Verificando o valor 111");
+  });
+
+  test("Duplicate Assert4", () { // 1
+    expect(sum(1,3), 4, reason: "Verificando o valor 123");
+    expect(sum(1,3), 4, reason: "Verificando o valor 321");
+    expect(sum2(1,3), 4, reason: "Verificando o valor 123");
+  });
+
+  test("Duplicate Assert5", () { // 1
+    expect(sum(2,2), 4, reason: "Verificando o valor 123");
+    expect(sum(2,2), 4, reason: "Verificando o valor 321");
+    expect(sum2(2,2), 4, reason: "Verificando o valor 123");
+  });
+
+  test("Duplicate Assert6", () { // 2
+    expect(sum(1,3), 4, reason: "Verificando o valor 123");
+    expect(sum(2,2), 4, reason: "Verificando o valor 321");
+    expect(sum2(2,2), 4, reason: "Verificando o valor 123");
+    expect(sum2(1,3), 4, reason: "Verificando o valor 123");
+  });
+        '''
+        ;
+  }
+
+
 }
 
 List<MethodInvocation> flow(AstNode e) {

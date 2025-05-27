@@ -1,5 +1,20 @@
 import 'dart:io';
 
+import 'package:dnose/detectors/abstract_detector.dart';
+import 'package:dnose/detectors/assertion_roulette_detector.dart';
+import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/duplicate_assert_detector.dart';
+import 'package:dnose/detectors/empty_test_detector.dart';
+import 'package:dnose/detectors/exception_handling_detector.dart';
+import 'package:dnose/detectors/ignored_test_detector.dart';
+import 'package:dnose/detectors/magic_number_detector.dart';
+import 'package:dnose/detectors/print_statment_fixture_detector.dart';
+import 'package:dnose/detectors/resource_optimism_detector.dart';
+import 'package:dnose/detectors/sensitive_equality_detector.dart';
+import 'package:dnose/detectors/sleepy_fixture_detector.dart';
+import 'package:dnose/detectors/test_without_description_detector.dart';
+import 'package:dnose/detectors/unknown_test_detector.dart';
+import 'package:dnose/detectors/verbose_test_detector.dart';
 import 'package:dnose/dnose_core.dart';
 import 'package:dnose/main.dart';
 import 'package:dnose/utils/git_utils.dart';
@@ -37,6 +52,24 @@ Future<List<String>> listaProjetos() async {
   var list = dirProjects.listSync().toList();
   return list.map((e) => e.path).toList();
 }
+
+
+List<AbstractDetector> detectors = [
+  ConditionalTestLogicDetector(),
+  PrintStatmentFixtureDetector(),
+  TestWithoutDescriptionDetector(),
+  MagicNumberDetector(),
+  SleepyFixtureDetector(),
+  DuplicateAssertDetector(),
+  ResourceOptimismDetector(),
+  AssertionRouletteDetector(),
+  VerboseTestDetector(),
+  EmptyTestDetector(),
+  UnknownTestDetector(),
+  ExceptionHandlingDetector(),
+  IgnoredTestDetector(),
+  SensitiveEqualityDetector()
+];
 
 void main() async{
   print(
@@ -163,6 +196,32 @@ Handler init() {
     code = code.replaceAll(";", ";\n");
     return Response.ok(code);
   });
+
+  app.get('/getTsDescription', (Request request) async {
+    String? testSmell = request.url.queryParameters['testsmell'];
+    String description = "";
+    for (var _abstractDetector in detectors) {
+      if(_abstractDetector.testSmellName == testSmell){
+        description = _abstractDetector.getDescription();
+        break;
+      }
+    }
+    return Response.ok(description);
+  });
+
+  app.get('/getTsExample', (Request request) async {
+    String? testSmell = request.url.queryParameters['testsmell'];
+    String example = "";
+    for (var _abstractDetector in detectors) {
+      if(_abstractDetector.testSmellName == testSmell){
+        example = _abstractDetector.getExample();
+        break;
+      }
+    }
+    return Response.ok(example);
+  });
+
+
 
   String chartData() {
     if (File(resultado2).existsSync()) {

@@ -15,16 +15,19 @@ class UnknownTestDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
 
-
     var list = flow(e);
 
-    if(list.isEmpty){
-      testSmells.add(TestSmell(
+    if (list.isEmpty) {
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -39,13 +42,13 @@ class UnknownTestDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end,
+        ),
+      );
     }
 
-
-    // if (e.toSource().contains("expect") == false && 
-    // e.toSource().contains("expectLater") == false && 
+    // if (e.toSource().contains("expect") == false &&
+    // e.toSource().contains("expectLater") == false &&
     // e.toSource().contains("verify") == false &&
     // e.toSource().contains("assert") == false) {
     //   testSmells.add(TestSmell(
@@ -69,16 +72,46 @@ class UnknownTestDetector implements AbstractDetector {
     return testSmells;
   }
 
+  @override
+  String getDescription() {
+    return '''
+    An assertion statement is used to declare an expected boolean condition for a test method.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    test("UnknownTest1", () {
+    print("teste");
+  });
+
+  test("UnknownTest2", () {
+    print("teste");
+    if(true){
+      print("teste");
+    }
+  });
+
+  test("UnknownTest4", () {
+    print("teste");
+    if(true){
+      print("teste");
+    }
+    // expect(1, 1, reason: "teste");
+  });
+    ''';
+  }
 }
 
 List<MethodInvocation> flow(AstNode e) {
   List<MethodInvocation> listMethods = List.empty(growable: true);
 
-  if (e is MethodInvocation && (e.methodName.name == "expect" 
-  || e.methodName.name == "expectLater" 
-  || e.methodName.name == "verify" 
-  || e.methodName.name == "assert" 
-  )) {
+  if (e is MethodInvocation &&
+      (e.methodName.name == "expect" ||
+          e.methodName.name == "expectLater" ||
+          e.methodName.name == "verify" ||
+          e.methodName.name == "assert")) {
     listMethods.add(e);
   }
 

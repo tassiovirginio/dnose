@@ -17,7 +17,10 @@ class VerboseTestDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -33,7 +36,8 @@ class VerboseTestDetector implements AbstractDetector {
       int end = lineNumber(e.root as CompilationUnit, e.parent!.end);
 
       if (end - start > valueMaxLineVerbose) {
-        testSmells.add(TestSmell(
+        testSmells.add(
+          TestSmell(
             name: testSmellName,
             testName: testName,
             testClass: testClass,
@@ -48,16 +52,72 @@ class VerboseTestDetector implements AbstractDetector {
             collumnStart: testClass.columnNumber(e.offset),
             collumnEnd: testClass.columnNumber(e.end),
             offset: e.offset,
-            endOffset: e.end
-        ));
+            endOffset: e.end,
+          ),
+        );
       }
     } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
+      e.childEntities.whereType<AstNode>().forEach(
+        (e) => _detect(e, testClass, testName),
+      );
     }
   }
 
   int lineNumber(CompilationUnit cu, int offset) =>
       cu.lineInfo.getLocation(offset).lineNumber;
+
+  @override
+  String getDescription() {
+    return '''
+    The 'Verbose Test' test smell occurs when a test method is excessively long, 
+    typically with more than 30 lines of code. Verbose test methods can indicate that 
+    the method has multiple responsibilities, making it difficult to understand and maintain.
+     Maintaining such test methods can be complicated, as changes in one part of the test can 
+     affect other parts, increasing the likelihood of introducing errors.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    test(
+      "VerboseFixture",
+      () => {
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3),
+            expect(1 + 2, 3)
+          });
+    ''';
+  }
 }

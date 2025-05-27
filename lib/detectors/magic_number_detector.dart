@@ -12,7 +12,10 @@ class MagicNumberDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -24,7 +27,8 @@ class MagicNumberDetector implements AbstractDetector {
     if (e is ForPartsWithDeclarations || e is NamedExpression) return;
 
     if (e is IntegerLiteral || e is DoubleLiteral) {
-      testSmells.add(TestSmell(
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -39,10 +43,13 @@ class MagicNumberDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
-    }else if (e is SimpleStringLiteral && e.toSource().replaceAll("\"", "").contains(RegExp(r'^\d+$'))) {
-      testSmells.add(TestSmell(
+          endOffset: e.end,
+        ),
+      );
+    } else if (e is SimpleStringLiteral &&
+        e.toSource().replaceAll("\"", "").contains(RegExp(r'^\d+$'))) {
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -57,15 +64,44 @@ class MagicNumberDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end,
+        ),
+      );
     }
 
-    e.childEntities
-        .whereType<AstNode>()
-        .forEach((e) => _detect(e, testClass, testName));
+    e.childEntities.whereType<AstNode>().forEach(
+      (e) => _detect(e, testClass, testName),
+    );
   }
 
   @override
   String get testSmellName => "Magic Number";
+
+  @override
+  String getDescription() {
+    return '''
+    Occurs when assert statements in a test method contain numeric literals (i.e., magic numbers) 
+    as parameters. Magic numbers do not indicate the meaning/purpose of the number. Hence, they 
+    should be replaced with constants or variables, thereby providing a descriptive name for the input.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    test("Magic Number1", () => {expect(1 + 2, 3)}); //3
+
+  test("Magic Number2", () => {expect("3", "3")}); //2
+
+  test("Magic Number4", () {
+    //1
+    print(123);
+  });
+
+  test("Magic Number5", () {
+    //1
+    print("123");
+  });
+    ''';
+  }
 }

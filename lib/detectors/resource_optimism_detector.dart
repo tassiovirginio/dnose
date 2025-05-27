@@ -15,7 +15,10 @@ class ResourceOptimismDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -24,9 +27,13 @@ class ResourceOptimismDetector implements AbstractDetector {
   }
 
   void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is MethodInvocation && e.toSource().replaceAll(" ", "").contains("File(")) {
-      if( (e.toSource().contains("exists(") ||e.toSource().contains("existsSync(")) == false) {
-        testSmells.add(TestSmell(
+    if (e is MethodInvocation &&
+        e.toSource().replaceAll(" ", "").contains("File(")) {
+      if ((e.toSource().contains("exists(") ||
+              e.toSource().contains("existsSync(")) ==
+          false) {
+        testSmells.add(
+          TestSmell(
             name: testSmellName,
             testName: testName,
             testClass: testClass,
@@ -41,14 +48,32 @@ class ResourceOptimismDetector implements AbstractDetector {
             collumnStart: testClass.columnNumber(e.offset),
             collumnEnd: testClass.columnNumber(e.end),
             offset: e.offset,
-            endOffset: e.end
-        ));
+            endOffset: e.end,
+          ),
+        );
       }
-    }else{
-      e.childEntities
-        .whereType<AstNode>()
-        .forEach((e) => _detect(e, testClass, testName));
+    } else {
+      e.childEntities.whereType<AstNode>().forEach(
+        (e) => _detect(e, testClass, testName),
+      );
     }
-    
+  }
+
+  @override
+  String getDescription() {
+    return '''
+    This smell occurs when a test method makes an optimistic assumption that the external resource 
+    (e.g., File), utilized by the test method, exists.
+    ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+    test("DetectorResourceOptimism1", () {
+    // ignore: unused_local_variable
+    var file = File('file.txt');
+  });
+    ''';
   }
 }

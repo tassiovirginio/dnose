@@ -7,4 +7,8 @@ mixin AbstractDetector {
 
   List<TestSmell> detect(
       ExpressionStatement e, TestClass testClass, String testName);
+
+  String getDescription();
+
+  String getExample();
 }

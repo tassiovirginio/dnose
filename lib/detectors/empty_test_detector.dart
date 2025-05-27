@@ -15,7 +15,10 @@ class EmptyTestDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -34,10 +37,11 @@ class EmptyTestDetector implements AbstractDetector {
         e.parent!.parent!.parent is ExpressionStatement &&
         e.parent!.parent!.parent!.parent is Block &&
         e.parent!.parent!.childEntities.first.toString() == "test" &&
-        (e.toString().replaceAll(" ", "") == "()=>{}" 
-        || e.toString().replaceAll(" ", "") == "{}"
-        || e.toString().replaceAll(" ", "") == "(){}")) {
-      testSmells.add(TestSmell(
+        (e.toString().replaceAll(" ", "") == "()=>{}" ||
+            e.toString().replaceAll(" ", "") == "{}" ||
+            e.toString().replaceAll(" ", "") == "(){}")) {
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -52,11 +56,37 @@ class EmptyTestDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end,
+        ),
+      );
     }
-    e.childEntities
-        .whereType<AstNode>()
-        .forEach((e) => _detect(e, testClass, testName));
+    e.childEntities.whereType<AstNode>().forEach(
+      (e) => _detect(e, testClass, testName),
+    );
+  }
+
+  @override
+  String getDescription() {
+    return '''
+        Occurs when a test method does not contain executable statements. Such methods are 
+        possibly created for debugging purposes and then forgotten about or contains commented 
+        out code. An empty test can be considered problematic and more dangerous than not having 
+        a test case at all since JUnit will indicate that the test passes even if there are no 
+        executable statements present in the method body. As such, developers introducing 
+        behavior-breaking changes into production class, 
+        will not be notified of the alternated outcomes as JUnit will report the test as passing.
+        ''';
+  }
+
+  @override
+  String getExample() {
+    return '''
+        test("EmptyFixture1", () => {});
+  test("EmptyFixture2", () => {     });
+  test("EmptyFixture3", () {});
+  test("EmptyFixture4", () {
+    //comentário
+  });
+        ''';
   }
 }
