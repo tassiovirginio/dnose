@@ -39,7 +39,7 @@
 
 
 ### For running the LLMs
-- create file .env 
+- create file .env
 - input in the file this codes:
 ```
 API_KEY_GEMINI="YOUR_API_KEY_GEMINI"
@@ -59,8 +59,8 @@ OLLAMA_MODEL="deepcoder:1.5b"
 
 ## Compile and Execute - Linux (running in Linux)
 - dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs
-- dart compile exe bin/dnose.dart -o dnose.exe
-- ./dnose.exe
+- dart compile exe bin/dnose.dart -o dnose.run
+- ./dnose.run
 
 
 ## Compile and Execute - Windows (running in Windows)
@@ -70,7 +70,3 @@ or
 - dart compile exe bin/dnose.dart --target-os=windows --target-arch=x64 -o dnose_win.exe
   - or dart compile exe bin/dnose.dart --target-os=windows -o dnose_win.exe
 - dnose_win.exe
-
-
-
-

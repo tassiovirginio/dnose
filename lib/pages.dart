@@ -45,11 +45,11 @@ const solutionsHtml = _$solutionsHtml;
 @EmbedStr('/public/solutions.js')
 const solutionsJs = _$solutionsJs;
 
-void loadPages(app){
-  app.get('/logo.png', () => Response.ok(
-    logoPng,
-    headers: {'Content-Type': 'image/png'},
-  ));
+void loadPages(app) {
+  app.get(
+    '/logo.png',
+    () => Response.ok(logoPng, headers: {'Content-Type': 'image/png'}),
+  );
 
   rPage(app, "/about.html", aboutHtml);
   rCss(app, "/bulma.min.css", bulmaMinCss);
@@ -66,23 +66,31 @@ void loadPages(app){
   rJs(app, "/solutions.js", solutionsJs);
 }
 
-void rPage(var app, String url, var obj){
-  app.get(url, () => Response.ok(
-    obj,
-    headers: {'Content-Type': 'text/html; charset=utf-8'},
-  ));
+void rPage(var app, String url, var obj) {
+  app.get(
+    url,
+    () =>
+        Response.ok(obj, headers: {'Content-Type': 'text/html; charset=utf-8'}),
+  );
 }
 
 void rCss(var app, String url, var cssContent) {
-  app.get(url, () => Response.ok(
-    cssContent,
-    headers: {'Content-Type': 'text/css; charset=utf-8'},
-  ));
+  app.get(
+    url,
+    () => Response.ok(
+      cssContent,
+      headers: {'Content-Type': 'text/css; charset=utf-8'},
+    ),
+  );
 }
 
 void rJs(var app, String url, var jsContent) {
-  app.get(url, () => Response.ok(
-    jsContent,
-    headers: {'Content-Type': 'application/javascript; charset=utf-8'},
-  ));
+  app.get(
+    url,
+    () => Response.ok(
+      jsContent,
+      headers: {'Content-Type': 'application/javascript; charset=utf-8'},
+    ),
+  );
 }
+
