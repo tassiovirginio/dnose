@@ -33,9 +33,10 @@ import 'package:dotenv/dotenv.dart';
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
-final userFolder = (Platform.isMacOS || Platform.isLinux)
-    ? Platform.environment['HOME']!
-    : Platform.environment['UserProfile']!;
+final userFolder =
+    (Platform.isMacOS || Platform.isLinux)
+        ? Platform.environment['HOME']!
+        : Platform.environment['UserProfile']!;
 final b = Platform.pathSeparator;
 final Directory dirUser = Directory(userFolder);
 final Directory dirDNose = Directory("${dirUser.path}${b}.dnose");
@@ -53,7 +54,6 @@ Future<List<String>> listaProjetos() async {
   return list.map((e) => e.path).toList();
 }
 
-
 List<AbstractDetector> detectors = [
   ConditionalTestLogicDetector(),
   PrintStatmentFixtureDetector(),
@@ -68,20 +68,19 @@ List<AbstractDetector> detectors = [
   UnknownTestDetector(),
   ExceptionHandlingDetector(),
   IgnoredTestDetector(),
-  SensitiveEqualityDetector()
+  SensitiveEqualityDetector(),
 ];
 
-void main() async{
-  print(
-      '''
+void main() async {
+  print('''
   ██████╗ ███╗   ██╗ ██████╗ ███████╗███████╗
   ██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔════╝
   ██║  ██║██╔██╗ ██║██║   ██║███████╗█████╗  
   ██║  ██║██║╚██╗██║██║   ██║╚════██║██╔══╝  
   ██████╔╝██║ ╚████║╚██████╔╝███████║███████╗
   ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚══════╝
-  '''
-  );
+Tássio
+''');
   await shelfRun(
     init,
     defaultEnableHotReload: false,
@@ -97,9 +96,9 @@ Handler init() {
   DNoseCore.contProcessProject = 0;
 
   //criando diretorios
-  if(dirDNose.existsSync() == false) dirDNose.createSync();
-  if(dirProjects.existsSync() == false) dirProjects.createSync();
-  if(dirResults.existsSync() == false) dirResults.createSync();
+  if (dirDNose.existsSync() == false) dirDNose.createSync();
+  if (dirProjects.existsSync() == false) dirProjects.createSync();
+  if (dirResults.existsSync() == false) dirResults.createSync();
 
   DotEnv env = DotEnv(includePlatformEnvironment: true)..load();
   final apiKeyGemini = env['API_KEY_GEMINI'] ?? '';
@@ -116,7 +115,10 @@ Handler init() {
   //carregar as páginas no sistema
   loadPages(app);
 
-  final gemini = ai.GenerativeModel(model: 'gemini-1.5-flash-latest', apiKey: apiKeyGemini);
+  final gemini = ai.GenerativeModel(
+    model: 'gemini-1.5-flash-latest',
+    apiKey: apiKeyGemini,
+  );
 
   var existFolder = dirProjects.existsSync();
   if (existFolder == false) dirProjects.createSync();
@@ -141,7 +143,7 @@ Handler init() {
   app.post('/solution2', (Request request) async {
     String prompt = await request.readAsString();
     prompt = prompt.replaceAll("_", " ");
-    String response = await getChatGptResponse(prompt,apiKeyChatGPT);
+    String response = await getChatGptResponse(prompt, apiKeyChatGPT);
     return Response.ok(response);
   });
 
@@ -201,7 +203,7 @@ Handler init() {
     String? testSmell = request.url.queryParameters['testsmell'];
     String description = "";
     for (var _abstractDetector in detectors) {
-      if(_abstractDetector.testSmellName == testSmell){
+      if (_abstractDetector.testSmellName == testSmell) {
         description = _abstractDetector.getDescription();
         break;
       }
@@ -213,15 +215,13 @@ Handler init() {
     String? testSmell = request.url.queryParameters['testsmell'];
     String example = "";
     for (var _abstractDetector in detectors) {
-      if(_abstractDetector.testSmellName == testSmell){
+      if (_abstractDetector.testSmellName == testSmell) {
         example = _abstractDetector.getExample();
         break;
       }
     }
     return Response.ok(example);
   });
-
-
 
   String chartData() {
     if (File(resultado2).existsSync()) {
@@ -329,9 +329,6 @@ Handler init() {
 
     return buffer.toString();
   }
-
-
-
 
   String listAuthorQtdCommit() {
     if (File(resultadoDbFile).existsSync() == false) return "";
@@ -534,4 +531,3 @@ Future<String> getOllamaResponse(String prompt, ollamaModel) async {
   final LLMResult res = await llm.invoke(PromptValue.string(prompt));
   return res.output;
 }
-

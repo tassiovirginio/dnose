@@ -65,6 +65,12 @@ OLLAMA_MODEL="deepcoder:1.5b"
 
 ## Compile and Execute - Windows (running in Windows)
 - dart run build_runner clean && dart run build_runner build --delete-conflicting-outputs
+or
+- dart run build_runner clean && dart run build_runner watch
 - dart compile exe bin/dnose.dart --target-os=windows --target-arch=x64 -o dnose_win.exe
   - or dart compile exe bin/dnose.dart --target-os=windows -o dnose_win.exe
 - dnose_win.exe
+
+
+
+
