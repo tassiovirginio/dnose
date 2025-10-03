@@ -20,3 +20,4 @@ mise.toml
 # FVM Version Cache
 .fvm/
 server
+.vscode/

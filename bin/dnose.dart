@@ -79,7 +79,6 @@ void main() async {
   ██║  ██║██║╚██╗██║██║   ██║╚════██║██╔══╝  
   ██████╔╝██║ ╚████║╚██████╔╝███████║███████╗
   ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚══════╝
-Tássio
 ''');
   await shelfRun(
     init,
@@ -103,7 +102,7 @@ Handler init() {
   DotEnv env = DotEnv(includePlatformEnvironment: true)..load();
   final apiKeyGemini = env['API_KEY_GEMINI'] ?? '';
   final apiKeyChatGPT = env['API_KEY_CHATGPT'] ?? '';
-  final ollamaModel = env['OLLAMA_MODEL'] ?? 'deepcoder:1.5b';
+  final ollamaModel = env['OLLAMA_MODEL'] ?? '';
 
   // print("API_KEY_GEMINI: $apiKeyGemini");
   // print("API_KEY_CHATGPT: $apiKeyChatGPT");
@@ -116,7 +115,7 @@ Handler init() {
   loadPages(app);
 
   final gemini = ai.GenerativeModel(
-    model: 'gemini-1.5-flash-latest',
+    model: 'gemini-2.5-flash',
     apiKey: apiKeyGemini,
   );
 
