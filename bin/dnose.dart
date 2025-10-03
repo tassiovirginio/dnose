@@ -129,9 +129,39 @@ Handler init() {
   app.get('/getstatistics', () => getStatists());
   app.get('/testsmellsnames', () => DNoseCore.listTestSmellsNames);
 
+  String getDesc(testSmell){
+    String description = "";
+    for (var _abstractDetector in detectors) {
+      if (_abstractDetector.testSmellName == testSmell) {
+        description = _abstractDetector.getDescription();
+        break;
+      }
+    }
+    return description;
+  }
+
+  String getExample(testSmell){
+    String example = "";
+    for (var _abstractDetector in detectors) {
+      if (_abstractDetector.testSmellName == testSmell) {
+        example = _abstractDetector.getExample();
+        break;
+      }
+    }
+    return example;
+  }
+
   app.post('/solution', (Request request) async {
     String prompt = await request.readAsString();
     prompt = prompt.replaceAll("_", " ");
+    var lista = prompt.replaceAll("( ", "|").replaceAll(" )", "|").split("|");
+    var testSmellName = lista[1];
+    var description = getDesc(testSmellName);
+    var example = getExample(testSmellName);
+
+    prompt = prompt.replaceAll("\$tsDescription", description);
+    prompt = prompt.replaceAll("\$tsExample", example);
+    
     String? resp;
     var content = [ai.Content.text(prompt)];
     final response = await gemini.generateContent(content);

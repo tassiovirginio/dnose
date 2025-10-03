@@ -34,8 +34,6 @@ function loadList() {
             const path = linha[3];
             const testDescripcion = linha[1];
             const testSmellName = linha[4];
-            const tsDescription = "";
-            const tsExample = "";
 
             const tr = document.createElement("tr");
 
@@ -56,7 +54,7 @@ function loadList() {
                 let code = document.getElementById("code");
                 code.innerHTML = "";
                 console.log(path + " - " + testDescripcion + " - " + testSmellName);
-                loadFile(path, testDescripcion, testSmellName, tsDescription, tsExample)
+                loadFile(path, testDescripcion, testSmellName)
             };
             const td3 = document.createElement("td");
             td3.appendChild(button);
@@ -69,7 +67,7 @@ function loadList() {
     req.send();
 }
 
-function loadFile(path, testDescripcion, testSmellName, tsDescription, tsExample) {
+function loadFile(path, testDescripcion, testSmellName) {
     console.log("path: " + path + " - " + testDescripcion);
     let code = document.getElementById("code");
     const req = new XMLHttpRequest();
@@ -77,8 +75,6 @@ function loadFile(path, testDescripcion, testSmellName, tsDescription, tsExample
         console.log(req.response);
         var code_full = req.response;
         code.innerHTML = code_full;
-        prompt = prompt.replaceAll("$tsExample", tsExample);
-        prompt = prompt.replaceAll("$tsDescription", tsDescription);
         prompt = prompt.replaceAll("$testSmellName", testSmellName);
         prompt = prompt.replaceAll("$code_full", code_full);
         console.log(prompt);
