@@ -34,6 +34,8 @@ function loadList() {
             const path = linha[3];
             const testDescripcion = linha[1];
             const testSmellName = linha[4];
+            const tsDescription = "";
+            const tsExample = "";
 
             const tr = document.createElement("tr");
 
