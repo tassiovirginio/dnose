@@ -10,12 +10,11 @@
 *.zip
 *.txt
 pubspec.lock
-mise.toml
 bin/server
 *.g.dart
 .env
+dnose.run
 dnose
-mise.toml
 
 # FVM Version Cache
 .fvm/
