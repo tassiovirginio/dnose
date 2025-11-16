@@ -110,7 +110,7 @@ List<MethodInvocation> flow(AstNode e) {
   if (e is MethodInvocation &&
       (e.methodName.name == "expect" ||
           e.methodName.name == "expectLater" ||
-          e.methodName.name == "verify" ||
+          // e.methodName.name == "verify" || -> esse verify é do Mock 
           e.methodName.name == "assert")) {
     listMethods.add(e);
   }
