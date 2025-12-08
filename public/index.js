@@ -47,7 +47,23 @@ function listAuthorStartEnd() {
         const div_listAuthorStartEnd = document.getElementById('listAuthorStartEnd');
 
         const div_table = document.createElement('table');
-        div_table.style = "width: 100%;"
+        div_table.style = "width: 100%; border-collapse: collapse;";
+
+        // Cabeçalho da tabela em inglês
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const headers = ["Project", "Author", "Start Date", "End Date", "Number of Days"];
+        headers.forEach(text => {
+            const th = document.createElement("th");
+            th.textContent = text;
+            th.style = "text-align: center; padding: 4px; border-bottom: 1px solid #ccc;";
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        div_table.appendChild(thead);
+
+        // Corpo da tabela
+        const tbody = document.createElement("tbody");
 
         lines.forEach(linha => {
             linha = linha.split(";");
@@ -57,31 +73,28 @@ function listAuthorStartEnd() {
             const data2 = linha[3];
             const dias = linha[4];
             const tr = document.createElement("tr");
-            const td1 = document.createElement("td");
-            td1.textContent = project;
-            td1.style = "width: 20%;";
-            const td2 = document.createElement("td");
-            td2.textContent = autor;
-            td2.style = "width: 20%;";
-            const td3 = document.createElement("td");
-            td3.textContent = data1;
-            const td4 = document.createElement("td");
-            td4.textContent = data2;
-            const td5 = document.createElement("td");
-            td5.textContent = dias;
+
+            const td1 = document.createElement("td"); td1.textContent = project; td1.style = "text-align: center;";
+            const td2 = document.createElement("td"); td2.textContent = autor; td2.style = "text-align: center;";
+            const td3 = document.createElement("td"); td3.textContent = data1; td3.style = "text-align: center;";
+            const td4 = document.createElement("td"); td4.textContent = data2; td4.style = "text-align: center;";
+            const td5 = document.createElement("td"); td5.textContent = dias; td5.style = "text-align: center;";
+
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
             tr.appendChild(td4);
             tr.appendChild(td5);
-            div_table.appendChild(tr);
+            tbody.appendChild(tr);
         });
 
+        div_table.appendChild(tbody);
         div_listAuthorStartEnd.appendChild(div_table);
     };
     req4.open("GET", "/list_author_start_end", true);
     req4.send();
 }
+
 
 
 function listAuthorQtdCommit() {
@@ -91,31 +104,48 @@ function listAuthorQtdCommit() {
         const div_listAuthorQtdCommit = document.getElementById('listAuthorQtdCommit');
 
         const div_table = document.createElement('table');
-        div_table.style = "width: 100%;"
+        div_table.style = "width: 100%; border-collapse: collapse;";
+
+        // Cabeçalho da tabela em inglês
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const headers = ["Project", "Author", "Number of Commits"];
+        headers.forEach(text => {
+            const th = document.createElement("th");
+            th.textContent = text;
+            th.style = "text-align: center; padding: 4px; border-bottom: 1px solid #ccc;";
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        div_table.appendChild(thead);
+
+        // Corpo da tabela
+        const tbody = document.createElement("tbody");
 
         lines.forEach(linha => {
             linha = linha.split(";");
-            var project = linha[0];
-            var autor = linha[1];
-            var qtd = linha[2];
+            const project = linha[0];
+            const autor = linha[1];
+            const qtd = linha[2];
             const tr = document.createElement("tr");
-            const td1 = document.createElement("td");
-            td1.textContent = project;
-            const td2 = document.createElement("td");
-            td2.textContent = autor;
-            const td3 = document.createElement("td");
-            td3.textContent = qtd;
+
+            const td1 = document.createElement("td"); td1.textContent = project; td1.style = "text-align: center;";
+            const td2 = document.createElement("td"); td2.textContent = autor; td2.style = "text-align: center;";
+            const td3 = document.createElement("td"); td3.textContent = qtd; td3.style = "text-align: center;";
+
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
-            div_table.appendChild(tr);
+            tbody.appendChild(tr);
         });
 
+        div_table.appendChild(tbody);
         div_listAuthorQtdCommit.appendChild(div_table);
     };
     req4.open("GET", "/list_author_qtd_commit", true);
     req4.send();
 }
+
 
 function loadTestSmellsNamesAuthors() {
     const req5_ = new XMLHttpRequest();
@@ -352,7 +382,7 @@ function loadChart4(id, names, values, msg) {
                     reverse: true,
                     title: {
                         display: true,
-                        text: 'Score negativo (quanto mais alto, pior)'
+                        text: 'Negative score (the higher the score, the worse)'
                     },
                     ticks: {
                         // callback: value => Math.abs(value)
@@ -426,28 +456,47 @@ function loadSelectProjects() {
     req.send();
 }
 
+function getSelectedSmells() {
+    const smells = [];
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            smells.push(checkbox.id);
+        }
+    });
+    return smells.join(';');
+}
+
+function selectAllSmells() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
+
+function deselectAllSmells() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+
+
 function process() {
-    document.getElementById("resultado").style.visibility = "hidden";
-    document.getElementById("resultado2").style.visibility = "hidden";
-    document.getElementById("resultado3").style.visibility = "hidden";
-    document.getElementById("resultado4").style.visibility = "hidden";
-    document.getElementById("resultado_db").style.visibility = "hidden";
-    document.getElementById("loading").style.visibility = "visible";
+    hideResultButtons();
+    showLoading();
+
     const path = document.getElementById("select_project");
 
     var lista = getSelectValues(path);
     var listaString = "";
     lista.forEach((p) => listaString = listaString + ";" + p);
 
+    const selectedSmells = getSelectedSmells();
+
     const req = new XMLHttpRequest();
-    req.onload = async (e) => {
-        const resultado = document.getElementById("resultado");
-        document.getElementById("resultado").style.visibility = "visible";
-        document.getElementById("resultado2").style.visibility = "visible";
-        document.getElementById("resultado3").style.visibility = "visible";
-        document.getElementById("resultado4").style.visibility = "visible";
-        document.getElementById("resultado_db").style.visibility = "visible";
-        document.getElementById("loading").style.visibility = "hidden";
+    req.onload = async () => {
+        showResultButtons();
         await loadProjectName();
         await loadStatistics();
         await loadTestSmellsNames();
@@ -457,36 +506,27 @@ function process() {
         loadQtdFilesTests();
         listAuthorStartEnd();
         listAuthorQtdCommit();
+        hideLoading();
     };
 
-    req.open("GET", "/processar?path_project=" + listaString, true);
+    req.open("GET", "/processar?path_project=" + listaString + "&smells=" + selectedSmells, true);
     req.send();
 }
 
 
 
 function process_all() {
-    document.getElementById("resultado").style.visibility = "hidden";
-    document.getElementById("resultado2").style.visibility = "hidden";
-    document.getElementById("resultado3").style.visibility = "hidden";
-    document.getElementById("resultado4").style.visibility = "hidden";
-    document.getElementById("resultado_db").style.visibility = "hidden";
-    document.getElementById("loading").style.visibility = "visible";
-
-    const path = document.getElementById("select_project");
+    hideResultButtons();
+    showLoading();
 
     const req = new XMLHttpRequest();
 
-    req.onload = async (e) => {
-        const resultado = document.getElementById("resultado");
-        document.getElementById("resultado").style.visibility = "visible";
-        document.getElementById("resultado2").style.visibility = "visible";
-        document.getElementById("resultado3").style.visibility = "visible";
-        document.getElementById("resultado4").style.visibility = "visible";
-        document.getElementById("resultado_db").style.visibility = "visible";
-        document.getElementById("loading").style.visibility = "hidden";
+    req.onload = async () => {
+        showResultButtons();
+        
+
         document.getElementById("projectname").innerHTML = "ALL";
-        // await loadProjectName();
+
         await loadStatistics();
         await loadTestSmellsNames();
         loadTestSmellsNamesAuthors();
@@ -495,7 +535,7 @@ function process_all() {
         loadQtdFilesTests();
         listAuthorStartEnd();
         listAuthorQtdCommit();
-
+        hideLoading();
     };
 
     req.open("GET", "/processar_all", true);
@@ -524,13 +564,20 @@ function loadStatistics() {
     const req = new XMLHttpRequest();
     req.onload = (e) => {
         var table = document.createElement("table");
-        table.className = "table is-fullwidth";
+        table.className = "table is-fullwidth is-striped is-hoverable";
+        table.style.width = "100%";
+
+        // CENTRALIZAR TUDO
+        table.style.textAlign = "center";
+        table.style.verticalAlign = "middle";
+
         let linhas = req.response.split("\n");
         let linha1 = 0;
 
         for (let i = 0; i < linhas.length; i++) {
             let line = linhas[i].split(";");
             let tr = document.createElement("tr");
+        
             for (let j = 0; j < line.length; j++) {
                 let td;
                 if (linha1 === 0) {
@@ -538,22 +585,38 @@ function loadStatistics() {
                 } else {
                     td = document.createElement("td");
                 }
-                td.innerHTML = line[j];
-                if (j === 7) {
-                    td.style.color = "blue";
-                    if (i != 0) {
-                        contador = contador + parseInt(line[j], 10);
+        
+                let value = line[j];
+        
+                // Decide se deve formatar para 2 casas decimais ou deixar inteiro
+                if (!isNaN(value) && value !== "") {
+                    if ([1, 2, 3, 4, 8].includes(j)) {
+                        // Mean, Std Dev, Median, Square Mean, Center → 2 casas decimais
+                        value = parseFloat(value).toFixed(2);
+                    } else {
+                        // Max, Min, Sum, Squares Sum → inteiro absoluto
+                        value = parseInt(value, 10);
                     }
                 }
+        
+                td.innerHTML = value;
+        
+                if (j === 7 && i != 0) { // coluna Sum
+                    td.style.color = "blue";
+                    contador += parseInt(line[j], 10);
+                }
+        
                 tr.appendChild(td);
             }
+        
             linha1 = 1;
             table.appendChild(tr);
         }
+        
 
 
         td = document.createElement("td");
-        td.innerHTML = contador;
+        td.innerHTML = contador.toFixed(2);
         td.style.color = "blue";
 
         td2 = document.createElement("td");
@@ -637,3 +700,28 @@ window.onload = (event) => {
     listAuthorStartEnd();
     listAuthorQtdCommit();
 };
+
+
+function showLoading() {
+    document.getElementById("loading").style.visibility = "visible";
+
+}
+
+function hideLoading() {
+    document.getElementById("loading").style.visibility = "hidden";
+
+}
+function hideResultButtons() {
+    document.getElementById("resultado").style.visibility = "hidden";
+    document.getElementById("resultado2").style.visibility = "hidden";
+    document.getElementById("resultado3").style.visibility = "hidden";
+    document.getElementById("resultado4").style.visibility = "hidden";
+    document.getElementById("resultado_db").style.visibility = "hidden";
+}
+function showResultButtons() {
+    document.getElementById("resultado").style.visibility = "visible";
+    document.getElementById("resultado2").style.visibility = "visible";
+    document.getElementById("resultado3").style.visibility = "visible";
+    document.getElementById("resultado4").style.visibility = "visible";
+    document.getElementById("resultado_db").style.visibility = "visible";
+}

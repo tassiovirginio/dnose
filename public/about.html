@@ -1,145 +1,130 @@
 <!doctype html>
-<!--light or dark-->
-<html data-theme="light">
+<html lang="en" class="bg-slate-50 antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DNose</title>
-    <link rel="stylesheet" href="/bulma.min.css">
-    <link rel="icon" type="image/x-icon" href="/logo.png">
-
-    <style>
-        .window {
-            position: absolute;
-            top: 50%;
-            left: 30%;
-            margin-top: -50px;
-            margin-left: -50px;
-            width: 40%;
-            height: 100px;
+    <title>DNose - About</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
         }
-
-        .loading {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-    </style>
-    <script src="/projects.js"></script>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+<body class="text-slate-600">
 
-
-<nav class="navbar is-light">
-    <div class="navbar-brand">
-        <div class="navbar-item">
-            <img style="width: 35px; height: 40px;" src="/logo.png" alt="logo"/>
-        </div>
-        <div class="navbar-item" style="font-weight: bold;">
-            DNose
-        </div>
-    </div>
-
-    <div id="navMenuColorlight-example" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/"> Home </a>
-            <a class="navbar-item" href="/projects.html"> Projects </a>
-            <a class="navbar-item" href="/solutions.html"> Recommendations </a>
-<!--            <a class="navbar-item" href="/mining.html"> Mining </a>-->
-        </div>
-
-        <div class="navbar-end">
-            <a class="navbar-item" href="/config.html"> Config </a>
-            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/about.html"> About </a>
+<nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <img class="h-8 w-auto" src="/logo.png" alt="DNose Logo"/>
+                <span class="font-bold text-xl text-slate-800 tracking-tight">DNose</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="/" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                    <a href="/projects.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                    <a href="/solutions.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Recommendations</a>
+                    <a href="/mining.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Mining</a>
+                    <a href="/config.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Config</a>
+                    <a href="/about.html" class="text-primary-600 bg-primary-50 px-3 py-2 rounded-md text-sm font-medium border border-primary-100">About</a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
-<section class="section is-medium">
-    <div class="container is-align-content-center">
-        <article class="panel is-link block">
-            <p class="panel-heading">About</p>
-            <div style="align-content: center;">
-                <div class="box">
-                    <div class="content">
-                        <br>
-                        <div style="position: absolute; top: 100px; right: 50px;">
-                            <img src="/logo.png" alt="logo" style="width: 80px;"/>
-                        </div>
-                        <p>
-                            Test smell detection system for the Dart language.
-                        </p>
-                        <br>
-                        List of Test Smells that the system detects:
+<main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden relative">
+        <!-- Watermark -->
+        <img src="/logo.png" class="absolute top-0 right-0 w-64 opacity-5 pointer-events-none transform translate-x-1/4 -translate-y-1/4" alt="">
+        
+        <div class="p-10">
+            <h1 class="text-4xl font-bold text-slate-900 mb-6">About DNose</h1>
+            <p class="text-lg text-slate-600 leading-relaxed mb-8">
+                DNose is an automated test smell detection system designed specifically for the <strong>Dart language</strong>. 
+                It helps developers maintain code quality by identifying patterns in test code that may indicate problems.
+            </p>
 
-                        <table>
-                            <tr>
-                                <td>
-                                    <ol>
-                                        <li>Assertion Roulette</li>
-                                        <li>Conditional Test Logic</li>
-                                        <li>Duplicate Assert</li>
-                                        <li>Empty Test</li>
-                                        <li>Exception Handling</li>
-                                        <li>Ignored Test</li>
-                                        <li>Magic Number</li>
-                                    </ol>
-                                </td>
-                                <td>
-                                    <ol>
-                                        <li>Print Statement</li>
-                                        <li>Resource Optimism</li>
-                                        <li>Sleepy Test</li>
-                                        <li>Sensitive Equality</li>
-                                        <li>Test Without Description</li>
-                                        <li>Unknow Test</li>
-                                        <li>Verbose Test</li>
-                                    </ol>
-                                </td>
-                            </tr>
-                        </table>
+            <div class="bg-slate-50 rounded-xl p-8 mb-10 border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-800 mb-6 uppercase tracking-wide text-xs">Detectable Smells</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8">
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Assertion Roulette</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Conditional Test Logic</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Duplicate Assert</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Empty Test</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Exception Handling</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Ignored Test</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Magic Number</li>
+                    </ul>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Print Statement</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Resource Optimism</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Sleepy Test</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Sensitive Equality</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Test Without Description</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Unknown Test</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Verbose Test</li>
+                    </ul>
+                </div>
+            </div>
 
-
-                        <hr/>
-                        <h2>Lib Sentiment</h2>
-                        <a target="_blank" href="https://pub.dev/packages/sentiment_dart">https://pub.dev/packages/sentiment_dart</a>
-                        <br>
-                        <a target="_blank" href="https://www2.imm.dtu.dk/pubdb/pubs/6010-full.html">AFINN-165 wordlist</a>
-                        <br>
-                        <hr/>
-                        <h2>Lib Statistics</h2>
-                        <a href="https://pub.dev/packages/statistics">Statistics</a>
-                        <hr/>
-                        <h2>Gemini</h2>
-                        gemini-1.5-flash
-                        <hr/>
-                        <h2>Ollama</h2>
-                        deepcoder:1.5b
-
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-bold text-slate-900 mb-3">Libraries & Resources</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li>
+                            <a href="https://pub.dev/packages/sentiment_dart" target="_blank" class="text-primary-600 hover:underline">sentiment_dart</a>
+                            <span class="text-slate-400 ml-1">(AFINN-165)</span>
+                        </li>
+                        <li>
+                            <a href="https://pub.dev/packages/statistics" target="_blank" class="text-primary-600 hover:underline">statistics</a>
+                        </li>
+                        <li>
+                            <a href="https://www2.imm.dtu.dk/pubdb/pubs/6010-full.html" target="_blank" class="text-primary-600 hover:underline">AFINN Wordlist</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 mb-3">AI Models Supported</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Gemini 1.5 Flash
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Ollama DeepCoder
+                        </span>
+                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            ChatGPT
+                        </span>
                     </div>
                 </div>
             </div>
-        </article>
+
+        </div>
     </div>
 
-</section>
+</main>
 
-
-<footer class="footer" style="background-color: #f0f0f0;">
-    <div class="content has-text-centered">
-        <p>
-            <strong>DNose</strong> by <a target="_blank" href="https://tassiovirginio.github.io">Tássio Virgínio</a>
+<footer class="bg-white border-t border-slate-200 py-10 mt-10">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col items-center">
+        <p class="text-slate-500 text-sm">
+            Created by <a href="https://tassiovirginio.github.io" target="_blank" class="text-primary-600 font-semibold hover:text-primary-700">Tássio Virgínio</a>
         </p>
-        <p>
-            <a target="_blank" href="https://dnose-ts.github.io/">DNose Site</a>
-        </p>
+        <a href="https://dnose-ts.github.io/" target="_blank" class="mt-2 text-xs text-slate-400 hover:text-slate-600 transition-colors">
+            Visit Official Documentation
+        </a>
     </div>
 </footer>
-
 
 </body>
 </html>

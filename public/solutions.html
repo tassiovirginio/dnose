@@ -1,176 +1,167 @@
 <!doctype html>
-<!--light or dark-->
-<html data-theme="light" alng="pt">
+<html lang="en" class="bg-slate-50 antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DNose</title>
-    <link rel="stylesheet" href="/bulma.min.css">
-    <link rel="icon" type="image/x-icon" href="/logo.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <title>DNose - Recommendations</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts & Code Highlight -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script src="/solutions.js"></script>
 
     <style>
-        .window {
-            position: absolute;
-            top: 50%;
-            left: 30%;
-            margin-top: -50px;
-            margin-left: -50px;
-            width: 40%;
-            height: 100px;
+        body { font-family: 'Inter', sans-serif; }
+        /* Layout overrides for injected content */
+        #listaFiles table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        #listaFiles td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; color: #475569; }
+        #listaFiles tr:hover td { background-color: #f8fafc; }
+        #listaFiles button { 
+            background-color: #e0e7ff; color: #4338ca; 
+            padding: 4px 12px; border-radius: 99px; font-weight: 600; font-size: 0.75rem;
+            transition: all 0.2s;
         }
-
-        .loading {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .hljs {
-            display: block;
-            overflow-x: auto;
-            padding: 0.5em;
-            font-size: 10px;
-        }
+        #listaFiles button:hover { background-color: #4f46e5; color: white; }
+        
+        .code-container { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
     </style>
-    <script src="/solutions.js"></script>
 </head>
-<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+<body class="text-slate-600 h-screen flex flex-col overflow-hidden">
 
-
-<nav class="navbar is-light">
-    <div class="navbar-brand">
-        <div class="navbar-item">
-            <img style="width: 35px; height: 40px;" src="/logo.png" alt="logo"/>
-        </div>
-        <div class="navbar-item" style="font-weight: bold;">
-            DNose
-        </div>
-    </div>
-
-    <div id="navMenuColorlight-example" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/"> Home </a>
-            <a class="navbar-item" href="/projects.html"> Projects </a>
-            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/solutions.html"> Recommendations </a>
-<!--            <a class="navbar-item" href="/mining.html"> Mining </a>-->
-        </div>
-
-        <div class="navbar-end">
-            <a class="navbar-item" href="/config.html"> Config </a>
-            <a class="navbar-item" href="/about.html"> About </a>
+<nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 flex-none">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <img class="h-8 w-auto" src="/logo.png" alt="DNose Logo"/>
+                <span class="font-bold text-xl text-slate-800 tracking-tight">DNose</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="/" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                    <a href="/projects.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                    <a href="/solutions.html" class="text-primary-600 bg-primary-50 px-3 py-2 rounded-md text-sm font-medium border border-primary-100">Recommendations</a>
+                    <a href="/mining.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Mining</a>
+                    <a href="/config.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Config</a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
-<section class="section is-medium">
-    <div class="container is-align-content-center">
-        <article class="panel is-link block">
-            <div class="panel-heading">
-                <div style="text-align: right; width: 95%; position: absolute;">
-                    <a target="_blank" class="button is-small" href="/config">template</a>
+<div class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 flex flex-col min-h-0">
+    <div class="flex flex-col lg:flex-row h-full gap-6">
+        
+        <!-- Sidebar: Filter & List -->
+        <div class="lg:w-1/3 w-full bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-0">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Filter by Smell</label>
+                    <select id="testSmells" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm text-slate-700"></select>
                 </div>
-                Recommendations
+                <a href="/config" target="_blank" class="text-slate-400 hover:text-primary-600" title="Edit Template"><i class="fas fa-cog"></i></a>
             </div>
-            <div style="align-content: center;">
-                <div class="box">
-                    <div class="content">
-                        Filter: <select id="testSmells"></select>
+            
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
+                <table id="listaFiles">
+                    <!-- Injected by JS -->
+                </table>
+            </div>
+        </div>
 
-                        <br><br>
-                        <table style="width: 100%;">
-                            <tr>
-                                <th style="width: 30%;">Test Smell</th>
-                                <th style="width: 50%;">File</th>
-                                <th style="width: 10%;"></th>
-                            </tr>
-                        </table>
-                        <div style="height: 200px; overflow: auto">
-                            <table id="listaFiles" style="width: 100%;">
-                            </table>
-                        </div>
-                        <br><br>
-                        <table class="table" style="width: 100%; height: 500px;">
-                            <tr style="background-color: #4258ff30">
-                                <th>Code snippet with TestSmell</th>
-                                <th style="padding: 0;margin: 0;">
-                                    <div class="tabs is-centered is-boxed is-small">
-                                        <ul>
-                                            <li id="lkGemini" class="is-active"><a onclick="tabs(0);">Gemini</a></li>
-                                            <li id="lkchatGPT"><a onclick="tabs(1);">chatGPT</a></li>
-                                            <li id="lkOllama"><a onclick="tabs(2);">Ollama</a></li>
-                                        </ul>
-                                    </div>
-                                </th>
-                            </tr>
-                            <tr style="background-color: #f3f3f3;">
-                                <td style="width: 50%; height: 100%;">
-                                    <div style="height: 100%; width: 100%; overflow: auto; position: relative; background-color: #f3f3f3;">
-                                    <pre style="position: absolute;">
-                                        <code style="width: 100%; height: 100%;" id="code" class="language-dart">
-                                        </code>
-                                    </pre>
-                                    </div>
-                                </td>
-                                <td style="width: 50%; height: 100%;">
-                                    <div style="height: 100%; width: 100%; overflow: auto; position: relative; background-color: #f3f3f3;">
-                                        <pre style="position:absolute;">
-                                            <code style="width: 100%; height: 100%;" id="solution"
-                                                  class="language-dart">
-                                            </code>
-                                            <code style="width: 100%; height: 100%;" id="solution2"
-                                                  class="language-dart">
-                                            </code>
-                                            <code style="width: 100%; height: 100%;" id="solution3"
-                                                  class="language-dart">
-                                            </code>
-                                        </pre>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td style="float: right;">
-                                    <button id="btCopy1" class="button is-small" onclick="copy1();">copy</button>
-                                    <button id="btCopy2" class="button is-small" onclick="copy2();">copy</button>
-                                    <button id="btCopy3" class="button is-small" onclick="copy3();">copy</button>
-                                </td>
-                            </tr>
-                        </table>
+        <!-- Main Content: Code & Solutions -->
+        <div class="lg:w-2/3 w-full flex flex-col gap-6 min-h-0">
+            
+            <!-- Source Code View -->
+            <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-0 overflow-hidden">
+                <div class="px-4 py-2 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="text-sm font-semibold text-slate-700"><i class="fas fa-code mr-2 text-slate-400"></i>Source Code</h3>
+                </div>
+                <div class="flex-1 overflow-auto bg-[#fafafa] relative">
+                    <pre class="m-0 h-full"><code id="code" class="language-dart h-full block p-4 code-container">Select a file to view code...</code></pre>
+                </div>
+            </div>
+
+            <!-- AI Solution View -->
+            <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-0 overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200">
+                    <div class="flex">
+                        <button id="lkGemini" onclick="tabs(0);" class="flex-1 py-3 text-sm font-medium border-b-2 border-primary-500 text-primary-700 bg-white">Gemini</button>
+                        <button id="lkchatGPT" onclick="tabs(1);" class="flex-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100">ChatGPT</button>
+                        <button id="lkOllama" onclick="tabs(2);" class="flex-1 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100">Ollama</button>
                     </div>
                 </div>
+                
+                <div class="flex-1 overflow-auto p-6 relative bg-white">
+                    <div id="solution" class="prose prose-sm max-w-none text-slate-700"></div>
+                    <div id="solution2" class="hidden prose prose-sm max-w-none text-slate-700"></div>
+                    <div id="solution3" class="hidden prose prose-sm max-w-none text-slate-700"></div>
+                </div>
+
+                <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+                    <button id="btCopy1" onclick="copy1();" class="inline-flex items-center px-3 py-1.5 border border-slate-300 shadow-sm text-xs font-medium rounded text-slate-700 bg-white hover:bg-slate-50">
+                        <i class="far fa-copy mr-1.5"></i> Copy Gemini
+                    </button>
+                    <button id="btCopy2" onclick="copy2();" class="hidden inline-flex items-center px-3 py-1.5 border border-slate-300 shadow-sm text-xs font-medium rounded text-slate-700 bg-white hover:bg-slate-50">
+                        <i class="far fa-copy mr-1.5"></i> Copy ChatGPT
+                    </button>
+                    <button id="btCopy3" onclick="copy3();" class="hidden inline-flex items-center px-3 py-1.5 border border-slate-300 shadow-sm text-xs font-medium rounded text-slate-700 bg-white hover:bg-slate-50">
+                        <i class="far fa-copy mr-1.5"></i> Copy Ollama
+                    </button>
+                </div>
             </div>
-        </article>
-    </div>
 
-</section>
-
-
-<footer class="footer" style="background-color: #f0f0f0;">
-    <div class="content has-text-centered">
-        <p>
-            <strong>DNose</strong> by <a target="_blank" href="https://tassiovirginio.github.io">Tássio Virgínio</a>
-        </p>
-        <p>
-            <a target="_blank" href="https://dnose-ts.github.io/">DNose Site</a>
-        </p>
-    </div>
-</footer>
-
-
-<div class="loading" id="loading">
-    <div class='window'>
-        <div class="box">Clonning...
-            <progress class="progress is-large is-info" max="100">60%</progress>
         </div>
     </div>
 </div>
+
+<div id="loading" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+    <div class="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
+    <div class="text-lg font-semibold text-slate-800">Generating Solutions...</div>
+</div>
+
+<!-- Scripts to handle tab class switching to match Tailwind -->
+<script>
+    const originalTabs = window.tabs;
+    window.tabs = function(idx) {
+        originalTabs(idx);
+        // Update styling manually since original logic uses className assignment which wipes tailwind classes
+        const tabs = ['lkGemini', 'lkchatGPT', 'lkOllama'];
+        const activeClass = "border-primary-500 text-primary-700 bg-white";
+        const inactiveClass = "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100";
+        
+        tabs.forEach((id, i) => {
+            const el = document.getElementById(id);
+            if(i == idx) {
+                el.className = `flex-1 py-3 text-sm font-medium border-b-2 ${activeClass}`;
+            } else {
+                el.className = `flex-1 py-3 text-sm font-medium border-b-2 ${inactiveClass}`;
+            }
+        });
+    }
+</script>
+
 </body>
 </html>

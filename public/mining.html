@@ -1,138 +1,147 @@
 <!doctype html>
-<!--light or dark-->
-<html data-theme="light">
+<html lang="en" class="bg-slate-50 antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DNose</title>
-    <link rel="stylesheet" href="/bulma.min.css">
-    <link rel="icon" type="image/x-icon" href="/logo.png">
-
-    <style>
-        .window {
-            position: absolute;
-            top: 50%;
-            left: 30%;
-            margin-top: -50px;
-            margin-left: -50px;
-            width: 40%;
-            height: 100px;
+    <title>DNose - Mining</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' } },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
         }
-
-        .loading {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-    </style>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/mining.js"></script>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+<body class="text-slate-600">
 
-
-<nav class="navbar is-light">
-    <div class="navbar-brand">
-        <div class="navbar-item">
-            <img style="width: 35px; height: 40px;" src="/logo.png" alt="logo"/>
-        </div>
-        <div class="navbar-item" style="font-weight: bold;">
-            DNose
-        </div>
-    </div>
-
-    <div id="navMenuColorlight-example" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/"> Home </a>
-            <a class="navbar-item" href="/projects.html"> Projects </a>
-            <a class="navbar-item" href="/solutions.html"> Recommendations </a>
-            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/mining.html"> Mining </a>
-        </div>
-
-        <div class="navbar-end">
-            <a class="navbar-item" href="/config.html"> Config </a>
-            <a class="navbar-item" href="/about.html"> About </a>
+<nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <img class="h-8 w-auto" src="/logo.png" alt="DNose Logo"/>
+                <span class="font-bold text-xl text-slate-800 tracking-tight">DNose</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="/" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                    <a href="/projects.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                    <a href="/solutions.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Recommendations</a>
+                    <a href="/mining.html" class="text-primary-600 bg-primary-50 px-3 py-2 rounded-md text-sm font-medium border border-primary-100">Mining</a>
+                    <a href="/config.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Config</a>
+                    <a href="/about.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
-<section class="section is-medium">
-    <div class="container is-align-content-center">
-        <article class="panel is-link block">
-            <p class="panel-heading">Mining</p>
-            <div style="align-content: center;">
-                <div class="box">
-                    <div class="content">
-                        <div class="field is-grouped is-grouped-multiline">
-                            <div class="control is-expanded">
-                                <select id="select_project" class="input is-link is-fullwidth">
-                                    <option value="0">Select Project</option>
-                                </select>
-                            </div>
-                            <div class="control">
-                                <button onclick="loadProjectToMining()" id="btn_mining" class="button is-link is-fullwidth">Load</button>
-                            </div>
-                        </div>
-                        <br>
-                        <label>Branch: </label> <label id="branchName"></label>
-                        <br>
-                        <label>Qtd Commits: </label> <label id="qtdCommits"></label>
-                        <br><br>
-                        <progress class="progress is-info is-large" value="15" max="100">15%</progress>
-                        <br>
-                        <button id="btn_mining" class="button is-link">Mining</button>
-                        <br><br>
-                        <article class="panel is-link block">
-                            <p class="panel-heading">Resultados</p>
-                            <a class="panel-block is-active">
-                                <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
-                                </span>
-                                <div class="buttons">
-                                    <button class="button is-info">Relatório 01</button>
-                                    <button class="button is-info">Relatório 02</button>
-                                    <button class="button is-info">Relatório 03</button>
-                                    <button class="button is-info">Relatório 04</button>
-                                </div>
-                            </a>
-                        </article>
+<main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-slate-900">Project Mining</h1>
+        <p class="mt-2 text-lg text-slate-500">Extract insights and history from your repositories.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+        <div class="p-8 space-y-8">
+            
+            <!-- Selector -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Target Repository</label>
+                <div class="flex gap-2">
+                    <div class="relative flex-grow">
+                        <select id="select_project" class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-2.5 pl-3 pr-10">
+                            <option value="0">Select Project...</option>
+                        </select>
                     </div>
+                    <button onclick="loadProjectToMining()" class="px-6 py-2.5 bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 transition-colors shadow-sm">
+                        Load Data
+                    </button>
                 </div>
             </div>
-        </article>
-    </div>
 
-</section>
+            <!-- Info Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Branch</p>
+                    <p class="text-xl font-semibold text-slate-800 mt-1" id="branchName">-</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Commits</p>
+                    <p class="text-xl font-semibold text-slate-800 mt-1" id="qtdCommits">-</p>
+                </div>
+            </div>
 
-<section>
-    <h1>Cliente WebSocket</h1>
-    <div id="messages"></div>
-    <input type="text" id="messageInput" placeholder="Digite uma mensagem">
-    <button id="sendButton">Enviar</button>
-</section>
+            <!-- Progress -->
+            <div class="space-y-2">
+                <div class="flex justify-between text-xs font-medium text-slate-500">
+                    <span>Mining Progress</span>
+                    <span>15%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                    <div class="bg-primary-600 h-3 rounded-full transition-all duration-500" style="width: 15%"></div>
+                </div>
+            </div>
 
+            <!-- Action -->
+            <button id="btn_mining" class="w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                <i class="fas fa-hammer mr-2"></i> Start Mining Process
+            </button>
+        </div>
 
-<footer class="footer" style="background-color: #f0f0f0;">
-    <div class="content has-text-centered">
-        <p>
-            <strong>DNose</strong> by <a target="_blank" href="https://tassiovirginio.github.io">Tássio Virgínio</a>
-        </p>
-        <p>
-            <a target="_blank" href="https://dnose-ts.github.io/">DNose Site</a>
-        </p>
-    </div>
-</footer>
-
-
-<div class="loading" id="loading">
-    <div class='window'>
-        <div class="box">Mining...
-            <progress class="progress is-large is-info" max="100">60%</progress>
+        <!-- Reports Footer -->
+        <div class="bg-slate-50 px-8 py-6 border-t border-slate-100">
+            <h3 class="text-sm font-semibold text-slate-800 mb-4">Generated Reports</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-500 hover:shadow-sm transition-all group">
+                    <i class="fas fa-file-alt text-slate-400 group-hover:text-primary-600 mb-2 text-xl"></i>
+                    <span class="text-xs font-medium text-slate-600 group-hover:text-primary-700">General</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-500 hover:shadow-sm transition-all group">
+                    <i class="fas fa-file-code text-slate-400 group-hover:text-primary-600 mb-2 text-xl"></i>
+                    <span class="text-xs font-medium text-slate-600 group-hover:text-primary-700">Smells</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-500 hover:shadow-sm transition-all group">
+                    <i class="fas fa-file-lines text-slate-400 group-hover:text-primary-600 mb-2 text-xl"></i>
+                    <span class="text-xs font-medium text-slate-600 group-hover:text-primary-700">History</span>
+                </button>
+                <button class="flex flex-col items-center justify-center p-3 bg-white border border-slate-200 rounded-lg hover:border-primary-500 hover:shadow-sm transition-all group">
+                    <i class="fas fa-chart-pie text-slate-400 group-hover:text-primary-600 mb-2 text-xl"></i>
+                    <span class="text-xs font-medium text-slate-600 group-hover:text-primary-700">Stats</span>
+                </button>
+            </div>
         </div>
     </div>
+    
+    <!-- Dev WebSocket Console (Optional) -->
+    <div class="mt-8 p-4 rounded-lg bg-slate-900 text-slate-300 text-xs font-mono opacity-50 hover:opacity-100 transition-opacity">
+        <div class="flex justify-between mb-2">
+            <span class="font-bold text-white">WebSocket Terminal</span>
+            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+        </div>
+        <div id="messages" class="h-24 overflow-y-auto mb-2 space-y-1"></div>
+        <div class="flex gap-2">
+            <input type="text" id="messageInput" placeholder="Send command..." class="flex-1 bg-slate-800 border-none rounded px-2 py-1 focus:ring-1 focus:ring-primary-500">
+            <button id="sendButton" class="px-3 bg-slate-700 hover:bg-slate-600 rounded">Send</button>
+        </div>
+    </div>
+
+</main>
+
+<div id="loading" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+    <div class="bg-white p-6 rounded-xl shadow-xl flex items-center gap-4">
+        <div class="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+        <span class="font-medium text-slate-700">Mining Data...</span>
+    </div>
 </div>
+
 </body>
 </html>

@@ -174,7 +174,7 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
   return result;
 }
 
-Future<String> processar(String listPathProjects) async {
+Future<String> processar(String listPathProjects, [List<String>? selectedSmells]) async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
@@ -186,7 +186,7 @@ Future<String> processar(String listPathProjects) async {
 
   for (final project in lista) {
     if (project.trim().isNotEmpty) {
-      var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project);
+      var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project, selectedSmells);
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
       listaArquivosTestes.addAll(listaArquivosTestes2);
@@ -257,7 +257,7 @@ List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
 }
 
 Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
-    String pathProject) async {
+    String pathProject, [List<String>? selectedSmells]) async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
 
   _logger.info("==============================================");
@@ -319,7 +319,7 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
             path: file.path,
             moduleAtual: moduleAtual,
             projectName: projectName);
-        var (testSmells, testMetrics) = dnoseCore.scan(testClass);
+        var (testSmells, testMetrics) = dnoseCore.scan(testClass, selectedSmells);
 
         //Blame
         Map<String,BlameLine> fileBlame = blameFile(file.path, pathProject);
