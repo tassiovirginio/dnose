@@ -453,7 +453,12 @@ Handler init() {
 
   app.get('/processar', (Request request) async {
     String? pathProject = request.url.queryParameters['path_project'];
-    await processar(pathProject!);
+    String? selectedSmellsParam = request.url.queryParameters['smells'];
+    List<String>? selectedSmells;
+    if (selectedSmellsParam != null && selectedSmellsParam.isNotEmpty) {
+      selectedSmells = selectedSmellsParam.split(';');
+    }
+    await processar(pathProject!, selectedSmells);
     return Response.ok("Processamento concluído");
   });
 

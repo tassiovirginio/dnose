@@ -1,140 +1,182 @@
 <!doctype html>
-<!--light or dark-->
-<html data-theme="light" lang="pt">
+<html lang="en" class="bg-slate-50 antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DNose</title>
-    <link rel="stylesheet" href="/bulma.min.css">
-    <link rel="icon" type="image/x-icon" href="/logo.png">
+    <title>DNose - Projects</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="/projects.js"></script>
 
     <style>
-        .window {
-            position: absolute;
-            top: 50%;
-            left: 30%;
-            margin-top: -50px;
-            margin-left: -50px;
-            width: 40%;
-            height: 100px;
+        body { font-family: 'Inter', sans-serif; }
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.8); 
+            backdrop-filter: blur(4px); z-index: 50; display: flex; 
+            justify-content: center; align-items: center;
         }
-
-        .loading {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .scrollable {
-            max-height: calc(1.5em * 20); /* Limita a altura a 20 linhas (ajuste se necessário) */
-            overflow-y: auto; /* Adiciona barra de rolagem vertical */
-            padding: 0.5rem; /* Segue o espaçamento padrão de Bulma */
-            border: 1px solid #dbdbdb; /* Mantém consistência com o estilo Bulma */
-            background-color: #f5f5f5; /* Cor de fundo padrão Bulma */
-            border-radius: 4px; /* Bordas arredondadas padrão */
-        }
-
     </style>
-    <script src="/projects.js"></script>
 </head>
-<body style='border-collapse: collapse;padding: 0;margin: 0; height: 100%;'>
+<body class="text-slate-600">
 
-
-<nav class="navbar is-light">
-    <div class="navbar-brand">
-        <div class="navbar-item">
-            <img style="width: 35px; height: 40px;" src="/logo.png" alt="logo"/>
-        </div>
-        <div class="navbar-item" style="font-weight: bold;">
-            DNose
-        </div>
-    </div>
-
-    <div id="navMenuColorlight-example" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/"> Home </a>
-            <a class="navbar-item" style="color: rgb(0, 86, 247);" href="/projects.html"> Projects </a>
-            <a class="navbar-item" href="/solutions.html"> Recommendations </a>
-<!--            <a class="navbar-item" href="/mining.html"> Mining </a>-->
-        </div>
-
-        <div class="navbar-end">
-            <a class="navbar-item" href="/config.html"> Config </a>
-            <a class="navbar-item" href="/about.html"> About </a>
+<nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center gap-3">
+                <img class="h-8 w-auto" src="/logo.png" alt="DNose Logo"/>
+                <span class="font-bold text-xl text-slate-800 tracking-tight">DNose</span>
+            </div>
+            <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                    <a href="/" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                    <a href="/projects.html" class="text-primary-600 bg-primary-50 px-3 py-2 rounded-md text-sm font-medium border border-primary-100">Projects</a>
+                    <a href="/solutions.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Recommendations</a>
+                    <a href="/mining.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Mining</a>
+                    <a href="/config.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">Config</a>
+                    <a href="/about.html" class="text-slate-600 hover:text-primary-600 hover:bg-slate-50 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
-<section class="section is-medium">
-    <div class="container is-align-content-center">
-        <article class="panel is-link block">
-            <p class="panel-heading">Clone Project</p>
-            <div class="panel-block">
-                <span id='processando' class="tag is-primary is-light"></span>
-            </div>
-            <div class="panel-block">
-                <label class="label">github url:</label>
-                <div style="width: 100%;">
-                    <input type="text" class="input is-link" id="url" placeholder=""/>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 gap-12 mt-6">
+        
+        <!-- Left: Clone Actions -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="border-b border-slate-200 bg-slate-50">
+                    <nav class="flex -mb-px" aria-label="Tabs">
+                        <button id="btn-single" class="tab-btn w-1/2 py-4 px-1 text-center font-medium text-sm"
+                            onclick="selectTab('single')">
+                            Clone Repository
+                        </button>
+                        <button id="btn-batch" class="tab-btn w-1/2 py-4 px-1 text-center font-medium text-sm"
+                            onclick="selectTab('batch')">
+                            Batch Clone
+                        </button>
+                    </nav>
+                    
+                </div>
+                
+                <div class="p-6">
+                    <span id='processando' class="hidden mb-4 inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Processing...</span>
+
+                    <!-- Single Clone Tab -->
+                    <div id="single-tab" class="space-y-4">
+                        <div>
+                            <label for="url" class="block text-sm font-medium text-slate-700 mb-1">GitHub URL</label>
+                            <div class="mt-1 flex rounded-md shadow-sm">
+                                <input type="text" id="url" class="block w-full rounded-l-md border-slate-300 focus:border-primary-500 focus:ring-primary-500 sm:text-sm" placeholder="https://github.com/user/repo.git">
+                                <button onclick="clone()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    Clone
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Batch Clone Tab -->
+                    <div id="batch-tab" class="hidden space-y-4">
+                        <div>
+                            <label for="urls" class="block text-sm font-medium text-slate-700 mb-1">GitHub URLs (One per line)</label>
+                            <textarea id="urls" rows="6" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm font-mono text-xs" placeholder="https://github.com/user/repo1.git&#10;https://github.com/user/repo2.git"></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                             <button onclick="clone_lote()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                Clone All
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="panel-block">
-                <div class="control">
-                    <button onclick="clone()" class="button is-primary">clone</button>
-                </div>
-            </div>
-        </article>
-        <article class="panel is-link block">
-            <p class="panel-heading">Clone Projects - Lote</p>
-            <div class="panel-block">
-                <span id='processando' class="tag is-primary is-light"></span>
-            </div>
-            <div class="panel-block">
-                <label class="label">github urls:</label>
-                <div style="width: 100%;">
-                    <textarea rows="10" class="input is-link" style="height: 200px;" id="urls" ></textarea>
-                </div>
-            </div>
-            <div class="panel-block">
-                <div class="control">
-                    <button onclick="clone_lote()" class="button is-primary">clone</button>
-                </div>
-            </div>
-        </article>
-        <article class="panel is-link block">
-            <p class="panel-heading">Projetos</p>
-            <div>
-                <div id="lista_projetos2" class="scrollable">
-                </div>
-            </div>
-        </article>
+        </div>
+
+        
+
     </div>
 
-</section>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-6">
+        <div class="lg:col-span-3">
 
+            <div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[600px]">
+                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-800">Local Repositories</h3>
+                        <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full" id="repo-count">-</span>
+                    </div>
+                    <div id="lista_projetos2" class="flex-1 overflow-y-auto p-0">
+                        <!-- List injected by JS -->
+                        <!-- Table style override for the injected content -->
+                        <style>
+                            #lista_projetos2 table { width: 100%; border-collapse: collapse; }
+                            #lista_projetos2 td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; }
+                            #lista_projetos2 tr:last-child td { border-bottom: none; }
+                            #lista_projetos2 button {
+                                padding: 4px 10px;
+                                border-radius: 0.5rem;
+                                font-weight: 600;
+                                font-size: 0.875rem;
+                                color: white;
+                                background-color: #dc2626; /* Tailwind red-600 */
+                                border: none;
+                                cursor: pointer;
+                                transition: background-color 0.2s;
+                            }
+                            #lista_projetos2 button:hover {
+                                background-color: #b91c1c; /* Tailwind red-700 */
+                            }
 
-<footer class="footer" style="background-color: #f0f0f0;">
-    <div class="content has-text-centered">
-        <p>
-            <strong>DNose</strong> by <a target="_blank" href="https://tassiovirginio.github.io">Tássio Virgínio</a>
-        </p>
-        <p>
-            <a target="_blank" href="https://dnose-ts.github.io/">DNose Site</a>
+                        </style>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        
+    </div>
+
+</main>
+
+<footer class="bg-white border-t border-slate-200 mt-auto py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-sm text-slate-500">
+            &copy; 2024 <strong>DNose</strong>
         </p>
     </div>
 </footer>
 
-
-<div class="loading" id="loading">
-    <div class='window'>
-        <div class="box">Clonning...
-            <progress class="progress is-large is-info" max="100">60%</progress>
+<div id="loading" class="loading-overlay">
+    <div class="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center max-w-sm w-full mx-4">
+        <div class="w-12 h-12 border-4 border-primary-100 border-t-primary-600 rounded-full animate-spin mb-4"></div>
+        <h3 class="text-lg font-bold text-slate-800 mb-2">Cloning repositories ...</h3>
+        <p class="text-sm text-slate-500 text-center mb-4">
+            Can take a few minutes.
+        </p>
+        <div class="w-full bg-slate-100 rounded-full h-2">
+            <div class="bg-primary-600 h-2 rounded-full w-/3 animate-pulse"></div>
         </div>
     </div>
 </div>
+ 
 </body>
 </html>

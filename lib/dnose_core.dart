@@ -85,8 +85,9 @@ class DNoseCore {
   List<TestSmell> detectTestSmells(
     ExpressionStatement e,
     TestClass testClass,
-    String testName,
-  ) {
+    String testName, [
+    List<String>? selectedSmells,
+  ]) {
     List<TestSmell> testSmells = List.empty(growable: true);
 
     //se mudar de local essa lista a detecção fica lenta.
@@ -108,6 +109,13 @@ class DNoseCore {
       MysteryGuestDetector()
     ];
 
+    // Filter detectors based on selected smells if provided
+    if (selectedSmells != null && selectedSmells.isNotEmpty) {
+      detectors = detectors.where((d) {
+        return selectedSmells.contains(d.testSmellName.replaceAll(' ', '_').toLowerCase());
+      }).toList();
+    }
+
     for (var d in detectors) {
       testSmells.addAll(d.detect(e, testClass, testName));
     }
@@ -115,13 +123,13 @@ class DNoseCore {
     return testSmells;
   }
 
-  (List<TestSmell>, List<TestMetric>) scan(TestClass testClass) {
+  (List<TestSmell>, List<TestMetric>) scan(TestClass testClass, [List<String>? selectedSmells]) {
     List<TestSmell> testSmells = List.empty(growable: true);
     List<TestMetric> testMetrics = List.empty(growable: true);
     AstNode n = testClass.root;
     _logger.info("Scanning...");
     _logger.info("Path: ${testClass.path}");
-    testSmells.addAll(_scan(n, testClass));
+    testSmells.addAll(_scan(n, testClass, selectedSmells));
     testMetrics.addAll(_scanMetric(n, testClass));
     return (testSmells, testMetrics);
   }
@@ -145,17 +153,17 @@ class DNoseCore {
     return testMetrics;
   }
 
-  List<TestSmell> _scan(AstNode n, TestClass testClass) {
+  List<TestSmell> _scan(AstNode n, TestClass testClass, [List<String>? selectedSmells]) {
     List<TestSmell> testSmells = List.empty(growable: true);
     n.childEntities.whereType<AstNode>().forEach((element) {
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
         testSmells.addAll(
-          detectTestSmells(element as ExpressionStatement, testClass, testName),
+          detectTestSmells(element as ExpressionStatement, testClass, testName, selectedSmells),
         );
       }
-      testSmells.addAll(_scan(element, testClass));
+      testSmells.addAll(_scan(element, testClass, selectedSmells));
     });
     return testSmells;
   }
