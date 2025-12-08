@@ -135,4 +135,44 @@ void main() {
       pathFile: "/test/samples/sensitive_equality_test.dart",
     );
   });
+
+  test("Detect: Mystery Guest", () {
+    verify(
+      name: "Mystery Guest",
+      qtd: 1,
+      pathFile: "/test/samples/mystery_guest_test.dart",
+    );
+  });
+
+  test("Detect: Expected Resolution Omission", () {
+    verify(
+      name: "Expected Resolution Omission",
+      qtd: 4,
+      pathFile: "/test/oracle/expected_resolution_omission_test.dart_",
+    );
+  });
+
+  test("Detect: Residual State Test", () {
+    verify(
+      name: "Residual State Test",
+      qtd: 4,
+      pathFile: "/test/oracle/residual_state_test.dart_",
+    );
+  });
+
+  test("Detect: Widget Setup Smell", () {
+    verify(
+      name: "Widget Setup Smell",
+      qtd: 0,
+      pathFile: "/test/oracle/widget_setup_smell_test.dart_",
+    );
+  });
+
+  test("Detect: Redundant Assertion", () {
+    verify(
+      name: "Redundant Assertion",
+      qtd: 4,
+      pathFile: "/test/oracle/redundant_assertion_test.dart_",
+    );
+  });
 }

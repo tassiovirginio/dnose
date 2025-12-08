@@ -6,8 +6,13 @@ import 'package:dnose/detectors/conditional_test_logic_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
+import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
 import 'package:dnose/detectors/ignored_test_detector.dart';
+import 'package:dnose/detectors/residual_state_test_detector.dart';
+import 'package:dnose/detectors/widget_setup_smell_detector.dart';
+import 'package:dnose/detectors/redundant_assertion_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
+import 'package:dnose/detectors/mystery_guest_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
 import 'package:dnose/detectors/resource_optimism_detector.dart';
 import 'package:dnose/detectors/sensitive_equality_detector.dart';
@@ -43,19 +48,34 @@ class DNoseCore {
     EmptyTestDetector().testSmellName,
     UnknownTestDetector().testSmellName,
     ExceptionHandlingDetector().testSmellName,
-    IgnoredTestDetector().testSmellName
+    IgnoredTestDetector().testSmellName,
+    MysteryGuestDetector().testSmellName,
+    ExpectedResolutionOmissionDetector().testSmellName,
+    ResidualStateTestDetector().testSmellName,
+    WidgetSetupSmellDetector().testSmellName,
+    RedundantAssertionDetector().testSmellName,
   ];
 
-  final Set<String> listTestNames = {"test","testWidgets","testWithGame","isarTest"};
+  final Set<String> listTestNames = {
+    "test",
+    "testWidgets",
+    "testWithGame",
+    "isarTest",
+  };
 
   bool isTest(AstNode e) {
     return e is ExpressionStatement &&
         e.beginToken.type == TokenType.IDENTIFIER &&
-        (listTestNames.contains(e.beginToken.toString())); //Métodos de teste do Flutter
+        (listTestNames.contains(
+          e.beginToken.toString(),
+        )); //Métodos de teste do Flutter
   }
 
   List<TestMetric> calculeTestMetrics(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     List<TestMetric> testMetrics = List.empty(growable: true);
 
     List<AbstractMetric> metrics = [
@@ -71,7 +91,10 @@ class DNoseCore {
   }
 
   List<TestSmell> detectTestSmells(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     List<TestSmell> testSmells = List.empty(growable: true);
 
     //se mudar de local essa lista a detecção fica lenta.
@@ -89,7 +112,12 @@ class DNoseCore {
       UnknownTestDetector(),
       ExceptionHandlingDetector(),
       IgnoredTestDetector(),
-      SensitiveEqualityDetector()
+      SensitiveEqualityDetector(),
+      MysteryGuestDetector(),
+      ExpectedResolutionOmissionDetector(),
+      ResidualStateTestDetector(),
+      WidgetSetupSmellDetector(),
+      RedundantAssertionDetector(),
     ];
 
     for (var d in detectors) {
@@ -99,7 +127,7 @@ class DNoseCore {
     return testSmells;
   }
 
-  (List<TestSmell>,List<TestMetric>) scan(TestClass testClass) {
+  (List<TestSmell>, List<TestMetric>) scan(TestClass testClass) {
     List<TestSmell> testSmells = List.empty(growable: true);
     List<TestMetric> testMetrics = List.empty(growable: true);
     AstNode n = testClass.root;
@@ -110,15 +138,19 @@ class DNoseCore {
     return (testSmells, testMetrics);
   }
 
-
   List<TestMetric> _scanMetric(AstNode n, TestClass testClass) {
     List<TestMetric> testMetrics = List.empty(growable: true);
     n.childEntities.whereType<AstNode>().forEach((element) {
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
-        testMetrics.addAll(calculeTestMetrics(
-            element as ExpressionStatement, testClass, testName));
+        testMetrics.addAll(
+          calculeTestMetrics(
+            element as ExpressionStatement,
+            testClass,
+            testName,
+          ),
+        );
       }
       testMetrics.addAll(_scanMetric(element, testClass));
     });
@@ -131,8 +163,9 @@ class DNoseCore {
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
-        testSmells.addAll(detectTestSmells(
-            element as ExpressionStatement, testClass, testName));
+        testSmells.addAll(
+          detectTestSmells(element as ExpressionStatement, testClass, testName),
+        );
       }
       testSmells.addAll(_scan(element, testClass));
     });
@@ -140,8 +173,12 @@ class DNoseCore {
   }
 
   String getCodeTestByDescription(String path, String description) {
-    TestClass testClass =
-        TestClass(path: path, moduleAtual: "", projectName: "", commit: "");
+    TestClass testClass = TestClass(
+      path: path,
+      moduleAtual: "",
+      projectName: "",
+      commit: "",
+    );
     var root = testClass.root;
     List<String> code = _scan2(root, testClass, description);
     return code.first;
@@ -169,9 +206,9 @@ class DNoseCore {
             e.beginToken.toString() == "testWidgets")) {
       e.childEntities.whereType<MethodInvocation>().forEach((element) {
         element.childEntities.whereType<ArgumentList>().forEach((element) {
-          element.childEntities
-              .whereType<SimpleStringLiteral>()
-              .forEach((element) {
+          element.childEntities.whereType<SimpleStringLiteral>().forEach((
+            element,
+          ) {
             testName = element.value;
           });
         });
@@ -181,15 +218,12 @@ class DNoseCore {
     return testName;
   }
 
-
   mining(String pathProject) async {
     print("Minerando: $pathProject");
     final Map<String, Commit> mapa = await GitUtil.getListCommits(pathProject);
 
-    mapa.forEach((key,value){
+    mapa.forEach((key, value) {
       print("$key -> $value");
     });
-
   }
-
 }

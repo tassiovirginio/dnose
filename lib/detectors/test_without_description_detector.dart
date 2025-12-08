@@ -28,7 +28,8 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
         e.parent!.parent is MethodInvocation &&
         e.value.trim().isEmpty &&
         e.parent!.parent!.toString().contains("test(")) {
-      testSmells.add(TestSmell(
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
           testClass: testClass,
@@ -43,12 +44,13 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           offset: e.offset,
-          endOffset: e.end
-      ));
+          endOffset: e.end,
+        ),
+      );
     } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
+      e.childEntities.whereType<AstNode>().forEach(
+        (e) => _detect(e, testClass, testName),
+      );
     }
   }
 
