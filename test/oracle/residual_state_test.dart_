@@ -1,0 +1,179 @@
+/// Testes reais com Residual State Test
+
+void main() {
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp());
+
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  testWidgets('Only builds currently selected item',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(buildListButtonScaffold());
+
+    expect(find.text(kShortString), findsNothing);
+    expect(find.text(kLongString), findsNothing);
+    expect(find.text(kPlaceholderString), findsOneWidget);
+
+    selectionController.selectedIndex = 0;
+    await tester.pump();
+    expect(find.text(kShortString), findsOneWidget);
+    expect(find.text(kLongString), findsNothing);
+    expect(find.text(kPlaceholderString), findsNothing);
+
+    selectionController.selectedIndex = 1;
+    await tester.pump();
+    expect(find.text(kShortString), findsNothing);
+    expect(find.text(kLongString), findsOneWidget);
+    expect(find.text(kPlaceholderString), findsNothing);
+  });
+
+  test('listens to other selection models', () {
+    // Setup
+    final behavior = DomainHighlighter(SelectionModelType.action);
+    when(_chart.getSelectionModel(SelectionModelType.action))
+        .thenReturn(_selectionModel);
+
+    // Act
+    behavior.attachTo(_chart);
+
+    // Verify
+    verify(_chart.getSelectionModel(SelectionModelType.action));
+    verifyNever(_chart.getSelectionModel(SelectionModelType.info));
+  });
+
+  test('initial values', () {
+    when(delegate.getKeys()).thenReturn(Set.from(['first', 'second']));
+    expect(preferences.getKeys(), emits(Set.from(['first', 'second'])));
+  });
+
+  test('default layout', () {
+    var layout = LayoutManagerImpl();
+    layout.measure(400, 300);
+
+    expect(layout.marginTop, equals(0));
+    expect(layout.marginRight, equals(0));
+    expect(layout.marginBottom, equals(0));
+    expect(layout.marginLeft, equals(0));
+  });
+
+  test('all fixed margin', () {
+    var layout = LayoutManagerImpl(
+      config: LayoutConfig(
+        topSpec: MarginSpec.fixedPixel(12),
+        rightSpec: MarginSpec.fixedPixel(11),
+        bottomSpec: MarginSpec.fixedPixel(10),
+        leftSpec: MarginSpec.fixedPixel(9),
+      ),
+    );
+    layout.measure(400, 300);
+
+    expect(layout.marginTop, equals(12));
+    expect(layout.marginRight, equals(11));
+    expect(layout.marginBottom, equals(10));
+    expect(layout.marginLeft, equals(9));
+  });
+
+  test('getKeys().getValue() - initial values', () {
+    when(delegate.getKeys()).thenReturn(Set.from(['first', 'second']));
+    expect(preferences.getKeys(), emits(Set.from(['first', 'second'])));
+  });
+
+  test('map null to null', () {
+    expect(typeSystem.mapToSqlLiteral(null), 'NULL');
+    expect(typeSystem.mapToSqlVariable(null), null);
+  });
+
+  testWidgets('TextEditingController without dispose', (WidgetTester tester) async {
+    final controller = TextEditingController();
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: TextField(controller: controller),
+      ),
+    ));
+
+    await tester.enterText(find.byType(TextField), 'Test');
+    expect(controller.text, 'Test');
+    // Missing controller.dispose()
+  });
+
+  testWidgets('StreamController without dispose', (WidgetTester tester) async {
+    final controller = StreamController<String>();
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: StreamBuilder<String>(
+          stream: controller.stream,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+      ),
+    ));
+
+    controller.add('Data');
+    await tester.pump();
+    expect(find.text('Data'), findsOneWidget);
+    // Missing controller.close()
+  });
+
+  testWidgets('AnimationController without dispose', (WidgetTester tester) async {
+    final controller = AnimationController(vsync: tester);
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: FadeTransition(
+          opacity: controller,
+          child: Text('Animated'),
+        ),
+      ),
+    ));
+
+    controller.forward();
+    await tester.pumpAndSettle();
+    expect(find.text('Animated'), findsOneWidget);
+    // Missing controller.dispose()
+  });
+
+  testWidgets('FocusNode without dispose', (WidgetTester tester) async {
+    final focusNode = FocusNode();
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: TextField(focusNode: focusNode),
+      ),
+    ));
+
+    focusNode.requestFocus();
+    await tester.pump();
+    expect(focusNode.hasFocus, true);
+    // Missing focusNode.dispose()
+  });
+
+  testWidgets('TabController without dispose', (WidgetTester tester) async {
+    final controller = TabController(length: 2, vsync: tester);
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            controller: controller,
+            tabs: [Tab(text: 'Tab1'), Tab(text: 'Tab2')],
+          ),
+        ),
+        body: TabBarView(
+          controller: controller,
+          children: [Text('Content1'), Text('Content2')],
+        ),
+      ),
+    ));
+
+    expect(find.text('Content1'), findsOneWidget);
+    // Missing controller.dispose()
+  });
+}
