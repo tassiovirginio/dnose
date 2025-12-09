@@ -22,6 +22,7 @@
 - [x] **Exception Handling**
 - [x] **Ignored Test**
 - [x] **Magic Number**
+- [x] **Mystery Guest**
 - [x] **Print Statement**
 - [x] **Resource Optimism**
 - [x] **Sensitive Equality**
