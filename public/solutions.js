@@ -58,6 +58,7 @@ function loadList() {
             };
             const td3 = document.createElement("td");
             td3.appendChild(button);
+            td3.style.textAlign = "left";
             tr.appendChild(td3);
 
             listaFiles.appendChild(tr);
@@ -214,6 +215,7 @@ window.onload = (event) => {
     loadSelect();
     loadList();
     loadStructureSolution();
+    tabs(0);
 };
 
 

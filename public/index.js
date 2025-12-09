@@ -616,7 +616,7 @@ function loadStatistics() {
 
 
         td = document.createElement("td");
-        td.innerHTML = contador.toFixed(2);
+        td.innerHTML = contador;
         td.style.color = "blue";
 
         td2 = document.createElement("td");
