@@ -24,6 +24,7 @@
 - [x] **Magic Number**
 - [x] **Mystery Guest**
 - [x] **Print Statement**
+- [x] **Redundant Assertion**
 - [x] **Resource Optimism**
 - [x] **Sensitive Equality**
 - [x] **Sleepy Test**

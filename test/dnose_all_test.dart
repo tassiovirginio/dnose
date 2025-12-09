@@ -17,6 +17,10 @@ void main() {
       TestClass.test(File("$path$pathFile").path),
     );
     var list = testSmells.where((e) => e.name == name).toList();
+    print("Found ${list.length} $name smells, expected $qtd");
+    for (var smell in list) {
+      print("  - ${smell.name}: ${smell.code}");
+    }
     expect(
       list.length,
       qtd,
@@ -141,6 +145,14 @@ void main() {
       name: "Mystery Guest",
       qtd: 1,
       pathFile: "/test/samples/mystery_guest_test.dart",
+    );
+  });
+
+  test("Detect: Redundant Assertion", () {
+    verify(
+      name: "Redundant Assertion",
+      qtd: 17,
+      pathFile: "/test/oracle/redundant_assertion_test.dart_",
     );
   });
 
