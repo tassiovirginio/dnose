@@ -20,6 +20,7 @@
 - [x] **Duplicate Assert**
 - [x] **Empty Test**
 - [x] **Exception Handling**
+- [x] **Expected Resolution Omission**
 - [x] **Ignored Test**
 - [x] **Magic Number**
 - [x] **Mystery Guest**

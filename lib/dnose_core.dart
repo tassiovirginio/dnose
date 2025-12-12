@@ -6,6 +6,7 @@ import 'package:dnose/detectors/conditional_test_logic_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
+import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
 import 'package:dnose/detectors/ignored_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/mystery_guest_detector.dart';
@@ -47,6 +48,7 @@ class DNoseCore {
     ExceptionHandlingDetector().testSmellName,
     IgnoredTestDetector().testSmellName,
     RedundantAssertionDetector().testSmellName,
+    ExpectedResolutionOmissionDetector().testSmellName,
 
   ];
 
@@ -109,7 +111,8 @@ class DNoseCore {
       IgnoredTestDetector(),
       SensitiveEqualityDetector(),
       MysteryGuestDetector(),
-      RedundantAssertionDetector()
+      RedundantAssertionDetector(),
+      ExpectedResolutionOmissionDetector()
     ];
 
     // Filter detectors based on selected smells if provided
