@@ -156,4 +156,12 @@ void main() {
     );
   });
 
+  test("Detect: Expected Resolution Omission", () {
+    verify(
+      name: "Expected Resolution Omission",
+      qtd: 6,
+      pathFile: "/test/oracle/expected_resolution_omission_test.dart_",
+    );
+  });
+
 }
