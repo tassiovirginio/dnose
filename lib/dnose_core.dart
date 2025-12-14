@@ -3,6 +3,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/detectors/assertion_roulette_detector.dart';
 import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/default_test_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
@@ -49,6 +50,7 @@ class DNoseCore {
     IgnoredTestDetector().testSmellName,
     RedundantAssertionDetector().testSmellName,
     ExpectedResolutionOmissionDetector().testSmellName,
+    DefaultTestDetector().testSmellName,
 
   ];
 
@@ -112,7 +114,8 @@ class DNoseCore {
       SensitiveEqualityDetector(),
       MysteryGuestDetector(),
       RedundantAssertionDetector(),
-      ExpectedResolutionOmissionDetector()
+      ExpectedResolutionOmissionDetector(),
+      DefaultTestDetector()
     ];
 
     // Filter detectors based on selected smells if provided

@@ -164,4 +164,12 @@ void main() {
     );
   });
 
+  test("Detect: Default Test", () {
+    verify(
+      name: "Default Test",
+      qtd: 1,
+      pathFile: "/test/oracle/default_test.dart_",
+    );
+  });
+
 }

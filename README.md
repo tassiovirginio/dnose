@@ -17,6 +17,7 @@
 
 - [x] **Assertion Roulette**
 - [x] **Conditional Test Logic**
+- [x] **Default Test**
 - [x] **Duplicate Assert**
 - [x] **Empty Test**
 - [x] **Exception Handling**
