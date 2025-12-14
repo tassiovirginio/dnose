@@ -187,4 +187,12 @@ void main() {
       pathFile: "/test/oracle/eager_test.dart_",
     );
   });
+
+  test("Detect: Lazy Test", () {
+    verify(
+      name: "Lazy Test",
+      qtd: 11,
+      pathFile: "/test/oracle/lazy_test.dart_",
+    );
+  });
 }
