@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/detectors/assertion_roulette_detector.dart';
 import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/default_test_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
@@ -69,6 +70,7 @@ List<AbstractDetector> detectors = [
   ExceptionHandlingDetector(),
   IgnoredTestDetector(),
   SensitiveEqualityDetector(),
+  DefaultTestDetector()
 ];
 
 void main() async {
