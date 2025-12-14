@@ -22,6 +22,7 @@ import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/detectors/widget_setup_detector.dart';
 import 'package:dnose/metrics/abstract_metric.dart';
 import 'package:dnose/metrics/cyclomatic_complexity_metric.dart';
 import 'package:dnose/metrics/lines_of_code_metric.dart';
@@ -56,7 +57,8 @@ class DNoseCore {
     DefaultTestDetector().testSmellName,
     ResidualStateTestDetector().testSmellName,
     EagerTestDetector().testSmellName,
-    LazyTestDetector().testSmellName
+    LazyTestDetector().testSmellName,
+    WidgetSetupDetector().testSmellName
 
   ];
 
@@ -148,6 +150,7 @@ class DNoseCore {
     _logger.info("Path: ${testClass.path}");
     
     LazyTestDetector.reset();
+    WidgetSetupDetector.reset();
     
     testSmells.addAll(_scan(n, testClass, selectedSmells));
     testMetrics.addAll(_scanMetric(n, testClass));
@@ -155,6 +158,11 @@ class DNoseCore {
     if (selectedSmells == null || selectedSmells.isEmpty || 
         selectedSmells.contains('lazy_test')) {
       testSmells.addAll(LazyTestDetector.detectLazyTests());
+    }
+    
+    if (selectedSmells == null || selectedSmells.isEmpty || 
+        selectedSmells.contains('widget_setup')) {
+      testSmells.addAll(WidgetSetupDetector.detectWidgetSetup());
     }
     
     return (testSmells, testMetrics);
@@ -188,6 +196,10 @@ class DNoseCore {
         
         LazyTestDetector.collectMethodCalls(
           element as ExpressionStatement, testClass, testName
+        );
+        
+        WidgetSetupDetector.collectSetupPatterns(
+          element, testClass, testName
         );
         
         testSmells.addAll(
