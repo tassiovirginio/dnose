@@ -195,4 +195,12 @@ void main() {
       pathFile: "/test/oracle/lazy_test.dart_",
     );
   });
+
+  test("Detect: Widget Setup", () {
+    verify(
+      name: "Widget Setup",
+      qtd: 9,
+      pathFile: "/test/oracle/widget_setup_test.dart_",
+    );
+  });
 }

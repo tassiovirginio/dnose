@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  // WIDGET SETUP SMELL: Repetição de MaterialApp + Scaffold + Text
+  testWidgets('WS1: Test title widget 1', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Text('Test title 1'),
+        ),
+      ),
+    );
+
+    expect(find.text('Test title 1'), findsOneWidget);
+  });
+
+  testWidgets('WS2: Test title widget 2', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Text('Test title 2'),
+        ),
+      ),
+    );
+
+    expect(find.text('Test title 2'), findsOneWidget);
+  });
+
+  testWidgets('WS3: Test title widget 3', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Text('Test title 3'),
+        ),
+      ),
+    );
+
+    expect(find.text('Test title 3'), findsOneWidget);
+  });
+
+  // WIDGET SETUP SMELL: Repetição de MaterialApp + Scaffold + ElevatedButton
+  testWidgets('WS4: Test button 1', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () {},
+            child: Text('Press 1'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Press 1'), findsOneWidget);
+  });
+
+  testWidgets('WS5: Test button 2', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () {},
+            child: Text('Press 2'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Press 2'), findsOneWidget);
+  });
+
+  testWidgets('WS6: Test button 3', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ElevatedButton(
+            onPressed: () {},
+            child: Text('Press 3'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Press 3'), findsOneWidget);
+  });
+
+  // VALID CASES - Different structures, no duplication
+
+  testWidgets('Valid1: Test with Column', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Text('Item 1'),
+              Text('Item 2'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Item 1'), findsOneWidget);
+  });
+
+  testWidgets('Valid2: Test with Container', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: Text('App')),
+          body: Container(
+            child: Text('Container content'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Container content'), findsOneWidget);
+  });
+
+  testWidgets('Valid3: Test with ListView', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListView(
+            children: [
+              ListTile(title: Text('List item')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('List item'), findsOneWidget);
+  });
+}
