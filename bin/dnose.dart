@@ -10,6 +10,7 @@ import 'package:dnose/detectors/exception_handling_detector.dart';
 import 'package:dnose/detectors/ignored_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
+import 'package:dnose/detectors/eager_test_detector.dart';
 import 'package:dnose/detectors/residual_state_test_detector.dart';
 import 'package:dnose/detectors/resource_optimism_detector.dart';
 import 'package:dnose/detectors/sensitive_equality_detector.dart';
@@ -72,7 +73,8 @@ List<AbstractDetector> detectors = [
   IgnoredTestDetector(),
   SensitiveEqualityDetector(),
   DefaultTestDetector(),
-  ResidualStateTestDetector()
+  ResidualStateTestDetector(),
+  EagerTestDetector(),
 ];
 
 void main() async {
@@ -133,7 +135,7 @@ Handler init() {
   app.get('/getstatistics', () => getStatists());
   app.get('/testsmellsnames', () => DNoseCore.listTestSmellsNames);
 
-  String getDesc(testSmell){
+  String getDesc(testSmell) {
     String description = "";
     for (var _abstractDetector in detectors) {
       if (_abstractDetector.testSmellName == testSmell) {
@@ -144,7 +146,7 @@ Handler init() {
     return description;
   }
 
-  String getExample(testSmell){
+  String getExample(testSmell) {
     String example = "";
     for (var _abstractDetector in detectors) {
       if (_abstractDetector.testSmellName == testSmell) {
@@ -165,7 +167,7 @@ Handler init() {
 
     prompt = prompt.replaceAll("\$tsDescription", description);
     prompt = prompt.replaceAll("\$tsExample", example);
-    
+
     String? resp;
     var content = [ai.Content.text(prompt)];
     final response = await gemini.generateContent(content);
