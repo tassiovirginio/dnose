@@ -179,4 +179,12 @@ void main() {
       pathFile: "/test/oracle/residual_state_test.dart_",
     );
   });
+
+  test("Detect: Eager Test", () {
+    verify(
+      name: "Eager Test",
+      qtd: 7,
+      pathFile: "/test/oracle/eager_test.dart_",
+    );
+  });
 }

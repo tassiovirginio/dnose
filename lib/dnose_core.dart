@@ -5,6 +5,7 @@ import 'package:dnose/detectors/assertion_roulette_detector.dart';
 import 'package:dnose/detectors/conditional_test_logic_detector.dart';
 import 'package:dnose/detectors/default_test_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
+import 'package:dnose/detectors/eager_test_detector.dart';
 import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
 import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
@@ -52,7 +53,8 @@ class DNoseCore {
     RedundantAssertionDetector().testSmellName,
     ExpectedResolutionOmissionDetector().testSmellName,
     DefaultTestDetector().testSmellName,
-    ResidualStateTestDetector().testSmellName
+    ResidualStateTestDetector().testSmellName,
+    EagerTestDetector().testSmellName
 
   ];
 
@@ -118,7 +120,8 @@ class DNoseCore {
       RedundantAssertionDetector(),
       ExpectedResolutionOmissionDetector(),
       DefaultTestDetector(),
-      ResidualStateTestDetector()
+      ResidualStateTestDetector(),
+      EagerTestDetector()
     ];
 
     // Filter detectors based on selected smells if provided
