@@ -1,0 +1,117 @@
+import 'package:test/test.dart';
+
+class Cryptographer {
+  static String encrypt(String data, String key) {
+    return data.split('').reversed.join() + key;
+  }
+  
+  static String decrypt(String data, String key) {
+    var withoutKey = data.substring(0, data.length - key.length);
+    return withoutKey.split('').reversed.join();
+  }
+}
+
+class Calculator {
+  int add(int a, int b) => a + b;
+  int subtract(int a, int b) => a - b;
+  int multiply(int a, int b) => a * b;
+  double divide(int a, int b) => a / b;
+}
+
+class User {
+  String name;
+  int age;
+  
+  User(this.name, this.age);
+  
+  bool isAdult() => age >= 18;
+  String getInfo() => 'Name: $name, Age: $age';
+  void updateAge(int newAge) => age = newAge;
+}
+
+void main() {
+  
+  // LAZY TEST SMELL 1: decrypt() called in multiple tests
+  test('LT1: decrypt encrypted data', () {
+    var encrypted = Cryptographer.encrypt('Hello', 'key');
+    var result = Cryptographer.decrypt(encrypted, 'key');
+    expect(result, 'Hello');
+  });
+  
+  test('LT2: decrypt with different key', () {
+    var encrypted = 'olleHpass';
+    var result = Cryptographer.decrypt(encrypted, 'pass');
+    expect(result, 'Hello');
+  });
+  
+  test('LT3: decrypt empty string', () {
+    var encrypted = 'test';
+    var result = Cryptographer.decrypt(encrypted, 'test');
+    expect(result, '');
+  });
+  
+  // LAZY TEST SMELL 2: add() called in multiple tests
+  test('LT4: add positive numbers', () {
+    var calc = Calculator();
+    expect(calc.add(2, 3), 5);
+  });
+  
+  test('LT5: add negative numbers', () {
+    var calc = Calculator();
+    expect(calc.add(-2, -3), -5);
+  });
+  
+  test('LT6: add zero', () {
+    var calc = Calculator();
+    expect(calc.add(5, 0), 5);
+  });
+  
+  // LAZY TEST SMELL 3: isAdult() called in multiple tests
+  test('LT7: check if user is adult', () {
+    var user = User('John', 25);
+    expect(user.isAdult(), true);
+  });
+  
+  test('LT8: check if minor is not adult', () {
+    var user = User('Jane', 15);
+    expect(user.isAdult(), false);
+  });
+  
+  test('LT9: check if exactly 18 is adult', () {
+    var user = User('Bob', 18);
+    expect(user.isAdult(), true);
+  });
+  
+  // VALID CASES - Should NOT be detected as Lazy Test
+  
+  test('Valid1: multiply operation', () {
+    var calc = Calculator();
+    expect(calc.multiply(3, 4), 12);
+  });
+  
+  test('Valid2: subtract operation', () {
+    var calc = Calculator();
+    expect(calc.subtract(10, 3), 7);
+  });
+  
+  test('Valid3: divide operation', () {
+    var calc = Calculator();
+    expect(calc.divide(10, 2), 5.0);
+  });
+  
+  test('Valid4: user info', () {
+    var user = User('Alice', 30);
+    expect(user.getInfo(), 'Name: Alice, Age: 30');
+  });
+  
+  test('Valid5: update age', () {
+    var user = User('Charlie', 20);
+    user.updateAge(21);
+    expect(user.age, 21);
+  });
+  
+  test('Valid6: encrypt operation', () {
+    var result = Cryptographer.encrypt('Test', 'key');
+    expect(result, 'tseTkey');
+  });
+}

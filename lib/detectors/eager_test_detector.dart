@@ -19,6 +19,7 @@ class EagerTestDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
+    List<TestSmell> smells = [];
     codeTest = e.toSource();
     startTest = testClass.lineNumber(e.offset);
     endTest = testClass.lineNumber(e.end);
@@ -28,8 +29,8 @@ class EagerTestDetector implements AbstractDetector {
     _collectMethodCalls(e, objectMethods);
 
     for (var entry in objectMethods.entries) {
-      if (entry.value.length >= 5) {
-        testSmells.add(
+      if (entry.value.length >= 3) {
+        smells.add(
           TestSmell(
             name: testSmellName,
             testName: testName,
@@ -52,7 +53,7 @@ class EagerTestDetector implements AbstractDetector {
       }
     }
 
-    return testSmells;
+    return smells;
   }
 
   void _collectMethodCalls(

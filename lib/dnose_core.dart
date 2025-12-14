@@ -10,6 +10,7 @@ import 'package:dnose/detectors/empty_test_detector.dart';
 import 'package:dnose/detectors/exception_handling_detector.dart';
 import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
 import 'package:dnose/detectors/ignored_test_detector.dart';
+import 'package:dnose/detectors/lazy_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/mystery_guest_detector.dart';
 import 'package:dnose/detectors/redundant_assertion_detector.dart';
@@ -54,7 +55,8 @@ class DNoseCore {
     ExpectedResolutionOmissionDetector().testSmellName,
     DefaultTestDetector().testSmellName,
     ResidualStateTestDetector().testSmellName,
-    EagerTestDetector().testSmellName
+    EagerTestDetector().testSmellName,
+    LazyTestDetector().testSmellName
 
   ];
 
@@ -144,8 +146,17 @@ class DNoseCore {
     AstNode n = testClass.root;
     _logger.info("Scanning...");
     _logger.info("Path: ${testClass.path}");
+    
+    LazyTestDetector.reset();
+    
     testSmells.addAll(_scan(n, testClass, selectedSmells));
     testMetrics.addAll(_scanMetric(n, testClass));
+    
+    if (selectedSmells == null || selectedSmells.isEmpty || 
+        selectedSmells.contains('lazy_test')) {
+      testSmells.addAll(LazyTestDetector.detectLazyTests());
+    }
+    
     return (testSmells, testMetrics);
   }
 
@@ -174,8 +185,13 @@ class DNoseCore {
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
+        
+        LazyTestDetector.collectMethodCalls(
+          element as ExpressionStatement, testClass, testName
+        );
+        
         testSmells.addAll(
-          detectTestSmells(element as ExpressionStatement, testClass, testName, selectedSmells),
+          detectTestSmells(element, testClass, testName, selectedSmells),
         );
       }
       testSmells.addAll(_scan(element, testClass, selectedSmells));

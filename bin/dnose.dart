@@ -11,6 +11,7 @@ import 'package:dnose/detectors/ignored_test_detector.dart';
 import 'package:dnose/detectors/magic_number_detector.dart';
 import 'package:dnose/detectors/print_statment_fixture_detector.dart';
 import 'package:dnose/detectors/eager_test_detector.dart';
+import 'package:dnose/detectors/lazy_test_detector.dart';
 import 'package:dnose/detectors/residual_state_test_detector.dart';
 import 'package:dnose/detectors/resource_optimism_detector.dart';
 import 'package:dnose/detectors/sensitive_equality_detector.dart';
@@ -75,6 +76,7 @@ List<AbstractDetector> detectors = [
   DefaultTestDetector(),
   ResidualStateTestDetector(),
   EagerTestDetector(),
+  LazyTestDetector(),
 ];
 
 void main() async {
