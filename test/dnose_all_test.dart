@@ -172,4 +172,11 @@ void main() {
     );
   });
 
+  test("Detect: Residual State", () {
+    verify(
+      name: "Residual State",
+      qtd: 5,
+      pathFile: "/test/oracle/residual_state_test.dart_",
+    );
+  });
 }
