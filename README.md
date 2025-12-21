@@ -19,20 +19,24 @@
 - [x] **Conditional Test Logic**
 - [x] **Default Test**
 - [x] **Duplicate Assert**
+- [x] **Eager Test**
 - [x] **Empty Test**
 - [x] **Exception Handling**
 - [x] **Expected Resolution Omission**
 - [x] **Ignored Test**
+- [x] **Lazy Test**
 - [x] **Magic Number**
 - [x] **Mystery Guest**
 - [x] **Print Statement**
 - [x] **Redundant Assertion**
 - [x] **Resource Optimism**
+- [x] **Residual State**
 - [x] **Sensitive Equality**
 - [x] **Sleepy Test**
 - [x] **Test Without Description**
 - [x] **Unknown Test**
 - [x] **Verbose Test**
+- [x] **Widget Setup**
 
 
 ### Prerequisites
