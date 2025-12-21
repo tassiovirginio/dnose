@@ -20,6 +20,9 @@ import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
+import 'package:dnose/detectors/mystery_guest_detector.dart';
+import 'package:dnose/detectors/redundant_assertion_detector.dart';
 import 'package:dnose/dnose_core.dart';
 import 'package:dnose/main.dart';
 import 'package:dnose/utils/git_utils.dart';
@@ -79,6 +82,9 @@ List<AbstractDetector> detectors = [
   EagerTestDetector(),
   LazyTestDetector(),
   WidgetSetupDetector(),
+  ExpectedResolutionOmissionDetector(),
+  MysteryGuestDetector(),
+  RedundantAssertionDetector(),
 ];
 
 void main() async {
