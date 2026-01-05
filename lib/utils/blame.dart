@@ -1,82 +1,118 @@
 import 'dart:io';
 
 void main() async {
-
-  String arquivo = '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
+  String arquivo =
+      '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
   String workingDirectory = '/home/tassio/Desenvolvimento/repo.git/dnose';
 
-  Map<String,BlameLine> lista = blameFile(arquivo, workingDirectory);
+  Map<String, BlameLine> lista = blameFile(arquivo, workingDirectory);
 
   for (var linha in lista.entries) {
     print(linha);
   }
 }
 
-class BlameLine{
+class BlameLine {
   String? lineNumber, commit, author, dateStr, timeStr, summary;
-  BlameLine(this.lineNumber, this.commit, this.author, this.dateStr, this.timeStr, this.summary);
+  BlameLine(
+    this.lineNumber,
+    this.commit,
+    this.author,
+    this.dateStr,
+    this.timeStr,
+    this.summary,
+  );
   @override
   String toString() {
     return '$lineNumber|$commit|$author|$dateStr|$timeStr|$summary';
   }
 }
 
-Map<String,BlameLine> blameFile(String arquivo, String workingDirectory) {
+Map<String, BlameLine> blameFile(String arquivo, String workingDirectory) {
+  Map<String, BlameLine> mapa = {};
 
-
-  arquivo = arquivo.replaceAll("$workingDirectory/", "");
-
-  // List<BlameLine> lista = List.empty(growable: true);
-  Map<String,BlameLine> mapa = {};
-
-  final check =
-      Process.runSync('git', ['ls-files', '--error-unmatch', arquivo], workingDirectory: workingDirectory);
-  if (check.exitCode != 0) {
-    print("Erro: O arquivo '$arquivo' não está sob controle do git.");
-    return mapa;
-  }
-
-  final result = Process.runSync('git', ['blame', '--line-porcelain', arquivo], workingDirectory: workingDirectory);
-  if (result.exitCode != 0) {
-    print('Erro ao executar git blame.');
-    return mapa;
-  }
-
-  String? commit;
-  String? author;
-  String? dateStr;
-  String? timeStr;
-  String? summary;
-  String? lineNumber;
-
-  final lines = result.stdout.toString().split('\n');
-
-  for (final line in lines) {
-    if (line.length > 40 && RegExp(r'^[a-fA-F0-9]{40} ').hasMatch(line)) {
-      final parts = line.split(' ');
-      commit = parts[0].substring(0, 8); // encurta o hash
-      lineNumber = parts.length > 2 ? parts[2] : null;
-    } else if (line.startsWith('author ')) {
-      author = line.substring('author '.length);
-    } else if (line.startsWith('author-time ')) {
-      final timestamp = int.tryParse(line.substring('author-time '.length));
-      if (timestamp != null) {
-        final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-        dateStr =
-            '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
-        timeStr =
-            '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
-      }
-    } else if (line.startsWith('summary ')) {
-      summary = line.substring('summary '.length);
-    } else if (line.startsWith('\t')) {
-      if ([commit, author, dateStr, timeStr, summary, lineNumber]
-          .every((e) => e != null)) {
-        // lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
-        mapa[lineNumber!] = BlameLine(lineNumber, commit, author, dateStr, timeStr, summary);
-      }
-      commit = author = dateStr = timeStr = summary = lineNumber = null;
+  try {
+    String pathParaGit = arquivo;
+    try {
+      pathParaGit = File(arquivo).resolveSymbolicLinksSync();
+    } catch (e) {
+      print("Aviso: Não foi possível resolver links para $arquivo: $e");
     }
+
+    arquivo = pathParaGit.replaceAll("$workingDirectory/", "");
+
+    final check = Process.runSync('git', [
+      'ls-files',
+      '--error-unmatch',
+      arquivo,
+    ], workingDirectory: workingDirectory);
+    if (check.exitCode != 0) {
+      print("Erro: O arquivo '$arquivo' não está sob controle do git.");
+      return mapa;
+    }
+
+    final result = Process.runSync('git', [
+      'blame',
+      '--line-porcelain',
+      arquivo,
+    ], workingDirectory: workingDirectory);
+    if (result.exitCode != 0) {
+      print('Erro ao executar git blame.');
+      return mapa;
+    }
+
+    String? commit;
+    String? author;
+    String? dateStr;
+    String? timeStr;
+    String? summary;
+    String? lineNumber;
+
+    final lines = result.stdout.toString().split('\n');
+
+    for (final line in lines) {
+      if (line.length > 40 && RegExp(r'^[a-fA-F0-9]{40} ').hasMatch(line)) {
+        final parts = line.split(' ');
+        commit = parts[0].substring(0, 8); // encurta o hash
+        lineNumber = parts.length > 2 ? parts[2] : null;
+      } else if (line.startsWith('author ')) {
+        author = line.substring('author '.length);
+      } else if (line.startsWith('author-time ')) {
+        final timestamp = int.tryParse(line.substring('author-time '.length));
+        if (timestamp != null) {
+          final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+          dateStr =
+              '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+          timeStr =
+              '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
+        }
+      } else if (line.startsWith('summary ')) {
+        summary = line.substring('summary '.length);
+      } else if (line.startsWith('\t')) {
+        if ([
+          commit,
+          author,
+          dateStr,
+          timeStr,
+          summary,
+          lineNumber,
+        ].every((e) => e != null)) {
+          // lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
+          mapa[lineNumber!] = BlameLine(
+            lineNumber,
+            commit,
+            author,
+            dateStr,
+            timeStr,
+            summary,
+          );
+        }
+        commit = author = dateStr = timeStr = summary = lineNumber = null;
+      }
+    }
+  } catch (e) {
+    print('Erro ao processar o arquivo: $e');
+    return {};
   }
 
   return mapa;
