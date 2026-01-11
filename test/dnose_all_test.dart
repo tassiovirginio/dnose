@@ -203,4 +203,12 @@ void main() {
       pathFile: "/test/oracle/widget_setup_test.dart_",
     );
   });
+
+  test("Detect: Dependent Test", () {
+    verify(
+      name: "Dependent Test",
+      qtd: 3,
+      pathFile: "/test/oracle/dependent_test.dart_",
+    );
+  });
 }
