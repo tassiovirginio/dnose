@@ -35,6 +35,11 @@ dependencies:
   intl: ^0.20.2
   dotenv: ^4.2.0
   embed_annotation: ^1.2.2
+  
+  # TUI dependencies
+  cli_util: ^0.4.1
+  ansicolor: ^2.0.3
+  console: ^4.1.0
 
 dev_dependencies:
   embed: ^1.4.1

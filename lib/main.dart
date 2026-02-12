@@ -8,8 +8,10 @@ import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/blame.dart';
+import 'package:dnose/utils/console_ui.dart';
 import 'package:dnose/utils/git_log.dart';
 import 'package:dnose/utils/progresso.dart';
+import 'package:dnose/utils/util.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -206,6 +208,34 @@ Future<String> processar(String listPathProjects) async {
 
   Progresso.finalizado();
 
+  // Mostra resumo final
+  final ui = ConsoleUI();
+  final smellCounts = <String, int>{};
+  for (var smell in listaTotal) {
+    smellCounts[smell.name] = (smellCounts[smell.name] ?? 0) + 1;
+  }
+
+  // Top arquivos com mais smells
+  final fileSmellCounts = <String, int>{};
+  for (var smell in listaTotal) {
+    fileSmellCounts[smell.testClass.path] =
+        (fileSmellCounts[smell.testClass.path] ?? 0) + 1;
+  }
+  final topFiles =
+      fileSmellCounts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+  ui.showSummary(
+    totalFiles: listaArquivosTestes.length,
+    totalSmells: listaTotal.length,
+    smellCounts: smellCounts,
+    duration: DateTime.now().difference(
+      DateTime.now().subtract(Duration(seconds: 1)),
+    ), // TODO: track real start time
+    topFiles:
+        topFiles.take(5).map((e) => '${e.key} (${e.value} smells)').toList(),
+  );
+
   return "OK";
 }
 
@@ -238,6 +268,34 @@ Future<String> processarAll() async {
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
   Progresso.finalizado();
+
+  // Mostra resumo final
+  final ui = ConsoleUI();
+  final smellCounts = <String, int>{};
+  for (var smell in listaTotal) {
+    smellCounts[smell.name] = (smellCounts[smell.name] ?? 0) + 1;
+  }
+
+  // Top arquivos com mais smells
+  final fileSmellCounts = <String, int>{};
+  for (var smell in listaTotal) {
+    fileSmellCounts[smell.testClass.path] =
+        (fileSmellCounts[smell.testClass.path] ?? 0) + 1;
+  }
+  final topFiles =
+      fileSmellCounts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+  ui.showSummary(
+    totalFiles: listaArquivosTestes.length,
+    totalSmells: listaTotal.length,
+    smellCounts: smellCounts,
+    duration: DateTime.now().difference(
+      DateTime.now().subtract(Duration(seconds: 1)),
+    ),
+    topFiles:
+        topFiles.take(5).map((e) => '${e.key} (${e.value} smells)').toList(),
+  );
 
   return "OK";
 }
@@ -360,6 +418,10 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   _logger.info("========= Dart Test Smells Detector ==========");
   _logger.info("==============================================");
 
+  // Inicializa UI
+  final ui = ConsoleUI();
+  ui.showBanner();
+
   final commitAtual = await getCommit(pathProject);
   await generateGitLogCsv(pathProject, dirResults.path);
 
@@ -410,6 +472,10 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
     }
   }
 
+  // Configura total de arquivos para progresso
+  Progresso.setTotalFiles(testFiles.length);
+  ui.startProject(projectName, testFiles.length);
+
   // Processa arquivos em paralelo com limite de concorrência
   _logger.info(
     "Processando ${testFiles.length} arquivos com $maxConcurrent workers...",
@@ -432,11 +498,12 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
     // Coleta resultados
     for (var result in results) {
       Progresso.adicionarBloco();
-      DNoseCore.contProcessProject++;
+      Progresso.updateFile(result.filePath);
 
       if (result.success) {
         listaTotal.addAll(result.smells);
         listaTotalMetrics.addAll(result.metrics);
+        Progresso.addSmells(result.smells);
         _logger.info(
           "Analyzed: ${result.filePath} - ${result.smells.length} smells",
         );
@@ -445,6 +512,8 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
           "Failed to analyze ${result.filePath}: ${result.error}",
         );
       }
+
+      DNoseCore.contProcessProject++;
     }
   }
 

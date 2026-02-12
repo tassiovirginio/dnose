@@ -1,78 +1,87 @@
-import 'dart:io';
+import 'package:dnose/models/test_class.dart';
+import 'package:dnose/utils/blame.dart';
+import 'package:dnose/utils/console_ui.dart';
+import 'package:dnose/utils/util.dart';
 
+/// Sistema de progresso aprimorado com ConsoleUI
 class Progresso {
-  static String _barra = '';
-  static int _progresso = 0;
-  static int _tamanhoBarra = 50;
   static String project = '';
-  static bool _coresDisponiveis = true;
   static bool _finalizado = false;
+  static final ConsoleUI _ui = ConsoleUI();
+
+  // Estatísticas acumuladas
+  static int _totalFiles = 0;
+  static int _processedFiles = 0;
+  static int _totalSmells = 0;
+  static final Map<String, int> _smellCounts = {};
+  static String _currentFile = '';
 
   static void setProject(String projeto) {
     project = projeto;
-    _barra = '';
-    _progresso = 0;
     _finalizado = false;
-    _coresDisponiveis = stdout.supportsAnsiEscapes;
+    _totalFiles = 0;
+    _processedFiles = 0;
+    _totalSmells = 0;
+    _smellCounts.clear();
+    _currentFile = '';
+  }
+
+  static void setTotalFiles(int total) {
+    _totalFiles = total;
   }
 
   static void adicionarBloco() {
     if (_finalizado) return;
+    _processedFiles++;
+    _updateUI();
+  }
 
-    _progresso += 1;
+  static void updateFile(String filePath) {
+    _currentFile = filePath;
+    _updateUI();
+  }
 
-    if (_progresso > 100) {
-      _progresso = 100;
+  static void addSmells(List<dynamic> smells) {
+    _totalSmells += smells.length;
+    for (var smell in smells) {
+      final name = smell.name.toString();
+      _smellCounts[name] = (_smellCounts[name] ?? 0) + 1;
     }
+    _updateUI();
+  }
 
-    final blocosCompletos = (_progresso * _tamanhoBarra) ~/ 100;
-    _barra = '█' * blocosCompletos;
-    final espacos = ' ' * (_tamanhoBarra - blocosCompletos);
+  static void _updateUI() {
+    if (_totalFiles == 0) return;
 
-    final porcentagem = '${_progresso.toString().padLeft(3)}%';
-
-    if (_coresDisponiveis) {
-      _limparLinha();
-      stdout.write('\r\x1B[36m$project\x1B[0m [\x1B[32m$_barra\x1B[0m$espacos] $porcentagem');
-    } else {
-      _limparLinha();
-      stdout.write('\r$project [$_barra$espacos] $porcentagem');
-    }
+    _ui.updateProgress(
+      processedFiles: _processedFiles,
+      totalSmells: _totalSmells,
+      currentFile: _currentFile,
+      smellCounts: _smellCounts,
+      cacheAstSize: TestClass.cacheSize,
+      cacheBlameSize: BlameCache.size,
+      cacheMd5Size: Util.md5CacheSize,
+    );
   }
 
   static void resetar() {
-    _barra = '';
-    _progresso = 0;
     _finalizado = false;
-    _limparLinha();
-    stdout.write('\r${' ' * (project.length + _tamanhoBarra + 10)}\r');
+    _totalFiles = 0;
+    _processedFiles = 0;
+    _totalSmells = 0;
+    _smellCounts.clear();
+    _currentFile = '';
   }
 
   static void finalizado() {
     if (_finalizado) return;
-
-    // Completa a barra
-    _progresso = 100;
-    _barra = '█' * _tamanhoBarra;
-
-    // Limpa a linha atual
-    _limparLinha();
-    stdout.write('\r${' ' * (project.length + _tamanhoBarra + 10)}\r');
-
-    if (_coresDisponiveis) {
-      // Versão colorida
-      _limparLinha();
-      stdout.write('\r\x1B[32m✓ Process completed successfully!\x1B[0m');
-    } else {
-      // Versão sem cores
-      _limparLinha();
-      stdout.write('\r✓ Process completed successfully!');
-    }
-
     _finalizado = true;
   }
 
-  static void _limparLinha() {
-    stdout.write('\r${' ' * (100)}\r');
-  }
+  static bool get isFinalizado => _finalizado;
+
+  static int get totalFiles => _totalFiles;
+  static int get processedFiles => _processedFiles;
+  static int get totalSmells => _totalSmells;
+  static Map<String, int> get smellCounts => Map.unmodifiable(_smellCounts);
 }

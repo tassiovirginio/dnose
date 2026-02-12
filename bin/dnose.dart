@@ -17,6 +17,7 @@ import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
 import 'package:dnose/dnose_core.dart';
 import 'package:dnose/main.dart';
+import 'package:dnose/utils/console_ui.dart';
 import 'package:dnose/utils/git_utils.dart';
 import 'package:dnose/utils/util.dart';
 import 'package:dnose/pages.dart';
@@ -72,21 +73,17 @@ List<AbstractDetector> detectors = [
 ];
 
 void main() async {
-  print('''
-  ██████╗ ███╗   ██╗ ██████╗ ███████╗███████╗
-  ██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔════╝
-  ██║  ██║██╔██╗ ██║██║   ██║███████╗█████╗  
-  ██║  ██║██║╚██╗██║██║   ██║╚════██║██╔══╝  
-  ██████╔╝██║ ╚████║╚██████╔╝███████║███████╗
-  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚══════╝
-''');
+  // Mostra banner bonito usando ConsoleUI
+  final ui = ConsoleUI();
+  ui.showBanner();
+
   await shelfRun(
     init,
     defaultEnableHotReload: false,
     defaultBindPort: port,
     defaultBindAddress: ip,
   );
-  print("open -> http://127.0.0.1:$port");
+  ui.showInfo("Servidor iniciado -> http://127.0.0.1:$port");
 }
 
 Handler init() {
