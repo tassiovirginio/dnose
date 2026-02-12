@@ -4,6 +4,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:statistics/statistics.dart';
+import 'package:dnose/utils/lru_cache.dart';
 
 Future<void> main() async {
   // Caminho da pasta que você deseja ler
@@ -14,11 +15,13 @@ Future<void> main() async {
 
   // print('Quantidade de arquivos com sufixo _test.dart: $count');
 
-
   print(Util.date("1722036893 -0700"));
 }
 
 class Util {
+  // Cache LRU para MD5 com capacidade de 10000 entradas
+  static final _md5Cache = LruCache<String, String>(capacity: 10000);
+
   static int getQtyFilesWithTestSuffix(String? directoryPath) {
     final directory = Directory(directoryPath!);
 
@@ -38,15 +41,40 @@ class Util {
   }
 
   static String md5(String code) {
-    code = code.replaceAll("\n", "").replaceAll("\r", "").replaceAll(" ", "");
-    return crypto.md5.convert(utf8.encode(code)).toString();
+    // Verifica cache primeiro
+    final cached = _md5Cache.get(code);
+    if (cached != null) {
+      return cached;
+    }
+
+    // Calcula MD5
+    final normalized = code
+        .replaceAll("\n", "")
+        .replaceAll("\r", "")
+        .replaceAll(" ", "");
+    final hash = crypto.md5.convert(utf8.encode(normalized)).toString();
+
+    // Armazena no cache
+    _md5Cache.set(code, hash);
+
+    return hash;
   }
 
-  static String date(String timestampGmt) {
+  /// Limpa o cache de MD5
+  static void clearMd5Cache() => _md5Cache.clear();
 
+  /// Retorna o tamanho do cache de MD5
+  static int get md5CacheSize => _md5Cache.length;
+
+  static String date(String timestampGmt) {
     int timestamp = timestampGmt.trim().split(" ").first.toInt();
-    double gmt = (timestampGmt.trim().split(" ").last.toInt())/100;// Timestamp Unix em segundos
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true);
+    double gmt =
+        (timestampGmt.trim().split(" ").last.toInt()) /
+        100; // Timestamp Unix em segundos
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      timestamp * 1000,
+      isUtc: true,
+    );
 
     // Ajuste para o fuso horário +0200
     print(gmt.toInt());
@@ -57,5 +85,4 @@ class Util {
 
     return formattedDate;
   }
-
 }

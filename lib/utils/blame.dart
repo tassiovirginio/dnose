@@ -1,42 +1,84 @@
 import 'dart:io';
+import 'package:dnose/utils/lru_cache.dart';
 
 void main() async {
-
-  String arquivo = '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
+  String arquivo =
+      '/home/tassio/Desenvolvimento/repo.git/dnose/bin/server.dart';
   String workingDirectory = '/home/tassio/Desenvolvimento/repo.git/dnose';
 
-  Map<String,BlameLine> lista = blameFile(arquivo, workingDirectory);
+  Map<String, BlameLine> lista = blameFile(arquivo, workingDirectory);
 
   for (var linha in lista.entries) {
     print(linha);
   }
 }
 
-class BlameLine{
+class BlameLine {
   String? lineNumber, commit, author, dateStr, timeStr, summary;
-  BlameLine(this.lineNumber, this.commit, this.author, this.dateStr, this.timeStr, this.summary);
+  BlameLine(
+    this.lineNumber,
+    this.commit,
+    this.author,
+    this.dateStr,
+    this.timeStr,
+    this.summary,
+  );
   @override
   String toString() {
     return '$lineNumber|$commit|$author|$dateStr|$timeStr|$summary';
   }
 }
 
-Map<String,BlameLine> blameFile(String arquivo, String workingDirectory) {
+/// Cache LRU para resultados de git blame
+class BlameCache {
+  static final _cache = LruCache<String, Map<String, BlameLine>>(capacity: 200);
 
+  static Map<String, BlameLine>? get(String arquivo, String workingDirectory) {
+    final key = '$workingDirectory/$arquivo';
+    return _cache.get(key);
+  }
+
+  static void set(
+    String arquivo,
+    String workingDirectory,
+    Map<String, BlameLine> blame,
+  ) {
+    final key = '$workingDirectory/$arquivo';
+    _cache.set(key, blame);
+  }
+
+  static void clear() => _cache.clear();
+
+  static int get size => _cache.length;
+}
+
+Map<String, BlameLine> blameFile(String arquivo, String workingDirectory) {
+  // Verifica cache primeiro
+  final cached = BlameCache.get(arquivo, workingDirectory);
+  if (cached != null) {
+    return cached;
+  }
 
   arquivo = arquivo.replaceAll("$workingDirectory/", "");
 
   // List<BlameLine> lista = List.empty(growable: true);
-  Map<String,BlameLine> mapa = {};
+  Map<String, BlameLine> mapa = {};
 
-  final check =
-      Process.runSync('git', ['ls-files', '--error-unmatch', arquivo], workingDirectory: workingDirectory);
+  final check = Process.runSync('git', [
+    'ls-files',
+    '--error-unmatch',
+    arquivo,
+  ], workingDirectory: workingDirectory);
   if (check.exitCode != 0) {
     print("Erro: O arquivo '$arquivo' não está sob controle do git.");
     return mapa;
   }
 
-  final result = Process.runSync('git', ['blame', '--line-porcelain', arquivo], workingDirectory: workingDirectory);
+  final result = Process.runSync('git', [
+    'blame',
+    '--line-porcelain',
+    arquivo,
+  ], workingDirectory: workingDirectory);
   if (result.exitCode != 0) {
     print('Erro ao executar git blame.');
     return mapa;
@@ -70,14 +112,30 @@ Map<String,BlameLine> blameFile(String arquivo, String workingDirectory) {
     } else if (line.startsWith('summary ')) {
       summary = line.substring('summary '.length);
     } else if (line.startsWith('\t')) {
-      if ([commit, author, dateStr, timeStr, summary, lineNumber]
-          .every((e) => e != null)) {
+      if ([
+        commit,
+        author,
+        dateStr,
+        timeStr,
+        summary,
+        lineNumber,
+      ].every((e) => e != null)) {
         // lista.add(BlameLine(lineNumber, commit, author, dateStr, timeStr, summary));
-        mapa[lineNumber!] = BlameLine(lineNumber, commit, author, dateStr, timeStr, summary);
+        mapa[lineNumber!] = BlameLine(
+          lineNumber,
+          commit,
+          author,
+          dateStr,
+          timeStr,
+          summary,
+        );
       }
       commit = author = dateStr = timeStr = summary = lineNumber = null;
     }
   }
+
+  // Armazena no cache
+  BlameCache.set(arquivo, workingDirectory, mapa);
 
   return mapa;
 }

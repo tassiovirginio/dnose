@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart' show md5;
 import 'package:dnose/dnose_core.dart';
@@ -20,9 +21,10 @@ import 'package:sentiment_dart/sentiment_dart.dart';
 // final libsqlite3 = DynamicLibrary.open('./libsqlite3.so');
 
 // final currentPath = Directory.current.path;
-final userFolder = (Platform.isMacOS || Platform.isLinux)
-    ? Platform.environment['HOME']!
-    : Platform.environment['UserProfile']!;
+final userFolder =
+    (Platform.isMacOS || Platform.isLinux)
+        ? Platform.environment['HOME']!
+        : Platform.environment['UserProfile']!;
 final Directory dirUser = Directory(userFolder);
 final Directory dirDNose = Directory("${dirUser.path}/.dnose");
 final Directory dirProjects = Directory("${dirDNose.path}/projects");
@@ -36,10 +38,10 @@ Future<void> main2(List<String> args) async {
   //   processar(args[0]);
   //   return;
   // }
-//
+  //
   // processar(
-      // "/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
-//   processar("/home/tassio/Desenvolvimento/dart/dnose");
+  // "/home/tassio/dnose_projects/chicago/test/widget_surveyor_test.dart");
+  //   processar("/home/tassio/Desenvolvimento/dart/dnose");
 
   // cloandoProjetos();
 
@@ -143,12 +145,7 @@ String getURLBaseGithubProject(String url) {
   String urlFinal = "";
 
   if (urlList.length > 4) {
-    var urlFinal = urlList
-        .sublist(0, 5)
-        .map(
-          (e) => "$e/",
-        )
-        .toString();
+    var urlFinal = urlList.sublist(0, 5).map((e) => "$e/").toString();
     urlFinal = urlFinal
         .toString()
         .replaceAll(",", "")
@@ -186,7 +183,11 @@ Future<String> processar(String listPathProjects) async {
 
   for (final project in lista) {
     if (project.trim().isNotEmpty) {
-      var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project);
+      var (
+        listaTotal2,
+        listaTotalMetrics2,
+        listaArquivosTestes2,
+      ) = await _processar(project);
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
       listaArquivosTestes.addAll(listaArquivosTestes2);
@@ -213,14 +214,17 @@ Future<String> processarAll() async {
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  final directories =
-  dirProjects.listSync().whereType<Directory>();
+  final directories = dirProjects.listSync().whereType<Directory>();
 
   var file = File('${dirResults.path}/commits.csv');
   if (file.existsSync()) file.deleteSync();
 
   for (final folder in directories) {
-    var (listaTotal2, listaTotalMetrics2, listaArquivosTestes2) = await _processar(folder.path);
+    var (
+      listaTotal2,
+      listaTotalMetrics2,
+      listaArquivosTestes2,
+    ) = await _processar(folder.path);
     listaTotal.addAll(listaTotal2);
     listaTotalMetrics.addAll(listaTotalMetrics2);
     listaArquivosTestes.addAll(listaArquivosTestes2);
@@ -241,9 +245,7 @@ Future<String> processarAll() async {
 List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
   final dir = Directory(pathProject);
 
-  return dir
-      .listSync(recursive: true)
-      .where((entry) {
+  return dir.listSync(recursive: true).where((entry) {
     // Ignora se tiver diretório oculto no caminho
     // final parts = entry.path.split(Platform.pathSeparator);
     // final temDiretorioOculto = parts.any((part) => part.startsWith('.'));
@@ -252,96 +254,196 @@ List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
     final ehArquivoDart = entry is File && entry.path.endsWith('.dart');
 
     return ehArquivoDart;
-  })
-      .toList();
+  }).toList();
+}
+
+/// Dados para processamento de um arquivo em isolate
+class _FileProcessData {
+  final String filePath;
+  final String pathProject;
+  final String commitAtual;
+  final String moduleAtual;
+  final String projectName;
+
+  _FileProcessData({
+    required this.filePath,
+    required this.pathProject,
+    required this.commitAtual,
+    required this.moduleAtual,
+    required this.projectName,
+  });
+}
+
+/// Resultado do processamento de um arquivo
+class _FileProcessResult {
+  final List<TestSmell> smells;
+  final List<TestMetric> metrics;
+  final String filePath;
+  final bool success;
+  final String? error;
+
+  _FileProcessResult({
+    required this.smells,
+    required this.metrics,
+    required this.filePath,
+    required this.success,
+    this.error,
+  });
+}
+
+/// Processa um único arquivo em isolate
+Future<_FileProcessResult> _processSingleFile(_FileProcessData data) async {
+  try {
+    // Cria instância do detector
+    final dnoseCore = DNoseCore();
+
+    // Cria TestClass (com cache de AST)
+    final testClass = TestClass(
+      commit: data.commitAtual,
+      path: data.filePath,
+      moduleAtual: data.moduleAtual,
+      projectName: data.projectName,
+    );
+
+    // Scaneia o arquivo
+    final (testSmells, testMetrics) = dnoseCore.scan(testClass);
+
+    // Blame (com cache)
+    final fileBlame = blameFile(data.filePath, data.pathProject);
+
+    // Aplica informações de blame e sentiment
+    for (var ts in testSmells) {
+      final blameLine = fileBlame[ts.start.toString()];
+      if (blameLine != null) {
+        ts.lineNumber = blameLine.lineNumber;
+        ts.commitAuthor = blameLine.commit;
+        ts.author = blameLine.author;
+        ts.dateStr = blameLine.dateStr;
+        ts.timeStr = blameLine.timeStr;
+        ts.summary = blameLine.summary;
+
+        // Sentiment analysis
+        final sentimentResult = Sentiment.analysis(
+          blameLine.summary.toString(),
+          emoji: true,
+        );
+        ts.score = sentimentResult.score;
+        ts.comparative = sentimentResult.comparative;
+        ts.words = sentimentResult.words;
+      }
+    }
+
+    return _FileProcessResult(
+      smells: testSmells,
+      metrics: testMetrics,
+      filePath: data.filePath,
+      success: true,
+    );
+  } catch (e) {
+    return _FileProcessResult(
+      smells: [],
+      metrics: [],
+      filePath: data.filePath,
+      success: false,
+      error: e.toString(),
+    );
+  }
 }
 
 Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
-    String pathProject) async {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  String pathProject, {
+  int maxConcurrent = 4, // Número máximo de arquivos processados em paralelo
+}) async {
+  Logger.root.level = Level.ALL;
 
   _logger.info("==============================================");
   _logger.info("========= Dart Test Smells Detector ==========");
   _logger.info("==============================================");
 
-  String commitAtual = await getCommit(pathProject);
+  final commitAtual = await getCommit(pathProject);
   await generateGitLogCsv(pathProject, dirResults.path);
 
-  DNoseCore dnoseCore = DNoseCore();
-
-  List<TestSmell> listaTotal = List.empty(growable: true);
-  List<TestMetric> listaTotalMetrics = List.empty(growable: true);
-  List<String> listaArquivosTestes = List.empty(growable: true);
-
-  // Directory dir = Directory(pathProject);
-  // List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
+  final listaTotal = <TestSmell>[];
+  final listaTotalMetrics = <TestMetric>[];
+  final listaArquivosTestes = <String>[];
 
   final entries = listarSemPastasOcultas(pathProject);
-
-  String projectName = pathProject.split("/").last;
+  final projectName = pathProject.split("/").last;
 
   Progresso.setProject(projectName);
 
   String moduleAtual = "";
-
   String diretorioAtual = "";
 
-  for (var file in entries) {
-    Progresso.adicionarBloco();
+  // Coleta arquivos de teste
+  final testFiles = <_FileProcessData>[];
 
+  for (var file in entries) {
     if (diretorioAtual.isEmpty) {
       diretorioAtual = file.parent.path;
     } else if (diretorioAtual != file.parent.path) {
       diretorioAtual = file.parent.path;
-      File file2 = File("$diretorioAtual/pubspec.yaml");
+      final pubspecFile = File("$diretorioAtual/pubspec.yaml");
 
-      if (file2.existsSync()) {
-        String yamlString = "";
+      if (pubspecFile.existsSync()) {
         try {
-          yamlString = file2.readAsStringSync();
-          Map yaml = loadYaml(yamlString);
-          moduleAtual = yaml['name'];
+          final yamlString = pubspecFile.readAsStringSync();
+          final yaml = loadYaml(yamlString);
+          moduleAtual = yaml['name'] ?? "";
         } catch (e) {
           moduleAtual = "";
         }
       }
     }
 
-    if (file.path.endsWith("_test.dart") == true) {
+    if (file.path.endsWith("_test.dart")) {
       listaArquivosTestes.add(file.path);
-      _logger.info("Analyzing: ${file.path}");
-      //contador de procentagem para a tela
+      testFiles.add(
+        _FileProcessData(
+          filePath: file.path,
+          pathProject: pathProject,
+          commitAtual: commitAtual,
+          moduleAtual: moduleAtual,
+          projectName: projectName,
+        ),
+      );
+    }
+  }
+
+  // Processa arquivos em paralelo com limite de concorrência
+  _logger.info(
+    "Processando ${testFiles.length} arquivos com $maxConcurrent workers...",
+  );
+
+  // Processa em batches para controlar memória
+  for (var i = 0; i < testFiles.length; i += maxConcurrent) {
+    final batch = testFiles.sublist(
+      i,
+      i + maxConcurrent > testFiles.length
+          ? testFiles.length
+          : i + maxConcurrent,
+    );
+
+    // Processa batch em paralelo
+    final results = await Future.wait(
+      batch.map((data) => Isolate.run(() => _processSingleFile(data))),
+    );
+
+    // Coleta resultados
+    for (var result in results) {
+      Progresso.adicionarBloco();
       DNoseCore.contProcessProject++;
 
-      try {
-        TestClass testClass = TestClass(
-            commit: commitAtual,
-            path: file.path,
-            moduleAtual: moduleAtual,
-            projectName: projectName);
-        var (testSmells, testMetrics) = dnoseCore.scan(testClass);
-
-        //Blame
-        Map<String,BlameLine> fileBlame = blameFile(file.path, pathProject);
-        for(var ts in testSmells){
-          BlameLine? blameLine = fileBlame[ts.start.toString()];
-          ts.lineNumber = blameLine!.lineNumber;
-          ts.commitAuthor = blameLine.commit;
-          ts.author = blameLine.author;
-          ts.dateStr = blameLine.dateStr;
-          ts.timeStr = blameLine.timeStr;
-          ts.summary = blameLine.summary;
-          //sentiment
-          SentimentResult sentimentResult = Sentiment.analysis(blameLine.summary.toString(),emoji: true);
-          ts.score = sentimentResult.score;
-          ts.comparative = sentimentResult.comparative;
-          ts.words = sentimentResult.words;
-        }
-
-        listaTotal.addAll(testSmells);
-        listaTotalMetrics.addAll(testMetrics);
-      } catch (e) {
-        print(e);
+      if (result.success) {
+        listaTotal.addAll(result.smells);
+        listaTotalMetrics.addAll(result.metrics);
+        _logger.info(
+          "Analyzed: ${result.filePath} - ${result.smells.length} smells",
+        );
+      } else {
+        _logger.warning(
+          "Failed to analyze ${result.filePath}: ${result.error}",
+        );
       }
     }
   }
@@ -369,10 +471,11 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
   file4.createSync();
   var sink4 = file4.openWrite();
   sink4.write(
-      "project_name;test_name;module;path;testsmell;start;end;commit;qtdLine;qtdLineTeste;"
-      "for;while;if;sleep;expect;catch;throw;try;number;print;file;"
-      "forT;whileT;ifT;sleepT;expectT;catchT;throwT;tryT;printT;fileT"
-      "\n");
+    "project_name;test_name;module;path;testsmell;start;end;commit;qtdLine;qtdLineTeste;"
+    "for;while;if;sleep;expect;catch;throw;try;number;print;file;"
+    "forT;whileT;ifT;sleepT;expectT;catchT;throwT;tryT;printT;fileT"
+    "\n",
+  );
 
   for (TestSmell ts in listaTotal) {
     String codeLine = ts.code.trim().replaceAll(" ", "");
@@ -403,28 +506,31 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     int qtdLine = ts.end - ts.start + 1;
     int qtdLineTeste = ts.endTest - ts.startTest + 1;
 
-    sink4.write("${ts.testClass.projectName}"
-        ";${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")}"
-        ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
-        ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
-        "$containsFor;$containsWhile;$containsIf;$containsSleep;"
-        "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
-        "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
-        "$containsExpectTeste;$containsCatchTeste;$containsThrowTeste;$containsTryTeste;$containsPrintTeste;$containsFileTeste"
-        "\n");
+    sink4.write(
+      "${ts.testClass.projectName}"
+      ";${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")}"
+      ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
+      ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
+      "$containsFor;$containsWhile;$containsIf;$containsSleep;"
+      "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
+      "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
+      "$containsExpectTeste;$containsCatchTeste;$containsThrowTeste;$containsTryTeste;$containsPrintTeste;$containsFileTeste"
+      "\n",
+    );
 
     sink.write(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};"
-            "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};");
+      "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};"
+      "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};",
+    );
     sink.write(
-        "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
-            "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".").replaceAll('"', "")};");
-    sink.write(
-        "${ts.score};${ts.comparative};${ts.words};\n");
-
+      "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
+      "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".").replaceAll('"', "")};",
+    );
+    sink.write("${ts.score};${ts.comparative};${ts.words};\n");
 
     _logger.info(
-        "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}");
+      "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}",
+    );
     _logger.info("Code: ${ts.code}");
 
     if (somatorio[ts.name] == null) {
@@ -458,8 +564,7 @@ Future<bool> createListFilesTestsCSV(List<String> listFileTests) async {
   file.createSync();
 
   var sink = file.openWrite();
-  sink.write(
-      "pathFile\n");
+  sink.write("pathFile\n");
   for (var m in listFileTests) {
     sink.write("$m\n");
   }
@@ -475,12 +580,15 @@ Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
 
   var sink = file.openWrite();
   sink.write(
-      "project_name;test_name;module;path;metric;start;end;value;commit\n");
+    "project_name;test_name;module;path;metric;start;end;value;commit\n",
+  );
   for (var m in listaTotal) {
     sink.write(
-        "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n");
+      "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n",
+    );
     _logger.info(
-        "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}");
+      "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}",
+    );
     _logger.info("Code: ${m.code}");
   }
   sink.close();
@@ -515,27 +623,29 @@ Future<bool> createSqlite() async {
 List<String> getQtdTestSmellsByType() {
   final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select(
-      'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;');
+    'select testsmell, count(testsmell) as qtd from testsmells group by testsmell;',
+  );
   return resultSet.toList().map((e) => e.toString()).toList();
 }
 
 List<String> getProjects() {
   if (File(resultadoDbFile).existsSync()) {
     final db = sqlite3.open(resultadoDbFile);
-    final ResultSet resultSet =
-        db.select('select distinct project_name from testsmells;');
+    final ResultSet resultSet = db.select(
+      'select distinct project_name from testsmells;',
+    );
     return resultSet.toList().map((e) => e.toString()).toList();
   } else {
     return [];
   }
 }
 
-void main(){
+void main() {
   print(getSizeTestFiles());
 }
 
-int getSizeTestFiles(){
-  if(File(resultadoDbFile).existsSync() == false) return 0;
+int getSizeTestFiles() {
+  if (File(resultadoDbFile).existsSync() == false) return 0;
   final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select('SELECT COUNT(1) FROM filestests;');
   final int count = resultSet.first.values.first as int;
@@ -548,7 +658,8 @@ String getStatists() {
   if (file.existsSync() == false) return "";
   final db = sqlite3.open(resultadoDbFile);
   final ResultSet resultSet = db.select(
-      'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;');
+    'select path, testsmell, count(testsmell) as qtd from testsmells group by testsmell, path;',
+  );
   var lista = resultSet.toList();
   var mapa = <String, List<int>>{};
   for (var item in lista) {
