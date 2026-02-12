@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -8,12 +9,7 @@ class VerboseTestDetector implements AbstractDetector {
   @override
   get testSmellName => "Verbose Test";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
   static const valueMaxLineVerbose = 30;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
   List<TestSmell> detect(
@@ -21,50 +17,17 @@ class VerboseTestDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
+    final visitor = _VerboseTestVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
+    );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is SimpleIdentifier &&
-        e.toString() == "test" &&
-        e.parent is MethodInvocation) {
-      int start = lineNumber(e.root as CompilationUnit, e.parent!.offset);
-      int end = lineNumber(e.root as CompilationUnit, e.parent!.end);
-
-      if (end - start > valueMaxLineVerbose) {
-        testSmells.add(
-          TestSmell(
-            name: testSmellName,
-            testName: testName,
-            testClass: testClass,
-            code: e.toSource(),
-            codeMD5: Util.md5(e.toSource()),
-            codeTest: codeTest,
-            codeTestMD5: Util.md5(codeTest!),
-            startTest: startTest,
-            endTest: endTest,
-            start: testClass.lineNumber(e.parent!.offset),
-            end: testClass.lineNumber(e.parent!.end),
-            collumnStart: testClass.columnNumber(e.offset),
-            collumnEnd: testClass.columnNumber(e.end),
-            offset: e.offset,
-            endOffset: e.end,
-          ),
-        );
-      }
-    } else {
-      e.childEntities.whereType<AstNode>().forEach(
-        (e) => _detect(e, testClass, testName),
-      );
-    }
-  }
-
-  int lineNumber(CompilationUnit cu, int offset) =>
-      cu.lineInfo.getLocation(offset).lineNumber;
 
   @override
   String getDescription() {
@@ -116,8 +79,65 @@ class VerboseTestDetector implements AbstractDetector {
             expect(1 + 2, 3),
             expect(1 + 2, 3),
             expect(1 + 2, 3),
+            expect(1 + 2, 3),
             expect(1 + 2, 3)
           });
     ''';
+  }
+}
+
+/// Visitor específico para detectar testes verbose
+class _VerboseTestVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _VerboseTestVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    // Verifica se é uma chamada de teste (test ou testWidgets)
+    final methodName = node.methodName.name;
+    if (methodName == 'test' || methodName == 'testWidgets') {
+      final start = testClass.lineNumber(node.offset);
+      final end = testClass.lineNumber(node.end);
+
+      if (end - start > VerboseTestDetector.valueMaxLineVerbose) {
+        testSmells.add(
+          TestSmell(
+            name: testSmellName,
+            testName: testName,
+            testClass: testClass,
+            code: node.toSource(),
+            codeMD5: Util.md5(node.toSource()),
+            codeTest: codeTest,
+            codeTestMD5: Util.md5(codeTest),
+            startTest: startTest,
+            endTest: endTest,
+            start: start,
+            end: end,
+            collumnStart: testClass.columnNumber(node.offset),
+            collumnEnd: testClass.columnNumber(node.end),
+            offset: node.offset,
+            endOffset: node.end,
+          ),
+        );
+      }
+    }
+
+    // Continua a recursão para outros nós
+    super.visitMethodInvocation(node);
   }
 }

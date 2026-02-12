@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -8,49 +9,22 @@ class ExceptionHandlingDetector implements AbstractDetector {
   @override
   get testSmellName => "Exception Handling";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   List<TestSmell> detect(
     ExpressionStatement e,
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is ThrowExpression || e is TryStatement) {
-      testSmells.add(
-        TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.toSource(),
-          codeMD5: Util.md5(e.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
-        ),
-      );
-    }
-    e.childEntities.whereType<AstNode>().forEach(
-      (e) => _detect(e, testClass, testName),
+    final visitor = _ExceptionHandlingVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
     );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
 
   @override
@@ -99,5 +73,59 @@ class ExceptionHandlingDetector implements AbstractDetector {
     }
   });
     ''';
+  }
+}
+
+class _ExceptionHandlingVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _ExceptionHandlingVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitThrowExpression(ThrowExpression node) {
+    _addSmell(node);
+    super.visitThrowExpression(node);
+  }
+
+  @override
+  void visitTryStatement(TryStatement node) {
+    _addSmell(node);
+    super.visitTryStatement(node);
+  }
+
+  void _addSmell(AstNode node) {
+    testSmells.add(
+      TestSmell(
+        name: testSmellName,
+        testName: testName,
+        testClass: testClass,
+        code: node.toSource(),
+        codeMD5: Util.md5(node.toSource()),
+        codeTest: codeTest,
+        codeTestMD5: Util.md5(codeTest),
+        startTest: startTest,
+        endTest: endTest,
+        start: testClass.lineNumber(node.offset),
+        end: testClass.lineNumber(node.end),
+        collumnStart: testClass.columnNumber(node.offset),
+        collumnEnd: testClass.columnNumber(node.end),
+        offset: node.offset,
+        endOffset: node.end,
+      ),
+    );
   }
 }

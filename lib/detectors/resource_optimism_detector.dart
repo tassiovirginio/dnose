@@ -8,55 +8,61 @@ class ResourceOptimismDetector implements AbstractDetector {
   @override
   get testSmellName => "Resource Optimism";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   List<TestSmell> detect(
     ExpressionStatement e,
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
+    final codeTest = e.toSource();
+    final startTest = testClass.lineNumber(e.offset);
+    final endTest = testClass.lineNumber(e.end);
+    final testSmells = <TestSmell>[];
 
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is MethodInvocation &&
-        e.toSource().replaceAll(" ", "").contains("File(")) {
-      if ((e.toSource().contains("exists(") ||
-              e.toSource().contains("existsSync(")) ==
-          false) {
-        testSmells.add(
-          TestSmell(
-            name: testSmellName,
-            testName: testName,
-            testClass: testClass,
-            code: e.toSource(),
-            codeMD5: Util.md5(e.toSource()),
-            codeTest: codeTest,
-            codeTestMD5: Util.md5(codeTest!),
-            startTest: startTest,
-            endTest: endTest,
-            start: testClass.lineNumber(e.offset),
-            end: testClass.lineNumber(e.end),
-            collumnStart: testClass.columnNumber(e.offset),
-            collumnEnd: testClass.columnNumber(e.end),
-            offset: e.offset,
-            endOffset: e.end,
-          ),
-        );
+    void processNode(AstNode node) {
+      if (node is MethodInvocation) {
+        final nodeSource = node.toSource();
+        final nodeSourceNoSpaces = nodeSource.replaceAll(" ", "");
+
+        if (nodeSourceNoSpaces.contains("File(")) {
+          final hasExistsCheck =
+              nodeSource.contains("exists(") ||
+              nodeSource.contains("existsSync(");
+
+          if (!hasExistsCheck) {
+            testSmells.add(
+              TestSmell(
+                name: testSmellName,
+                testName: testName,
+                testClass: testClass,
+                code: nodeSource,
+                codeMD5: Util.md5(nodeSource),
+                codeTest: codeTest,
+                codeTestMD5: Util.md5(codeTest),
+                startTest: startTest,
+                endTest: endTest,
+                start: testClass.lineNumber(node.offset),
+                end: testClass.lineNumber(node.end),
+                collumnStart: testClass.columnNumber(node.offset),
+                collumnEnd: testClass.columnNumber(node.end),
+                offset: node.offset,
+                endOffset: node.end,
+              ),
+            );
+          }
+          // NÃO processa filhos de MethodInvocation com File()
+          return;
+        }
       }
-    } else {
-      e.childEntities.whereType<AstNode>().forEach(
-        (e) => _detect(e, testClass, testName),
-      );
+
+      // Processa filhos recursivamente
+      for (final child in node.childEntities.whereType<AstNode>()) {
+        processNode(child);
+      }
     }
+
+    processNode(e);
+    return testSmells;
   }
 
   @override

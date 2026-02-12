@@ -1,17 +1,13 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
 class ConditionalTestLogicDetector implements AbstractDetector {
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   get testSmellName => "Conditional Test Logic";
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
 
   @override
   List<TestSmell> detect(
@@ -19,65 +15,32 @@ class ConditionalTestLogicDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is ForElement ||
-        e is ForStatement ||
-        e is IfElement ||
-        e is IfStatement ||
-        e is WhileStatement ||
-        e is SwitchStatement ||
-        (e is SimpleIdentifier && e.name == "forEach")) {
-      testSmells.add(
-        TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.toSource(),
-          codeMD5: Util.md5(e.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
-        ),
-      );
-    }
-    e.childEntities.whereType<AstNode>().forEach(
-      (e) => _detect(e, testClass, testName),
+    final visitor = _ConditionalTestLogicVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
     );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
-
 
   @override
   String getDescription() {
-    return
-        '''
+    return '''
         Test methods need to be simple and execute all statements in the production method. 
         Conditions within the test method will alter the behavior of the test and its expected output, 
         and would lead to situations where the test fails to detect defects in the production method 
         since test statements were not executed as a condition was not met. Furthermore, 
         conditional code within a test method negatively impacts the ease of comprehension by developers.
-        '''
-    ;
+        ''';
   }
-
 
   @override
   String getExample() {
-    return
-        '''
+    return '''
   test("Conditional Test Logic IF1", () => {if (true) {}});//1
   
   test("Conditional Test Logic IF2", () => {if (true) {} else if (false) {}});//2
@@ -114,7 +77,92 @@ class ConditionalTestLogicDetector implements AbstractDetector {
       print(number);
     }
   });
-        '''
-        ;
+        ''';
+  }
+}
+
+class _ConditionalTestLogicVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _ConditionalTestLogicVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitForStatement(ForStatement node) {
+    _addSmell(node);
+    super.visitForStatement(node);
+  }
+
+  @override
+  void visitIfStatement(IfStatement node) {
+    _addSmell(node);
+    super.visitIfStatement(node);
+  }
+
+  @override
+  void visitWhileStatement(WhileStatement node) {
+    _addSmell(node);
+    super.visitWhileStatement(node);
+  }
+
+  @override
+  void visitSwitchStatement(SwitchStatement node) {
+    _addSmell(node);
+    super.visitSwitchStatement(node);
+  }
+
+  @override
+  void visitForElement(ForElement node) {
+    _addSmell(node);
+    super.visitForElement(node);
+  }
+
+  @override
+  void visitIfElement(IfElement node) {
+    _addSmell(node);
+    super.visitIfElement(node);
+  }
+
+  @override
+  void visitSimpleIdentifier(SimpleIdentifier node) {
+    if (node.name == "forEach") {
+      _addSmell(node);
+    }
+    super.visitSimpleIdentifier(node);
+  }
+
+  void _addSmell(AstNode node) {
+    testSmells.add(
+      TestSmell(
+        name: testSmellName,
+        testName: testName,
+        testClass: testClass,
+        code: node.toSource(),
+        codeMD5: Util.md5(node.toSource()),
+        codeTest: codeTest,
+        codeTestMD5: Util.md5(codeTest),
+        startTest: startTest,
+        endTest: endTest,
+        start: testClass.lineNumber(node.offset),
+        end: testClass.lineNumber(node.end),
+        collumnStart: testClass.columnNumber(node.offset),
+        collumnEnd: testClass.columnNumber(node.end),
+        offset: node.offset,
+        endOffset: node.end,
+      ),
+    );
   }
 }

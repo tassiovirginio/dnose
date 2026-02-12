@@ -8,50 +8,50 @@ class DuplicateAssertDetector implements AbstractDetector {
   @override
   get testSmellName => "Duplicate Assert";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   List<TestSmell> detect(
     ExpressionStatement e,
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
+    final codeTest = e.toSource();
+    final startTest = testClass.lineNumber(e.offset);
+    final endTest = testClass.lineNumber(e.end);
+    final testSmells = <TestSmell>[];
 
-  Map<String, List<MethodInvocation>> mapMethodInvocation =
-      <String, List<MethodInvocation>>{};
+    final mapMethodInvocation = <String, List<MethodInvocation>>{};
 
-  List<MethodInvocation> listMethodInvocation = List.empty(growable: true);
+    // Collect all method invocations
+    List<MethodInvocation> collectMethodInvocations(AstNode node) {
+      final result = <MethodInvocation>[];
+      if (node is MethodInvocation) {
+        result.add(node);
+      }
+      for (final child in node.childEntities.whereType<AstNode>()) {
+        result.addAll(collectMethodInvocations(child));
+      }
+      return result;
+    }
 
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    // if( e is MethodInvocation && e.beginToken.toString() == "expect" && e.childEntities.elementAt(1) is ArgumentList){
-    listMethodInvocation.addAll(flow(e));
-    // }
+    final allInvocations = collectMethodInvocations(e);
 
-    for (var item2 in listMethodInvocation) {
-      String item = item2.methodName.name;
-      if (item != "test" && item != "expect") {
-        if (mapMethodInvocation.containsKey(item)) {
-          mapMethodInvocation[item]?.add(item2);
+    for (final invocation in allInvocations) {
+      final methodName = invocation.methodName.name;
+      if (methodName != "test" && methodName != "expect") {
+        if (mapMethodInvocation.containsKey(methodName)) {
+          mapMethodInvocation[methodName]!.add(invocation);
         } else {
-          mapMethodInvocation[item] = List.empty(growable: true);
-          mapMethodInvocation[item]?.add(item2);
+          mapMethodInvocation[methodName] = [invocation];
         }
       }
     }
 
-    for (List<MethodInvocation> items in mapMethodInvocation.values) {
+    // Process duplicates
+    for (final items in mapMethodInvocation.values) {
       if (items.length > 1) {
-        items.removeLast(); //Removendo o ultimo
-        for (var value in items) {
+        // Removendo o ultimo
+        final itemsToMark = items.sublist(0, items.length - 1);
+        for (final value in itemsToMark) {
           testSmells.add(
             TestSmell(
               name: testSmellName,
@@ -60,7 +60,7 @@ class DuplicateAssertDetector implements AbstractDetector {
               code: e.toSource(),
               codeMD5: Util.md5(e.toSource()),
               codeTest: codeTest,
-              codeTestMD5: Util.md5(codeTest!),
+              codeTestMD5: Util.md5(codeTest),
               startTest: startTest,
               endTest: endTest,
               start: testClass.lineNumber(value.offset),
@@ -74,12 +74,13 @@ class DuplicateAssertDetector implements AbstractDetector {
         }
       }
     }
+
+    return testSmells;
   }
 
   @override
   String getDescription() {
-    return
-    '''
+    return '''
     This smell occurs when a test method tests for the same condition multiple times 
     within the same test method. If the test method needs to test the same condition 
     using different values, a new test method should be utilized; the name of the test 
@@ -87,15 +88,12 @@ class DuplicateAssertDetector implements AbstractDetector {
     would give rise to this smell include: (1) developers grouping multiple conditions 
     to test a single method; (2) developers performing debugging activities; and (3) 
     an accidental copy-paste of code.
-    '''
-    ;
+    ''';
   }
-
 
   @override
   String getExample() {
-    return
-        '''
+    return '''
         test("Duplicate Assert1", () { // 2
     expect(sum(1,2), 3, reason: "Verificando o valor");
     expect(sum(1,2), 3, reason: "Verificando o valor");
@@ -134,26 +132,6 @@ class DuplicateAssertDetector implements AbstractDetector {
     expect(sum2(2,2), 4, reason: "Verificando o valor 123");
     expect(sum2(1,3), 4, reason: "Verificando o valor 123");
   });
-        '''
-        ;
+        ''';
   }
-
-
-}
-
-List<MethodInvocation> flow(AstNode e) {
-  List<MethodInvocation> listMethods = List.empty(growable: true);
-
-  if (e is MethodInvocation) {
-    listMethods.add(e);
-  }
-
-  List lista = e.childEntities.toList();
-  for (var e2 in lista) {
-    if (e2 is AstNode) {
-      listMethods.addAll(flow(e2));
-    }
-  }
-
-  return listMethods;
 }

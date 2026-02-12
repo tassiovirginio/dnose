@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -8,48 +9,18 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
   @override
   get testSmellName => "Test Without Description";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   List<TestSmell> detect(AstNode e, TestClass testClass, String testName) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is SimpleStringLiteral &&
-        e.parent is ArgumentList &&
-        e.parent!.parent is MethodInvocation &&
-        e.value.trim().isEmpty &&
-        e.parent!.parent!.toString().contains("test(")) {
-      testSmells.add(TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.parent!.parent!.toSource(),
-          codeMD5: Util.md5(e.parent!.parent!.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end
-      ));
-    } else {
-      e.childEntities
-          .whereType<AstNode>()
-          .forEach((e) => _detect(e, testClass, testName));
-    }
+    final visitor = _TestWithoutDescriptionVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
+    );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
 
   @override
@@ -70,5 +41,55 @@ class TestWithoutDescriptionDetector implements AbstractDetector {
     expect(sum(1, 2)).toBe(3);
     });
     ''';
+  }
+}
+
+class _TestWithoutDescriptionVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _TestWithoutDescriptionVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitSimpleStringLiteral(SimpleStringLiteral node) {
+    final parent = node.parent;
+    if (parent is ArgumentList &&
+        parent.parent is MethodInvocation &&
+        node.value.trim().isEmpty &&
+        parent.parent!.toString().contains("test(")) {
+      testSmells.add(
+        TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
+          code: parent.parent!.toSource(),
+          codeMD5: Util.md5(parent.parent!.toSource()),
+          codeTest: codeTest,
+          codeTestMD5: Util.md5(codeTest),
+          startTest: startTest,
+          endTest: endTest,
+          start: testClass.lineNumber(node.offset),
+          end: testClass.lineNumber(node.end),
+          collumnStart: testClass.columnNumber(node.offset),
+          collumnEnd: testClass.columnNumber(node.end),
+          offset: node.offset,
+          endOffset: node.end,
+        ),
+      );
+    }
+    super.visitSimpleStringLiteral(node);
   }
 }

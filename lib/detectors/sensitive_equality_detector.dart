@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -8,57 +9,22 @@ class SensitiveEqualityDetector implements AbstractDetector {
   @override
   get testSmellName => "Sensitive Equality";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
   List<TestSmell> detect(
     ExpressionStatement e,
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
-
-  int cont = 0;
-  String code_1 = "";
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    //Melhorar - encontrar somente quando setado em uma variável
-    if (e is MethodInvocation) {
-      if (e.childEntities.first is SimpleIdentifier &&
-          e.childEntities.first.toString().trim() == "expect" &&
-          e.childEntities.last.toString().contains(".toString()")) {
-        testSmells.add(
-          TestSmell(
-            name: testSmellName,
-            testName: testName,
-            testClass: testClass,
-            code: e.toSource(),
-            codeMD5: Util.md5(e.toSource()),
-            codeTest: codeTest,
-            codeTestMD5: Util.md5(codeTest!),
-            startTest: startTest,
-            endTest: endTest,
-            start: testClass.lineNumber(e.offset),
-            end: testClass.lineNumber(e.end),
-            collumnStart: testClass.columnNumber(e.offset),
-            collumnEnd: testClass.columnNumber(e.end),
-            offset: e.offset,
-            endOffset: e.end,
-          ),
-        );
-      }
-    }
-    e.childEntities.whereType<AstNode>().forEach(
-      (e) => _detect(e, testClass, testName),
+    final visitor = _SensitiveEqualityVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
     );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
 
   @override
@@ -95,5 +61,57 @@ class SensitiveEqualityDetector implements AbstractDetector {
     expect("TESTE", test.toUpperCase());
   });
     ''';
+  }
+}
+
+class _SensitiveEqualityVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _SensitiveEqualityVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    final firstChild = node.childEntities.firstOrNull;
+    final lastChild = node.childEntities.lastOrNull;
+
+    if (firstChild is SimpleIdentifier &&
+        firstChild.toString().trim() == "expect" &&
+        lastChild != null &&
+        lastChild.toString().contains(".toString()")) {
+      testSmells.add(
+        TestSmell(
+          name: testSmellName,
+          testName: testName,
+          testClass: testClass,
+          code: node.toSource(),
+          codeMD5: Util.md5(node.toSource()),
+          codeTest: codeTest,
+          codeTestMD5: Util.md5(codeTest),
+          startTest: startTest,
+          endTest: endTest,
+          start: testClass.lineNumber(node.offset),
+          end: testClass.lineNumber(node.end),
+          collumnStart: testClass.columnNumber(node.offset),
+          collumnEnd: testClass.columnNumber(node.end),
+          offset: node.offset,
+          endOffset: node.end,
+        ),
+      );
+    }
+    super.visitMethodInvocation(node);
   }
 }

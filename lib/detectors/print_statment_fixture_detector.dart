@@ -1,15 +1,11 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
 class PrintStatmentFixtureDetector implements AbstractDetector {
-  List<TestSmell> testSmells = List.empty(growable: true);
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
   @override
   String get testSmellName => "Print Statment Fixture";
 
@@ -19,49 +15,16 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is SimpleIdentifier &&
-        ((e.name == "print" &&
-                e.parent.toString().contains(".print") == false) ||
-            (e.name == "write" &&
-                (e.parent?.beginToken.toString() == "stdout" ||
-                    e.parent?.beginToken.toString() == "stderr")) ||
-            (e.name == "prints" &&
-                e.parent.toString().contains(".print") == false) ||
-            (e.name == "writeln" &&
-                (e.parent?.beginToken.toString() == "stdout" ||
-                    e.parent?.beginToken.toString() == "stderr"))) &&
-        e.parent is MethodInvocation) {
-      testSmells.add(
-        TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.parent!.toSource(),
-          codeMD5: Util.md5(e.parent!.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
-        ),
-      );
-    }
-    e.childEntities.whereType<AstNode>().forEach(
-      (e) => _detect(e, testClass, testName),
+    final visitor = _PrintStatementVisitor(
+      testClass: testClass,
+      testName: testName,
+      testSmellName: testSmellName,
+      codeTest: e.toSource(),
+      startTest: testClass.lineNumber(e.offset),
+      endTest: testClass.lineNumber(e.end),
     );
+    e.accept(visitor);
+    return visitor.testSmells;
   }
 
   @override
@@ -90,5 +53,68 @@ class PrintStatmentFixtureDetector implements AbstractDetector {
   test("PrintStatmentFixture5", () => {stdout.write("teste3")});
   test("PrintStatmentFixture6", () => {stderr.writeln("teste4")});
     ''';
+  }
+}
+
+class _PrintStatementVisitor extends RecursiveAstVisitor<void> {
+  final TestClass testClass;
+  final String testName;
+  final String testSmellName;
+  final String codeTest;
+  final int startTest;
+  final int endTest;
+
+  final List<TestSmell> testSmells = [];
+
+  _PrintStatementVisitor({
+    required this.testClass,
+    required this.testName,
+    required this.testSmellName,
+    required this.codeTest,
+    required this.startTest,
+    required this.endTest,
+  });
+
+  @override
+  void visitSimpleIdentifier(SimpleIdentifier node) {
+    final parent = node.parent;
+    if (parent is MethodInvocation) {
+      final parentStr = parent.toString();
+      final name = node.name;
+
+      final isPrint = (name == "print" && !parentStr.contains(".print"));
+      final isStdoutWrite =
+          (name == "write" &&
+              (parent.beginToken.toString() == "stdout" ||
+                  parent.beginToken.toString() == "stderr"));
+      final isPrints = (name == "prints" && !parentStr.contains(".print"));
+      final isWriteln =
+          (name == "writeln" &&
+              (parent.beginToken.toString() == "stdout" ||
+                  parent.beginToken.toString() == "stderr"));
+
+      if (isPrint || isStdoutWrite || isPrints || isWriteln) {
+        testSmells.add(
+          TestSmell(
+            name: testSmellName,
+            testName: testName,
+            testClass: testClass,
+            code: parent.toSource(),
+            codeMD5: Util.md5(parent.toSource()),
+            codeTest: codeTest,
+            codeTestMD5: Util.md5(codeTest),
+            startTest: startTest,
+            endTest: endTest,
+            start: testClass.lineNumber(node.offset),
+            end: testClass.lineNumber(node.end),
+            collumnStart: testClass.columnNumber(node.offset),
+            collumnEnd: testClass.columnNumber(node.end),
+            offset: node.offset,
+            endOffset: node.end,
+          ),
+        );
+      }
+    }
+    super.visitSimpleIdentifier(node);
   }
 }

@@ -129,7 +129,7 @@ Handler init() {
   app.get('/getstatistics', () => getStatists());
   app.get('/testsmellsnames', () => DNoseCore.listTestSmellsNames);
 
-  String getDesc(testSmell){
+  String getDesc(testSmell) {
     String description = "";
     for (var _abstractDetector in detectors) {
       if (_abstractDetector.testSmellName == testSmell) {
@@ -140,7 +140,7 @@ Handler init() {
     return description;
   }
 
-  String getExample(testSmell){
+  String getExample(testSmell) {
     String example = "";
     for (var _abstractDetector in detectors) {
       if (_abstractDetector.testSmellName == testSmell) {
@@ -161,7 +161,7 @@ Handler init() {
 
     prompt = prompt.replaceAll("\$tsDescription", description);
     prompt = prompt.replaceAll("\$tsExample", example);
-    
+
     String? resp;
     var content = [ai.Content.text(prompt)];
     final response = await gemini.generateContent(content);
