@@ -170,7 +170,10 @@ List<FileSystemEntity> getFilesFromDirRecursive(String path) {
   return result;
 }
 
-Future<String> processar(String listPathProjects, [List<String>? selectedSmells]) async {
+Future<String> processar(
+  String listPathProjects, [
+  List<String>? selectedSmells,
+]) async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
@@ -182,7 +185,11 @@ Future<String> processar(String listPathProjects, [List<String>? selectedSmells]
 
   for (final project in lista) {
     if (project.trim().isNotEmpty) {
-      var (listaTotal2, listaTotalMetrics2,listaArquivosTestes2) = await _processar(project, selectedSmells);
+      var (
+        listaTotal2,
+        listaTotalMetrics2,
+        listaArquivosTestes2,
+      ) = await _processar(project, selectedSmells);
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
       listaArquivosTestes.addAll(listaArquivosTestes2);
@@ -273,7 +280,9 @@ List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
 }
 
 Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
-    String pathProject, [List<String>? selectedSmells]) async {
+  String pathProject, [
+  List<String>? selectedSmells,
+]) async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
 
   _logger.info("==============================================");
@@ -332,13 +341,18 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
 
       try {
         TestClass testClass = TestClass(
-            commit: commitAtual,
-            path: file.path,
-            moduleAtual: moduleAtual,
-            projectName: projectName);
-        var (testSmells, testMetrics) = dnoseCore.scan(testClass, selectedSmells);
+          commit: commitAtual,
+          path: file.path,
+          moduleAtual: moduleAtual,
+          projectName: projectName,
+        );
+        var (testSmells, testMetrics) = dnoseCore.scan(
+          testClass,
+          selectedSmells,
+        );
 
         //Blame
+        Map<String, BlameLine> fileBlame = blameFile(file.path, pathProject);
 
         for (var ts in testSmells) {
           if (fileBlame.isEmpty == true) continue;

@@ -1,5 +1,5 @@
 [tools]
-dart = "3.9.4"
+dart = "3.11.0"
 
 [env]
 API_KEY_GEMINI=""
