@@ -1,0 +1,72 @@
+/// Oracle Negative: Mystery Guest - CLEAN CODE
+/// This file contains NO external file dependencies - NO smells expected
+/// Expected detections: 0
+
+import 'dart:convert';
+import 'package:test/test.dart';
+
+class User {
+  final int id;
+  final String name;
+  
+  User({required this.id, required this.name});
+  
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(id: json['id'], name: json['name']);
+  }
+}
+
+void main() {
+  // CLEAN: Using string literal for JSON
+  test('parses user from inline JSON', () {
+    final jsonString = '{"id": 1, "name": "John"}';
+    final user = User.fromJson(jsonDecode(jsonString));
+    expect(user.name, equals('John'));
+  });
+
+  // CLEAN: Using Map literal directly
+  test('creates user from map literal', () {
+    final data = {'id': 2, 'name': 'Jane'};
+    final user = User.fromJson(data);
+    expect(user.id, equals(2));
+  });
+
+  // CLEAN: Using setUp to prepare test data
+  group('User validation', () {
+    late Map<String, dynamic> testData;
+    
+    setUp(() {
+      testData = {'id': 3, 'name': 'Bob', 'email': 'bob@test.com'};
+    });
+    
+    test('validates user data', () {
+      expect(testData['email'], contains('@'));
+    });
+  });
+
+  // CLEAN: Using factory method for test data
+  test('uses factory for test data', () {
+    final users = createTestUsers();
+    expect(users.length, equals(3));
+  });
+
+  // CLEAN: Inline list creation
+  test('processes inline list', () {
+    final items = ['apple', 'banana', 'cherry'];
+    expect(items.where((i) => i.startsWith('b')).length, equals(1));
+  });
+
+  // CLEAN: Mock object instead of real file
+  test('uses mock instead of file', () {
+    final mockContent = 'mocked file content';
+    expect(mockContent.isNotEmpty, isTrue);
+  });
+}
+
+List<User> createTestUsers() {
+  return [
+    User(id: 1, name: 'Alice'),
+    User(id: 2, name: 'Bob'),
+    User(id: 3, name: 'Charlie'),
+  ];
+}

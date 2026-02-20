@@ -1,0 +1,73 @@
+/// Oracle Negative: Redundant Assertion - CLEAN CODE
+/// This file contains UNIQUE assertions - NO smells expected
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class Rectangle {
+  final double width;
+  final double height;
+  
+  Rectangle(this.width, this.height);
+  
+  double get area => width * height;
+  double get perimeter => 2 * (width + height);
+  bool get isSquare => width == height;
+}
+
+void main() {
+  // CLEAN: Different assertions on different properties
+  test('rectangle has correct dimensions', () {
+    final rect = Rectangle(4, 5);
+    expect(rect.width, equals(4));
+    expect(rect.height, equals(5));
+  });
+
+  // CLEAN: Testing different calculated values
+  test('rectangle calculates area and perimeter', () {
+    final rect = Rectangle(3, 4);
+    expect(rect.area, equals(12));
+    expect(rect.perimeter, equals(14));
+  });
+
+  // CLEAN: Different matchers for same value
+  test('area is positive and greater than zero', () {
+    final rect = Rectangle(2, 3);
+    expect(rect.area, isPositive);
+    expect(rect.area, greaterThan(0));
+  });
+
+  // CLEAN: Testing boolean with proper assertion
+  test('square detection works correctly', () {
+    final square = Rectangle(5, 5);
+    final rectangle = Rectangle(3, 4);
+    expect(square.isSquare, isTrue);
+    expect(rectangle.isSquare, isFalse);
+  });
+
+  // CLEAN: Multiple objects, same assertion type but different values
+  test('different rectangles have different areas', () {
+    final rect1 = Rectangle(2, 3);
+    final rect2 = Rectangle(4, 5);
+    expect(rect1.area, equals(6));
+    expect(rect2.area, equals(20));
+  });
+
+  // CLEAN: Assertions on list elements
+  test('list contains expected elements', () {
+    final numbers = [1, 2, 3, 4, 5];
+    expect(numbers.first, equals(1));
+    expect(numbers.last, equals(5));
+    expect(numbers.length, equals(5));
+  });
+
+  // CLEAN: Different conditions checked
+  group('Rectangle validation', () {
+    test('validates dimensions are positive', () {
+      final rect = Rectangle(10, 20);
+      expect(rect.width, isPositive);
+      expect(rect.height, isPositive);
+      expect(rect.area, isPositive);
+    });
+  });
+}

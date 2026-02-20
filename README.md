@@ -17,6 +17,7 @@
 
 - [x] **Assertion Roulette**
 - [x] **Conditional Test Logic**
+- [x] **Constructor Initialization**
 - [x] **Dependent Test**
 - [x] **Default Test**
 - [x] **Duplicate Assert**

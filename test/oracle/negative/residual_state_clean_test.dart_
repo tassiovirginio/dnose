@@ -1,0 +1,66 @@
+/// Oracle Negative: Residual State - CLEAN CODE
+/// This file does NOT use disposable objects - NO smells expected
+/// Residual State detects: TextEditingController, StreamController, 
+/// AnimationController, FocusNode, TabController without dispose/close
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class Counter {
+  int value = 0;
+  void increment() => value++;
+  void decrement() => value--;
+  void reset() => value = 0;
+}
+
+class User {
+  final String name;
+  final int age;
+  User(this.name, this.age);
+}
+
+void main() {
+  // CLEAN: Using regular objects that don't need disposal
+  
+  test('Counter starts at zero', () {
+    final counter = Counter();
+    expect(counter.value, equals(0));
+  });
+
+  test('Counter increments correctly', () {
+    final counter = Counter();
+    counter.increment();
+    expect(counter.value, equals(1));
+  });
+
+  test('Counter decrements correctly', () {
+    final counter = Counter();
+    counter.value = 5;
+    counter.decrement();
+    expect(counter.value, equals(4));
+  });
+
+  test('User has correct properties', () {
+    final user = User('Alice', 30);
+    expect(user.name, equals('Alice'));
+    expect(user.age, equals(30));
+  });
+
+  test('List manipulation works correctly', () {
+    final list = <int>[];
+    list.add(1);
+    list.add(2);
+    expect(list.length, equals(2));
+  });
+
+  test('Map operations work correctly', () {
+    final map = <String, int>{};
+    map['one'] = 1;
+    expect(map['one'], equals(1));
+  });
+
+  test('String operations work correctly', () {
+    final text = 'Hello';
+    expect(text.toUpperCase(), equals('HELLO'));
+  });
+}

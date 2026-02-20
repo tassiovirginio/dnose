@@ -1,0 +1,61 @@
+/// Oracle Negative: Default Test - CLEAN CODE
+/// This file contains DESCRIPTIVE test names - NO smells expected
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class Calculator {
+  int add(int a, int b) => a + b;
+  int subtract(int a, int b) => a - b;
+  int multiply(int a, int b) => a * b;
+  double divide(int a, int b) => a / b;
+}
+
+void main() {
+  late Calculator calculator;
+  
+  setUp(() {
+    calculator = Calculator();
+  });
+
+  // CLEAN: Descriptive behavior-based name
+  test('should return sum when adding two positive integers', () {
+    expect(calculator.add(2, 3), equals(5));
+  });
+
+  // CLEAN: Given-When-Then format
+  test('given negative numbers when subtracted then returns correct difference', () {
+    expect(calculator.subtract(-5, -3), equals(-2));
+  });
+
+  // CLEAN: Action-result format
+  test('multiplying zero by any number returns zero', () {
+    expect(calculator.multiply(0, 100), equals(0));
+  });
+
+  // CLEAN: Edge case description
+  test('throws when dividing by zero', () {
+    expect(() => calculator.divide(10, 0), throwsA(anything));
+  });
+
+  // CLEAN: Feature-specific name
+  test('Calculator correctly handles large integer multiplication', () {
+    expect(calculator.multiply(1000, 1000), equals(1000000));
+  });
+
+  // CLEAN: Negative case description
+  test('subtract returns negative when second operand is larger', () {
+    expect(calculator.subtract(3, 5), equals(-2));
+  });
+
+  // CLEAN: Group with descriptive tests
+  group('Division operations', () {
+    test('returns decimal result for non-even division', () {
+      expect(calculator.divide(5, 2), equals(2.5));
+    });
+    
+    test('returns whole number when evenly divisible', () {
+      expect(calculator.divide(10, 2), equals(5.0));
+    });
+  });
+}

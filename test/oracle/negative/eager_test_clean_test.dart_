@@ -1,0 +1,66 @@
+/// Oracle Negative: Eager Test - CLEAN CODE
+/// This file contains FOCUSED tests with single responsibility - NO smells expected
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class UserService {
+  String getUserName(int id) => 'User$id';
+  int getUserAge(int id) => 20 + id;
+  bool isUserActive(int id) => id > 0;
+}
+
+class Calculator {
+  int add(int a, int b) => a + b;
+}
+
+void main() {
+  late UserService userService;
+  
+  setUp(() {
+    userService = UserService();
+  });
+
+  // CLEAN: Single method call, single assertion
+  test('getUserName returns correct name format', () {
+    final name = userService.getUserName(1);
+    expect(name, equals('User1'));
+  });
+
+  // CLEAN: Single method call with related assertions
+  test('getUserAge returns age greater than 20', () {
+    final age = userService.getUserAge(5);
+    expect(age, greaterThan(20));
+  });
+
+  // CLEAN: Testing one behavior
+  test('isUserActive returns true for positive id', () {
+    expect(userService.isUserActive(1), isTrue);
+  });
+
+  // CLEAN: Testing one behavior - negative case
+  test('isUserActive returns false for zero id', () {
+    expect(userService.isUserActive(0), isFalse);
+  });
+
+  // CLEAN: Focused group with related tests
+  group('Calculator add operation', () {
+    late Calculator calc;
+    
+    setUp(() {
+      calc = Calculator();
+    });
+    
+    test('adds positive numbers', () {
+      expect(calc.add(2, 3), equals(5));
+    });
+    
+    test('adds negative numbers', () {
+      expect(calc.add(-2, -3), equals(-5));
+    });
+    
+    test('adds zero', () {
+      expect(calc.add(5, 0), equals(5));
+    });
+  });
+}

@@ -1,0 +1,44 @@
+/// Oracle Negative: ERO (Expected Resolution Omission) - CLEAN CODE
+/// This file contains CORRECT async handling - NO smells expected
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+void main() {
+  // CLEAN: Properly awaited Future
+  test('awaits async operation correctly', () async {
+    final result = await Future.value(42);
+    expect(result, equals(42));
+  });
+
+  // CLEAN: Using expectLater for Future
+  test('uses expectLater for async assertion', () {
+    expectLater(Future.value(10), completion(equals(10)));
+  });
+
+  // CLEAN: Using completes matcher
+  test('uses completes matcher', () {
+    expect(Future.value('done'), completes);
+  });
+
+  // CLEAN: Proper Stream handling with expectLater
+  test('handles stream with expectLater', () {
+    final stream = Stream.fromIterable([1, 2, 3]);
+    expectLater(stream, emitsInOrder([1, 2, 3]));
+  });
+
+  // CLEAN: Async/await with multiple operations
+  test('chains async operations with await', () async {
+    final a = await Future.value(1);
+    final b = await Future.value(2);
+    expect(a + b, equals(3));
+  });
+
+  // CLEAN: Using throwsA for async exceptions
+  test('handles async exception properly', () {
+    expect(
+      Future.error(Exception('error')),
+      throwsA(isA<Exception>()),
+    );
+  });
+}

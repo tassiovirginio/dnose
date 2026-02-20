@@ -1,0 +1,55 @@
+/// Oracle Negative: Lazy Test - CLEAN CODE
+/// This file has each method called only ONE time - NO smells expected
+/// Lazy Test detects when >=2 tests call the SAME production method
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class Calculator {
+  int add(int a, int b) => a + b;
+  int subtract(int a, int b) => a - b;
+  int multiply(int a, int b) => a * b;
+  double divide(int a, int b) => a / b;
+  int power(int base, int exp) => List.filled(exp, base).reduce((a, b) => a * b);
+  int modulo(int a, int b) => a % b;
+}
+
+void main() {
+  late Calculator calc;
+  
+  setUp(() {
+    calc = Calculator();
+  });
+
+  // CLEAN: Each test calls a DIFFERENT method - no duplicates
+  
+  test('add returns correct sum', () {
+    final result = calc.add(2, 3);
+    expect(result, equals(5));
+  });
+
+  test('subtract returns correct difference', () {
+    final result = calc.subtract(10, 4);
+    expect(result, equals(6));
+  });
+
+  test('multiply returns correct product', () {
+    final result = calc.multiply(3, 4);
+    expect(result, equals(12));
+  });
+
+  test('divide returns correct quotient', () {
+    final result = calc.divide(10, 2);
+    expect(result, equals(5.0));
+  });
+
+  test('power calculates correctly', () {
+    final result = calc.power(2, 3);
+    expect(result, equals(8));
+  });
+
+  test('modulo returns remainder', () {
+    final result = calc.modulo(10, 3);
+    expect(result, equals(1));
+  });
+}

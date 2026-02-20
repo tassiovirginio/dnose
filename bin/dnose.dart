@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/detectors/assertion_roulette_detector.dart';
 import 'package:dnose/detectors/conditional_test_logic_detector.dart';
+import 'package:dnose/detectors/constructor_initialization_detector.dart';
 import 'package:dnose/detectors/dependent_test_detector.dart';
 import 'package:dnose/detectors/default_test_detector.dart';
 import 'package:dnose/detectors/duplicate_assert_detector.dart';
@@ -65,6 +66,7 @@ Future<List<String>> listaProjetos() async {
 
 List<AbstractDetector> detectors = [
   ConditionalTestLogicDetector(),
+  ConstructorInitializationDetector(),
   PrintStatmentFixtureDetector(),
   TestWithoutDescriptionDetector(),
   MagicNumberDetector(),
