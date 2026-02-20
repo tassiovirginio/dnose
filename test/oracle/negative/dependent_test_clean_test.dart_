@@ -1,0 +1,71 @@
+/// Oracle Negative: Dependent Test - CLEAN CODE
+/// This file contains ISOLATED tests - NO smells expected
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class Counter {
+  int value = 0;
+  void increment() => value++;
+  void decrement() => value--;
+  void reset() => value = 0;
+}
+
+void main() {
+  // CLEAN: Each test creates its own instance
+  test('counter starts at zero', () {
+    final counter = Counter();
+    expect(counter.value, equals(0));
+  });
+
+  test('increment increases value by one', () {
+    final counter = Counter();
+    counter.increment();
+    expect(counter.value, equals(1));
+  });
+
+  test('decrement decreases value by one', () {
+    final counter = Counter();
+    counter.value = 5;
+    counter.decrement();
+    expect(counter.value, equals(4));
+  });
+
+  // CLEAN: Using setUp for fresh instance
+  group('Counter with setUp', () {
+    late Counter counter;
+    
+    setUp(() {
+      counter = Counter(); // Fresh instance for each test
+    });
+    
+    test('starts at zero after setUp', () {
+      expect(counter.value, equals(0));
+    });
+    
+    test('can increment from zero', () {
+      counter.increment();
+      expect(counter.value, equals(1));
+    });
+    
+    test('can set initial value', () {
+      counter.value = 10;
+      expect(counter.value, equals(10));
+    });
+  });
+
+  // CLEAN: Tests with no shared state dependency
+  group('Isolated calculations', () {
+    test('adds two numbers', () {
+      final a = 5;
+      final b = 3;
+      expect(a + b, equals(8));
+    });
+    
+    test('multiplies two numbers', () {
+      final x = 4;
+      final y = 7;
+      expect(x * y, equals(28));
+    });
+  });
+}

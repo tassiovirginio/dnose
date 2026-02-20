@@ -1,14 +1,49 @@
-// Source - https://stackoverflow.com/q
-// Posted by grepLines, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-12-12, License - CC BY-SA 3.0
+/// Oracle: Default Test - Expanded version matching detector pattern
+/// The detector specifically looks for Flutter's default "Counter increments smoke test"
+/// Each case must use testWidgets with the exact name and pattern
+/// Expected detections: 4
 
- import 'package:flutter_test/flutter_test.dart';
- import 'package:testtest/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
- void main() {
-    testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-     // Build our app and trigger a frame.
-     await tester.pumpWidget(new MyApp());
+void main() {
+  // SMELL 1: Exact default Flutter counter test
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    await tester.pumpWidget(MyApp());
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  // SMELL 2: Same pattern, different variable naming
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    await tester.pumpWidget(MyApp());
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  // SMELL 3: With 'new' keyword (old style)
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    await tester.pumpWidget(new MyApp());
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  // SMELL 4: With additional comments
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -21,5 +56,32 @@
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
- });
- }
+  });
+
+  // NOT A SMELL: Different test name
+  testWidgets('User can increment counter', (WidgetTester tester) async {
+    await tester.pumpWidget(MyApp());
+    expect(find.text('0'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+    expect(find.text('1'), findsOneWidget);
+  });
+
+  // NOT A SMELL: test() instead of testWidgets()
+  test('Counter increments smoke test', () {
+    expect(1 + 1, equals(2));
+  });
+
+  // NOT A SMELL: Custom test with similar structure
+  testWidgets('My counter test', (WidgetTester tester) async {
+    await tester.pumpWidget(MyApp());
+    expect(find.text('0'), findsOneWidget);
+  });
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: Scaffold());
+  }
+}

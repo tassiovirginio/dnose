@@ -143,8 +143,8 @@ void main() {
   test("Detect: Mystery Guest", () {
     verify(
       name: "Mystery Guest",
-      qtd: 1,
-      pathFile: "/test/samples/mystery_guest_test.dart",
+      qtd: 6,
+      pathFile: "/test/oracle/mystery_guest_test.dart_",
     );
   });
 
@@ -167,7 +167,7 @@ void main() {
   test("Detect: Default Test", () {
     verify(
       name: "Default Test",
-      qtd: 1,
+      qtd: 4,
       pathFile: "/test/oracle/default_test.dart_",
     );
   });
@@ -199,7 +199,7 @@ void main() {
   test("Detect: Widget Setup", () {
     verify(
       name: "Widget Setup",
-      qtd: 9,
+      qtd: 6,
       pathFile: "/test/oracle/widget_setup_test.dart_",
     );
   });
@@ -207,8 +207,92 @@ void main() {
   test("Detect: Dependent Test", () {
     verify(
       name: "Dependent Test",
-      qtd: 3,
+      qtd: 2,
       pathFile: "/test/oracle/dependent_test.dart_",
+    );
+  });
+
+  test("Detect: Constructor Initialization", () {
+    verify(
+      name: "Constructor Initialization",
+      qtd: 4,
+      pathFile: "/test/samples/constructor_initialization_test.dart",
+    );
+  });
+
+  // ============================================
+  // NEGATIVE TESTS (Clean code - expect 0 smells)
+  // ============================================
+
+  test("Negative: ERO Clean (expect 0)", () {
+    verify(
+      name: "Expected Resolution Omission",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/ero_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Residual State Clean (expect 0)", () {
+    verify(
+      name: "Residual State",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/residual_state_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Mystery Guest Clean (expect 0)", () {
+    verify(
+      name: "Mystery Guest",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/mystery_guest_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Default Test Clean (expect 0)", () {
+    verify(
+      name: "Default Test",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/default_test_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Dependent Test Clean (expect 0)", () {
+    verify(
+      name: "Dependent Test",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/dependent_test_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Eager Test Clean (expect 0)", () {
+    verify(
+      name: "Eager Test",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/eager_test_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Lazy Test Clean (expect 0)", () {
+    verify(
+      name: "Lazy Test",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/lazy_test_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Redundant Assertion Clean (expect 0)", () {
+    verify(
+      name: "Redundant Assertion",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/redundant_assertion_clean_test.dart_",
+    );
+  });
+
+  test("Negative: Widget Setup Clean (expect 0)", () {
+    verify(
+      name: "Widget Setup",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/widget_setup_clean_test.dart_",
     );
   });
 }

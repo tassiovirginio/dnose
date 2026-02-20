@@ -1,0 +1,107 @@
+/// Oracle Negative: Widget Setup - CLEAN CODE
+/// This file contains VALID widget test patterns - NO smells expected
+/// Widget Setup only occurs with inline duplicated widget trees
+/// Expected detections: 0
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+// Helper factory method - encapsulates widget creation
+Widget buildGrid({required List<String> columns, required List<String> rows}) {
+  return MaterialApp(
+    home: Scaffold(
+      body: Column(children: columns.map((c) => Text(c)).toList()),
+    ),
+  );
+}
+
+Widget buildTestWidget(String text) {
+  return MaterialApp(
+    home: Scaffold(body: Text(text)),
+  );
+}
+
+void main() {
+  // NOT A SMELL: Using factory method (buildGrid)
+  // Different tests exercising different behaviors via factory
+  testWidgets('renders grid columns', (WidgetTester tester) async {
+    await tester.pumpWidget(buildGrid(columns: ['A', 'B'], rows: ['1']));
+    expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('renders grid with filter >', (WidgetTester tester) async {
+    await tester.pumpWidget(buildGrid(columns: ['C', 'D'], rows: ['2']));
+    expect(find.text('C'), findsOneWidget);
+  });
+
+  testWidgets('renders grid with filter >=', (WidgetTester tester) async {
+    await tester.pumpWidget(buildGrid(columns: ['E'], rows: ['3']));
+    expect(find.text('E'), findsOneWidget);
+  });
+
+  // NOT A SMELL: Using helper function (buildTestWidget)
+  testWidgets('helper function test 1', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget('Hello'));
+    expect(find.text('Hello'), findsOneWidget);
+  });
+
+  testWidgets('helper function test 2', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget('World'));
+    expect(find.text('World'), findsOneWidget);
+  });
+
+  testWidgets('helper function test 3', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestWidget('Test'));
+    expect(find.text('Test'), findsOneWidget);
+  });
+
+  // NOT A SMELL: Using local variable reference
+  testWidgets('local variable widget 1', (WidgetTester tester) async {
+    final widget = MaterialApp(home: Scaffold(body: Text('Local 1')));
+    await tester.pumpWidget(widget);
+    expect(find.text('Local 1'), findsOneWidget);
+  });
+
+  testWidgets('local variable widget 2', (WidgetTester tester) async {
+    final widget = MaterialApp(home: Scaffold(body: Text('Local 2')));
+    await tester.pumpWidget(widget);
+    expect(find.text('Local 2'), findsOneWidget);
+  });
+
+  testWidgets('local variable widget 3', (WidgetTester tester) async {
+    final widget = MaterialApp(home: Scaffold(body: Text('Local 3')));
+    await tester.pumpWidget(widget);
+    expect(find.text('Local 3'), findsOneWidget);
+  });
+
+  // NOT A SMELL: Structurally different widgets
+  testWidgets('different structure A', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(home: Scaffold(body: Text('Different A'))),
+    );
+    expect(find.text('Different A'), findsOneWidget);
+  });
+
+  testWidgets('different structure B', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(children: [Text('Different B')]),
+        ),
+      ),
+    );
+    expect(find.text('Different B'), findsOneWidget);
+  });
+
+  testWidgets('different structure C', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: Text('Bar')),
+          body: Container(child: Text('Different C')),
+        ),
+      ),
+    );
+    expect(find.text('Different C'), findsOneWidget);
+  });
+}

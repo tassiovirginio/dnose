@@ -49,7 +49,28 @@ class WidgetSetupDetector implements AbstractDetector {
     
     Expression widgetArg = pumpWidgetCall.argumentList.arguments.first;
     
-    String pattern = _normalizeWidgetStructure(widgetArg);
+    // If the argument is a variable reference, skip it
+    if (widgetArg is SimpleIdentifier ||
+        widgetArg is PrefixedIdentifier) {
+      return null;
+    }
+    
+    // If it's a MethodInvocation, check if it's a constructor (PascalCase)
+    // or a factory/helper function (camelCase)
+    // Without 'new' keyword, Dart parser treats constructors as MethodInvocation
+    if (widgetArg is MethodInvocation) {
+      String methodName = widgetArg.methodName.name;
+      // Factory/helper functions start with lowercase (e.g., buildGrid, createWidget)
+      if (methodName.isNotEmpty && methodName[0] == methodName[0].toLowerCase()) {
+        return null; // This is a factory/helper function — NOT inline widget tree
+      }
+      // PascalCase = constructor (e.g., MaterialApp, MyWidget) — continue to normalize
+    }
+    
+    String? pattern = _normalizeWidgetStructure(widgetArg);
+    
+    // Reject if normalization returned LOCAL_REF or null
+    if (pattern == null || pattern == 'LOCAL_REF') return null;
     
     return pattern;
   }
@@ -69,21 +90,36 @@ class WidgetSetupDetector implements AbstractDetector {
     return null;
   }
 
-  static String _normalizeWidgetStructure(Expression expr) {
+  static String? _normalizeWidgetStructure(Expression expr) {
     if (expr is InstanceCreationExpression) {
       String typeName = expr.constructorName.type.toString();
       
       List<String> childPatterns = [];
+      bool hasLocalReference = false;
       
       for (var arg in expr.argumentList.arguments) {
         if (arg is NamedExpression) {
           String argName = arg.name.label.name;
-          String argValue = _normalizeWidgetStructure(arg.expression);
+          String? argValue = _normalizeWidgetStructure(arg.expression);
+          // If child has a local reference, mark it
+          if (argValue == null || argValue == 'LOCAL_REF') {
+            hasLocalReference = true;
+            continue;
+          }
           childPatterns.add('$argName:$argValue');
         } else {
-          String argValue = _normalizeWidgetStructure(arg);
+          String? argValue = _normalizeWidgetStructure(arg);
+          // If child has a local reference, mark it
+          if (argValue == null || argValue == 'LOCAL_REF') {
+            hasLocalReference = true;
+            continue;
+          }
           childPatterns.add(argValue);
         }
+      }
+      
+      if (hasLocalReference) {
+        return null;
       }
       
       if (childPatterns.isEmpty) {
@@ -100,6 +136,42 @@ class WidgetSetupDetector implements AbstractDetector {
     
     if (expr is FunctionExpression) {
       return 'Function';
+    }
+    
+
+    if (expr is SimpleIdentifier) {
+      return 'LOCAL_REF';
+    }
+    
+    if (expr is PrefixedIdentifier) {
+      return 'LOCAL_REF';
+    }
+    
+    // MethodInvocation inside inline widget tree = widget constructor (e.g. Text(), Icon())
+    // In static AST without type resolution, constructors are parsed as MethodInvocation.
+    // Top-level factory calls like buildGrid() are already filtered in _extractSetupPattern.
+    if (expr is MethodInvocation) {
+      String methodName = expr.methodName.name;
+      
+      List<String> childPatterns = [];
+      for (var arg in expr.argumentList.arguments) {
+        if (arg is NamedExpression) {
+          String argName = arg.name.label.name;
+          String? argValue = _normalizeWidgetStructure(arg.expression);
+          if (argValue == null || argValue == 'LOCAL_REF') continue;
+          childPatterns.add('$argName:$argValue');
+        } else {
+          String? argValue = _normalizeWidgetStructure(arg);
+          if (argValue == null || argValue == 'LOCAL_REF') continue;
+          childPatterns.add(argValue);
+        }
+      }
+      
+      if (childPatterns.isEmpty) {
+        return methodName;
+      }
+      childPatterns.sort();
+      return '$methodName(${childPatterns.join(',')})';
     }
     
     return expr.runtimeType.toString();
