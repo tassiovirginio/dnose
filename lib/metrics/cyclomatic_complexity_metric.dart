@@ -11,6 +11,7 @@ class CyclomaticComplexityMetric implements AbstractMetric {
     TestClass testClass,
     String testName,
   ) {
+    cont = 0;
     _calculate(e);
 
     TestMetric testMetric = TestMetric(
@@ -42,6 +43,11 @@ class CyclomaticComplexityMetric implements AbstractMetric {
         e is WhileStatement ||
         e is YieldStatement) {
       cont++;
+    } else if (e is BinaryExpression) {
+      final operator = e.operator.lexeme;
+      if (operator == '&&' || operator == '||' || operator == '??') {
+        cont++;
+      }
     }
     e.childEntities.whereType<AstNode>().forEach((e) => _calculate(e));
   }

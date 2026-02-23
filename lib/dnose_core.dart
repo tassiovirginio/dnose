@@ -28,6 +28,7 @@ import 'package:dnose/detectors/widget_setup_detector.dart';
 import 'package:dnose/metrics/abstract_metric.dart';
 import 'package:dnose/metrics/cyclomatic_complexity_metric.dart';
 import 'package:dnose/metrics/lines_of_code_metric.dart';
+import 'package:dnose/metrics/logical_lines_of_code_metric.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
@@ -125,7 +126,11 @@ class DNoseCore {
 
   /// Creates the list of metrics once.
   List<AbstractMetric> _createMetrics() {
-    return [LinesOfCodeMetric(), CyclomaticComplexityMetric()];
+    return [
+      LinesOfCodeMetric(),
+      CyclomaticComplexityMetric(),
+      LogicalLinesOfCodeMetric(),
+    ];
   }
 
   List<TestMetric> calculeTestMetrics(
@@ -138,6 +143,7 @@ class DNoseCore {
     List<AbstractMetric> metrics = [
       LinesOfCodeMetric(),
       CyclomaticComplexityMetric(),
+      LogicalLinesOfCodeMetric(),
     ];
 
     for (var m in metrics) {
