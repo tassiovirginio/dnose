@@ -34,7 +34,7 @@ class DnoseTui {
   static const int _maxDetections = 5;
 
   // ── Dashboard dimensions ──
-  static const int _barWidth = 30;
+  static const int _barWidth = 22;
   static const int _boxInner = 62; // visible columns between ║ and ║
   static int _renderedLines = 0;
 
