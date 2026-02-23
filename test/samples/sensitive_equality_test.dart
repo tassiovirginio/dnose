@@ -6,12 +6,10 @@ void main() {
     expect("teste", test.toString());
   });
 
-
   test("Sensitive Equality2", () {
     String test = "teste";
     expect("teste", test.toString());
   });
-
 
   test("Sensitive Equality3", () {
     String test = "teste";

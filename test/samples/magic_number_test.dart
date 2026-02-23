@@ -18,19 +18,21 @@ void main() {
   });
 
   test(
-      "Magic Number6", //3
-      () => {
-            for (int i = 0; i < 10; i++)
-              {expect((1 + 1), 2, reason: "Verificando o valor")}
-          });
+    "Magic Number6", //3
+    () => {
+      for (int i = 0; i < 10; i++)
+        {expect((1 + 1), 2, reason: "Verificando o valor")},
+    },
+  );
 
   test(
-      "Magic Number7", //5
-      () => {
-            if (1 == 1)
-              {
-                for (int i = 0; i < 10; i++)
-                  {expect((1 + 1), 2, reason: "Verificando o valor")}
-              }
-          });
+    "Magic Number7", //5
+    () => {
+      if (1 == 1)
+        {
+          for (int i = 0; i < 10; i++)
+            {expect((1 + 1), 2, reason: "Verificando o valor")},
+        },
+    },
+  );
 }

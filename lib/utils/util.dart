@@ -14,7 +14,6 @@ Future<void> main() async {
 
   // print('Quantidade de arquivos com sufixo _test.dart: $count');
 
-
   print(Util.date("1722036893 -0700"));
 }
 
@@ -43,10 +42,14 @@ class Util {
   }
 
   static String date(String timestampGmt) {
-
     int timestamp = timestampGmt.trim().split(" ").first.toInt();
-    double gmt = (timestampGmt.trim().split(" ").last.toInt())/100;// Timestamp Unix em segundos
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000, isUtc: true);
+    double gmt =
+        (timestampGmt.trim().split(" ").last.toInt()) /
+        100; // Timestamp Unix em segundos
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      timestamp * 1000,
+      isUtc: true,
+    );
 
     // Ajuste para o fuso horário +0200
     print(gmt.toInt());
@@ -57,5 +60,4 @@ class Util {
 
     return formattedDate;
   }
-
 }

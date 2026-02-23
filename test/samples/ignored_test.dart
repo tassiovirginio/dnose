@@ -5,32 +5,31 @@ void main() {
     //1
     //Test Logic
     expect(1 + 2, 3);
-  }, skip:        true);
+  }, skip: true);
 
   test("Some Test2", () async {
     //1
     //Test Logic
     expect(1 + 2, 3);
-  }, skip:         "Message Ignore");
-
+  }, skip: "Message Ignore");
 
   test("Some Test3", () async {
     //1
     //Test Logic
     expect(1 + 2, 3);
-  }, skip:         "");
+  }, skip: "");
 
   test("Some Test4", () async {
     //1
     //Test Logic
     expect(1 + 2, 3);
-  }, skip:         "     ");
+  }, skip: "     ");
 
   test("Some Other Test1", () async {
     //0
     //Test Logic
     expect(1 + 2, 3);
-  }, skip:     false);
+  }, skip: false);
 
   test("Some Other Test2", () async {
     //0

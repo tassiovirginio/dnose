@@ -33,7 +33,9 @@ class Progresso {
 
     if (_coresDisponiveis) {
       _limparLinha();
-      stdout.write('\r\x1B[36m$project\x1B[0m [\x1B[32m$_barra\x1B[0m$espacos] $porcentagem');
+      stdout.write(
+        '\r\x1B[36m$project\x1B[0m [\x1B[32m$_barra\x1B[0m$espacos] $porcentagem',
+      );
     } else {
       _limparLinha();
       stdout.write('\r$project [$_barra$espacos] $porcentagem');

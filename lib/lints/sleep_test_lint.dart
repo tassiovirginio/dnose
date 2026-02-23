@@ -7,7 +7,7 @@ class SleepTestLint extends DartLintRule {
     "test",
     "testWidgets",
     "testWithGame",
-    "isarTest"
+    "isarTest",
   };
 
   static const valueMaxLineVerbose = 30;
@@ -39,5 +39,4 @@ class SleepTestLint extends DartLintRule {
       reporter.atNode(node, code);
     }
   }
-
 }

@@ -7,9 +7,8 @@ class UnknownTestLint extends DartLintRule {
     "test",
     "testWidgets",
     "testWithGame",
-    "isarTest"
+    "isarTest",
   };
-
 
   UnknownTestLint() : super(code: _code);
 
@@ -40,5 +39,4 @@ class UnknownTestLint extends DartLintRule {
       reporter.atNode(node, code);
     }
   }
-
 }

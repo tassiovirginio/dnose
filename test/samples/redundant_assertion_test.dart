@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 
-
 class Cosa {
   final String name;
   Cosa(this.name);
@@ -19,14 +18,14 @@ class User {
 class MapState {
   final Map<String, dynamic> data;
   MapState(this.data);
-  
+
   static MapState empty() => MapState({});
-  
+
   @override
   bool operator ==(Object other) =>
-    identical(this, other) ||
-    other is MapState && data.toString() == other.data.toString();
-  
+      identical(this, other) ||
+      other is MapState && data.toString() == other.data.toString();
+
   @override
   int get hashCode => data.hashCode;
 }
@@ -50,7 +49,6 @@ class FooViewModel {
 
 void main() {
   group('Case 1: Tautological Comparisons', () {
-    
     // DEVE DETECTAR: Compara a mesma coisa
     test('SMELL: Tautology - MapState.empty()', () {
       expect(MapState.empty(), MapState.empty());
@@ -76,7 +74,6 @@ void main() {
   });
 
   group('Case 2: Obvious Literals', () {
-    
     // DEVE DETECTAR: Literais idênticos
     test('SMELL: Obvious literal - expect(2, 2)', () {
       expect(2, 2);
@@ -116,7 +113,6 @@ void main() {
   });
 
   group('Case 3: Always True Assertions', () {
-    
     // DEVE DETECTAR: expect(true, qualquerCoisa)
     test('SMELL: Always true - expect(true, isTrue)', () {
       expect(true, isTrue);
@@ -155,16 +151,13 @@ void main() {
     });
   });
 
-
   group('Case 4: Immediate Assignment Check', () {
-    
     // DEVE DETECTAR: Atribui e verifica != null imediatamente
     test('SMELL: Immediate assignment - result != null', () {
       final sut = FooViewModel();
       var result = sut.mainFoo;
       expect(result != null, true);
     });
-
 
     // DEVE DETECTAR: Atribui propriedade e verifica
     test('SMELL: Immediate assignment - property check', () {
@@ -198,18 +191,19 @@ void main() {
     // NÃO DEVE DETECTAR: Método pode retornar null
     test('VALID: Method that can return null', () {
       final list = <String>[];
-      var result = list.firstWhere((e) => e == "test", orElse: () => null as String);
+      var result = list.firstWhere(
+        (e) => e == "test",
+        orElse: () => null as String,
+      );
       expect(result, isNull);
     });
   });
 
-
-// ============================================================================
-// CASO 5: CONSTRUTOR SIMPLES + isNotNull
-// ============================================================================
+  // ============================================================================
+  // CASO 5: CONSTRUTOR SIMPLES + isNotNull
+  // ============================================================================
 
   group('Case 5: Constructor Null Check', () {
-    
     // DEVE DETECTAR: Construtor simples + isNotNull
     test('SMELL: Constructor null check - simple', () {
       var item = Cosa("Towel");
@@ -227,7 +221,6 @@ void main() {
       var cosa = Cosa("Test");
       expect(cosa != null, true);
     });
-
 
     // NÃO DEVE DETECTAR: Construtor COM validação
     test('VALID: Constructor with validation', () {
@@ -255,13 +248,12 @@ void main() {
           return null;
         }
       }
-      
+
       var result = parseValue("abc");
       expect(result, isNull);
     });
   });
   group('Case 6: Edge Cases and Mixed Scenarios', () {
-    
     // DEVE DETECTAR: Múltiplos problemas - tautologia + literal
     test('SMELL: Multiple issues', () {
       expect(2, 2);
@@ -302,9 +294,8 @@ void main() {
   });
 
   group('Case 7: Not Redundant (Other smells)', () {
-    
     // Estes NÃO são Redundant Assertion, mas podem ser outros smells:
-    
+
     // Duplicate Assert (não Redundant!)
     test('NOT REDUNDANT: This is Duplicate Assert smell', () {
       final calc = Calculator();

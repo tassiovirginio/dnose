@@ -19,7 +19,6 @@ late int safeCounter;
 late String safeMessage;
 
 void main() {
-  
   // setUp reseta apenas algumas variáveis
   setUp(() {
     safeCounter = 0;

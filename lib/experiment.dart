@@ -14,11 +14,11 @@ extension NumberParsing2 on AstNode {
   }
 }
 
-CompilationUnit ast = parseFile(
-    path:
-    '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
-    featureSet: FeatureSet.latestLanguageVersion())
-    .unit;
+CompilationUnit ast =
+    parseFile(
+      path: '/home/tassio/Desenvolvimento/dart/dnose/test/oraculo_test.dart',
+      featureSet: FeatureSet.latestLanguageVersion(),
+    ).unit;
 
 void main(List<String> args) {
   detectar01(ast);
@@ -39,13 +39,11 @@ void detectar01(var astnode) {
 
     // if (astnode is SetOrMapLiteral && astnode.toString().replaceAll(" ", "") == "{}"
     // && astnode.parent!.parent!.parent!.parent!.childEntities.first.toString() == "test"){
-    if (astnode is NamedExpression && astnode.parent is ArgumentList
-        && astnode.toString().contains("skip: true")
-        ){
-
+    if (astnode is NamedExpression &&
+        astnode.parent is ArgumentList &&
+        astnode.toString().contains("skip: true")) {
       // int start = lineNumber(astnode.parent!.offset);
       // int end = lineNumber(astnode.parent!.end);
-
 
       print("Linha start: ${lineNumber(astnode.parent!.offset)}");
       print("Linha end: ${astnode.parent!.end.lineNumber}");
@@ -62,7 +60,9 @@ void detectar01(var astnode) {
       print("4 => ${astnode.parent!.parent!.parent.runtimeType}");
       print("5 => ${astnode.parent!.parent!.parent!.parent}");
       print("5 => ${astnode.parent!.parent!.parent!.parent.runtimeType}");
-      print("6 => ${astnode.parent!.parent!.parent!.parent!.childEntities.first}");
+      print(
+        "6 => ${astnode.parent!.parent!.parent!.parent!.childEntities.first}",
+      );
       // print("X => " + astnode.root.runtimeType.toString());
     }
 
@@ -70,10 +70,10 @@ void detectar01(var astnode) {
       print(astnode.runtimeType);
       print(astnode.toSource());
       // print(element.offset);
-          // print(element.end);
-          // print(element.length);
-          // print(element.toSource());
-          // print(element.toString());
+      // print(element.end);
+      // print(element.length);
+      // print(element.toSource());
+      // print(element.toString());
       print("---------------------------------------------------");
     }
   }
@@ -87,4 +87,3 @@ void detectar01(var astnode) {
   }
 }
 //     astnode.childEntities.forEach((element) {
-

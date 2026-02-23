@@ -6,5 +6,8 @@ mixin AbstractMetric {
   String get metricName;
 
   TestMetric calculate(
-      ExpressionStatement e, TestClass testClass, String testName);
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  );
 }

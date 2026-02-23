@@ -4,12 +4,16 @@ void main() {
   test("AssertionRoulet1", () {
     // 0
     expect(1 + 2, 3, reason: "Verificando o valor");
-    expect(1 + 2, 3, reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
+    expect(
+      1 + 2,
+      3,
+      reason: "Teste",
+    ); //Melhorar a detecção para pegar esse tipo de erro
     expect(1 + 2, 3);
   });
 
   test("AssertionRoulet2", () {
-    // 0 
+    // 0
     expect(1 + 2, 3, reason: "Verificando o valor");
     expect(1 + 2, 3, reason: "Verificando o valor");
     expect(1 + 2, 3, reason: "Verificando o valor");
@@ -18,14 +22,22 @@ void main() {
   test("AssertionRoulet3", () {
     // 1
     expect(1 + 2, 3);
-    expect(1 + 2, 3,reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
+    expect(
+      1 + 2,
+      3,
+      reason: "Teste",
+    ); //Melhorar a detecção para pegar esse tipo de erro
     expect(1 + 2, 3);
   });
 
   test("AssertionRoulet4", () {
     // 0
     expect(1 + 2, 3);
-    expect(1 + 2, 3, reason: "Teste"); //Melhorar a detecção para pegar esse tipo de erro
+    expect(
+      1 + 2,
+      3,
+      reason: "Teste",
+    ); //Melhorar a detecção para pegar esse tipo de erro
   });
 
   test("AssertionRoulet5", () {

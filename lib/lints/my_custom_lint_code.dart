@@ -18,8 +18,7 @@ class MyCustomLintCode extends DartLintRule {
     CustomLintContext context,
   ) {
     // Our lint will highlight all variable declarations with our custom warning.
-    context.registry.addVariableDeclaration(
-      (node) {
+    context.registry.addVariableDeclaration((node) {
       // "node" exposes metadata about the variable declaration. We could
       // check "node" to show the lint only in some conditions.
 
@@ -28,9 +27,7 @@ class MyCustomLintCode extends DartLintRule {
       reporter.atNode(node, code);
     });
 
-
-    context.registry.addAnnotation(
-      (node) {
+    context.registry.addAnnotation((node) {
       reporter.atNode(node, code);
     });
   }

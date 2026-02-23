@@ -88,7 +88,7 @@ List<AbstractDetector> detectors = [
   ExpectedResolutionOmissionDetector(),
   MysteryGuestDetector(),
   RedundantAssertionDetector(),
-  DependentTestDetector()
+  DependentTestDetector(),
 ];
 
 void main() async {

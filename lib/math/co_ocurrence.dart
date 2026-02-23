@@ -15,18 +15,17 @@ void main() async {
     // Imprime cada linha do arquivo
     for (var line in lines) {
       // print(line);
-      if(cont > 0){
+      if (cont > 0) {
         final path = line.split(",")[0];
         final testsmell = line.split(",")[1];
         pathToSmells.putIfAbsent(path, () => []).add(testsmell);
-      }else{
+      } else {
         cont++;
       }
     }
   } catch (e) {
     print('Erro ao ler o arquivo: $e');
   }
-
 
   // print(pathToSmells);
 
@@ -45,7 +44,8 @@ void main() async {
     for (var smell1 in smells) {
       for (var smell2 in smells) {
         if (smell1 != smell2) {
-          coOccurrence[smell1]![smell2] = (coOccurrence[smell1]![smell2] ?? 0) + 1;
+          coOccurrence[smell1]![smell2] =
+              (coOccurrence[smell1]![smell2] ?? 0) + 1;
         }
       }
     }

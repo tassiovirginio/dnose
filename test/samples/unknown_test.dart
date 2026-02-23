@@ -8,23 +8,22 @@ void main() {
 
   test("UnknownTest2", () {
     print("teste");
-    if(true){
+    if (true) {
       print("teste");
     }
   });
 
   test("UnknownTest3", () {
     print("teste");
-    if(true){
+    if (true) {
       print("teste");
     }
     expect(1, 1, reason: "teste");
   });
 
-
   test("UnknownTest4", () {
     print("teste");
-    if(true){
+    if (true) {
       print("teste");
     }
     // expect(1, 1, reason: "teste");

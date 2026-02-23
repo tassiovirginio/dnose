@@ -6,7 +6,7 @@
 //   final model = ia.GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
 //   final prompt = '''
-  
+
 //   Encontrei um test smells "Assertion Roulette" no código que vou te passar. Você poderia me dar uma solução de correção para esse problema?
 
 // Código: testWidgets('Spot check French', (WidgetTester tester) async {
@@ -24,9 +24,6 @@
 //     expect(localizations.timerPickerMinute(10), '10');
 //   });
 
-
-  
-  
 //   ''';
 
 //   final content = [ia.Content.text(prompt)];

@@ -7,7 +7,7 @@ class EmptyTestLint extends DartLintRule {
     "test",
     "testWidgets",
     "testWithGame",
-    "isarTest"
+    "isarTest",
   };
 
   EmptyTestLint() : super(code: _code);
@@ -32,14 +32,13 @@ class EmptyTestLint extends DartLintRule {
   }
 
   void verifyTestSmell(node, reporter) {
-    if ( node.childEntities.first.toString() == "test" 
+    if (node.childEntities.first.toString() == "test"
     // &&
-          // (node.toString().replaceAll(" ", "") == "()=>{}" ||
-          //     node.toString().replaceAll(" ", "") == "{}" ||
-          //     node.toString().replaceAll(" ", "") == "(){}")
-              ) {
-        reporter.atNode(node, code);
-      }
+    // (node.toString().replaceAll(" ", "") == "()=>{}" ||
+    //     node.toString().replaceAll(" ", "") == "{}" ||
+    //     node.toString().replaceAll(" ", "") == "(){}")
+    ) {
+      reporter.atNode(node, code);
+    }
   }
-
 }

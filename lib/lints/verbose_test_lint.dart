@@ -8,7 +8,7 @@ class VerboseTestLint extends DartLintRule {
     "test",
     "testWidgets",
     "testWithGame",
-    "isarTest"
+    "isarTest",
   };
 
   static const valueMaxLineVerbose = 30;
@@ -29,8 +29,10 @@ class VerboseTestLint extends DartLintRule {
     context.registry.addExpressionStatement((node) {
       if (node.beginToken.type == TokenType.IDENTIFIER &&
           listTestNames.contains(node.beginToken.toString())) {
-        int start =
-            lineNumber(node.root as CompilationUnit, node.parent!.offset);
+        int start = lineNumber(
+          node.root as CompilationUnit,
+          node.parent!.offset,
+        );
         int end = lineNumber(node.root as CompilationUnit, node.parent!.end);
 
         if (end - start > valueMaxLineVerbose) {

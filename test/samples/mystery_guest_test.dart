@@ -10,10 +10,7 @@ class Gift {
   Gift({required this.id, required this.name});
 
   factory Gift.fromJson(Map<String, dynamic> json) {
-    return Gift(
-      id: json['id'] as int,
-      name: json['name'] as String,
-    );
+    return Gift(id: json['id'] as int, name: json['name'] as String);
   }
 }
 
@@ -29,21 +26,24 @@ void main() {
 
   group('User Profile Test', () {
     test('User Profile with Mystery Guest', () {
-      final userProfile = fetchUserProfile();  // Depende de um usuário "Alice" configurado externamente
+      final userProfile =
+          fetchUserProfile(); // Depende de um usuário "Alice" configurado externamente
       expect(userProfile.name, equals("Alice"));
     });
   });
 
   group('Database Test', () {
     test('Database query test', () {
-      final data = queryDatabase('SELECT * FROM users WHERE id = 1');  // Depende de banco de dados externo
+      final data = queryDatabase(
+        'SELECT * FROM users WHERE id = 1',
+      ); // Depende de banco de dados externo
       expect(data.isNotEmpty, true);
     });
   });
 
   group('API Test', () {
     test('API call test', () {
-      final response = callExternalAPI('/users/1');  // Depende de API externa
+      final response = callExternalAPI('/users/1'); // Depende de API externa
       expect(response.statusCode, 200);
     });
   });
@@ -71,7 +71,9 @@ class UserProfile {
 
 List<Map<String, dynamic>> queryDatabase(String query) {
   // Simula uma consulta ao banco de dados
-  return [{'id': 1, 'name': 'Alice'}];
+  return [
+    {'id': 1, 'name': 'Alice'},
+  ];
 }
 
 class APIResponse {

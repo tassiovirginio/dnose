@@ -74,7 +74,10 @@ void main() {
   });
 
   test('CORRECT8: await on actual Future', () async {
-    expect(await Future.delayed(Duration(milliseconds: 1), () => 42), equals(42)); // ✓ CORRETO
+    expect(
+      await Future.delayed(Duration(milliseconds: 1), () => 42),
+      equals(42),
+    ); // ✓ CORRETO
   });
 
   test('CORRECT9: await on int literal does not compile', () async {

@@ -3,7 +3,6 @@ import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
-import 'package:dnose/utils/util.dart';
 
 class UnknownTestDetector extends AbstractDetector {
   @override
