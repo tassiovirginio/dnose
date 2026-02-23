@@ -9,7 +9,7 @@ import 'package:dnose/models/test_metric.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/blame.dart';
 import 'package:dnose/utils/git_log.dart';
-import 'package:dnose/utils/progresso.dart';
+import 'package:dnose/utils/tui.dart';
 import 'package:logging/logging.dart';
 import 'package:process_run/shell.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -179,22 +179,24 @@ Future<String> processar(
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  var lista = listPathProjects.split(";");
+  var lista =
+      listPathProjects.split(";").where((p) => p.trim().isNotEmpty).toList();
 
   var file = File('${dirResults.path}/commits.csv');
   if (file.existsSync()) file.deleteSync();
 
+  DnoseTui.init(totalProjects: lista.length);
+
   for (final project in lista) {
-    if (project.trim().isNotEmpty) {
-      var (
-        listaTotal2,
-        listaTotalMetrics2,
-        listaArquivosTestes2,
-      ) = await _processar(project, selectedSmells);
-      listaTotal.addAll(listaTotal2);
-      listaTotalMetrics.addAll(listaTotalMetrics2);
-      listaArquivosTestes.addAll(listaArquivosTestes2);
-    }
+    var (
+      listaTotal2,
+      listaTotalMetrics2,
+      listaArquivosTestes2,
+    ) = await _processar(project, selectedSmells);
+    listaTotal.addAll(listaTotal2);
+    listaTotalMetrics.addAll(listaTotalMetrics2);
+    listaArquivosTestes.addAll(listaArquivosTestes2);
+    DnoseTui.projectCompleted();
   }
 
   await createCSV(listaTotal);
@@ -207,7 +209,7 @@ Future<String> processar(
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
-  Progresso.finalizado();
+  DnoseTui.finish();
 
   return "OK";
 }
@@ -217,10 +219,12 @@ Future<String> processarAll() async {
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
 
-  final directories = dirProjects.listSync().whereType<Directory>();
+  final directories = dirProjects.listSync().whereType<Directory>().toList();
 
   var file = File('${dirResults.path}/commits.csv');
   if (file.existsSync()) file.deleteSync();
+
+  DnoseTui.init(totalProjects: directories.length);
 
   for (final folder in directories) {
     try {
@@ -236,6 +240,7 @@ Future<String> processarAll() async {
     } catch (e) {
       print(e);
     }
+    DnoseTui.projectCompleted();
   }
 
   try {
@@ -260,7 +265,7 @@ Future<String> processarAll() async {
 
   _logger.info("Foram encontrado ${listaTotal.length} Test Smells.");
 
-  Progresso.finalizado();
+  DnoseTui.finish();
 
   return "OK";
 }
@@ -300,8 +305,6 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
 
   String projectName = pathProject.split("/").last;
 
-  Progresso.setProject(projectName);
-
   // Pre-compute module map: directory -> module name
   final moduleMap = _buildModuleMap(entries);
 
@@ -313,6 +316,8 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
                 f.path.endsWith("_test.dart") && isBinaryFile(f.path) == false,
           )
           .toList();
+
+  DnoseTui.startProject(projectName, testFiles.length);
 
   // Process files concurrently with bounded concurrency
   final List<_FileResult> results = await _processFilesConcurrently(
@@ -379,18 +384,20 @@ Future<List<_FileResult>> _processFilesConcurrently(
   Future<void> acquire() async {
     if (running < _maxConcurrency) {
       running++;
+      DnoseTui.setActiveWorkers(running);
       return;
     }
     final completer = Completer<void>();
     waitQueue.add(completer);
     await completer.future;
     running++;
+    DnoseTui.setActiveWorkers(running);
   }
 
   void release() {
     running--;
-    // Update progress
-    Progresso.adicionarBloco();
+    DnoseTui.fileCompleted();
+    DnoseTui.setActiveWorkers(running);
     DNoseCore.contProcessProject++;
 
     if (waitQueue.isNotEmpty) {
@@ -470,6 +477,11 @@ Future<_FileResult> _processOneFile(
       } catch (e) {
         print(e);
       }
+    }
+
+    // Report detected smells to TUI
+    for (var ts in testSmells) {
+      DnoseTui.smellDetected(ts.name, file.path, ts.start);
     }
 
     return _FileResult(
