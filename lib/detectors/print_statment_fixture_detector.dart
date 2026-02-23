@@ -1,67 +1,50 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
-import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
-class PrintStatmentFixtureDetector implements AbstractDetector {
-  List<TestSmell> testSmells = List.empty(growable: true);
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
+class PrintStatmentFixtureDetector extends AbstractDetector {
   @override
   String get testSmellName => "Print Statment Fixture";
 
   @override
-  List<TestSmell> detect(
-    ExpressionStatement e,
-    TestClass testClass,
-    String testName,
-  ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is SimpleIdentifier &&
-        ((e.name == "print" &&
-                e.parent.toString().contains(".print") == false) ||
-            (e.name == "write" &&
-                (e.parent?.beginToken.toString() == "stdout" ||
-                    e.parent?.beginToken.toString() == "stderr")) ||
-            (e.name == "prints" &&
-                e.parent.toString().contains(".print") == false) ||
-            (e.name == "writeln" &&
-                (e.parent?.beginToken.toString() == "stdout" ||
-                    e.parent?.beginToken.toString() == "stderr"))) &&
-        e.parent is MethodInvocation) {
+  void visitSimpleIdentifier(SimpleIdentifier node) {
+    if (((node.name == "print" &&
+                node.parent.toString().contains(".print") == false) ||
+            (node.name == "write" &&
+                (node.parent?.beginToken.toString() == "stdout" ||
+                    node.parent?.beginToken.toString() == "stderr")) ||
+            (node.name == "prints" &&
+                node.parent.toString().contains(".print") == false) ||
+            (node.name == "writeln" &&
+                (node.parent?.beginToken.toString() == "stdout" ||
+                    node.parent?.beginToken.toString() == "stderr"))) &&
+        node.parent is MethodInvocation) {
+      // Uses parent node for code (preserving original behavior)
       testSmells.add(
         TestSmell(
           name: testSmellName,
           testName: testName,
-          testClass: testClass,
-          code: e.parent!.toSource(),
-          codeMD5: Util.md5(e.parent!.toSource()),
+          path: testClass.path,
+          projectName: testClass.projectName,
+          moduleAtual: testClass.moduleAtual,
+          commit: testClass.commit,
+          code: node.parent!.toSource(),
+          codeMD5: Util.md5(node.parent!.toSource()),
           codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
+          codeTestMD5: Util.md5(codeTest),
           startTest: startTest,
           endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
+          start: testClass.lineNumber(node.offset),
+          end: testClass.lineNumber(node.end),
+          collumnStart: testClass.columnNumber(node.offset),
+          collumnEnd: testClass.columnNumber(node.end),
+          offset: node.offset,
+          endOffset: node.end,
         ),
       );
     }
-    e.childEntities.whereType<AstNode>().forEach(
-      (e) => _detect(e, testClass, testName),
-    );
+    super.visitSimpleIdentifier(node);
   }
 
   @override

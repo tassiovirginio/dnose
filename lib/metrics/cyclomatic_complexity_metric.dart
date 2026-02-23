@@ -7,17 +7,24 @@ import 'package:dnose/models/test_metric.dart';
 class CyclomaticComplexityMetric implements AbstractMetric {
   @override
   TestMetric calculate(
-      ExpressionStatement e, TestClass testClass, String testName) {
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     _calculate(e);
 
     TestMetric testMetric = TestMetric(
-        name: metricName,
-        testName: testName,
-        testClass: testClass,
-        code: e.toSource(),
-        start: testClass.lineNumber(e.offset),
-        end: testClass.lineNumber(e.end),
-        value: cont + 1);
+      name: metricName,
+      testName: testName,
+      path: testClass.path,
+      projectName: testClass.projectName,
+      moduleAtual: testClass.moduleAtual,
+      commit: testClass.commit,
+      code: e.toSource(),
+      start: testClass.lineNumber(e.offset),
+      end: testClass.lineNumber(e.end),
+      value: cont + 1,
+    );
 
     return testMetric;
   }

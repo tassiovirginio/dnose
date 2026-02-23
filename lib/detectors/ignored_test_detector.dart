@@ -1,65 +1,25 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
-import 'package:dnose/models/test_class.dart';
-import 'package:dnose/models/test_smell.dart';
-import 'package:dnose/utils/util.dart';
 
-class IgnoredTestDetector implements AbstractDetector {
+class IgnoredTestDetector extends AbstractDetector {
   @override
   get testSmellName => "Ignored Test";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
-  List<TestSmell> detect(
-    ExpressionStatement e,
-    TestClass testClass,
-    String testName,
-  ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e as AstNode, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is NamedExpression &&
-        e.parent is ArgumentList &&
-        (e.toString().contains("skip: true") ||
-            e.toString().contains("skip:true") ||
-            e.toString().contains("skip: \""))) {
-      if (e.childEntities.elementAt(0) is Label &&
-          e.childEntities.elementAt(0).toString() == "skip:" &&
-          e.childEntities.elementAt(1).toString() != "false") {
-        testSmells.add(
-          TestSmell(
-            name: testSmellName,
-            testName: testName,
-            testClass: testClass,
-            code: e.toSource(),
-            codeMD5: Util.md5(e.toSource()),
-            codeTest: codeTest,
-            codeTestMD5: Util.md5(codeTest!),
-            startTest: startTest,
-            endTest: endTest,
-            start: testClass.lineNumber(e.offset),
-            end: testClass.lineNumber(e.end),
-            collumnStart: testClass.columnNumber(e.offset),
-            collumnEnd: testClass.columnNumber(e.end),
-            offset: e.offset,
-            endOffset: e.end,
-          ),
-        );
+  void visitNamedExpression(NamedExpression node) {
+    if (node.parent is ArgumentList &&
+        (node.toString().contains("skip: true") ||
+            node.toString().contains("skip:true") ||
+            node.toString().contains("skip: \""))) {
+      if (node.childEntities.elementAt(0) is Label &&
+          node.childEntities.elementAt(0).toString() == "skip:" &&
+          node.childEntities.elementAt(1).toString() != "false") {
+        testSmells.add(createSmell(node));
+        // Don't recurse into this node (preserving original else-branch behavior)
+        return;
       }
-    } else {
-      e.childEntities.whereType<AstNode>().forEach(
-        (e) => _detect(e, testClass, testName),
-      );
     }
+    super.visitNamedExpression(node);
   }
 
   @override

@@ -82,34 +82,8 @@ class DNoseCore {
         )); //Métodos de teste do Flutter
   }
 
-  List<TestMetric> calculeTestMetrics(
-    ExpressionStatement e,
-    TestClass testClass,
-    String testName,
-  ) {
-    List<TestMetric> testMetrics = List.empty(growable: true);
-
-    List<AbstractMetric> metrics = [
-      LinesOfCodeMetric(),
-      CyclomaticComplexityMetric(),
-    ];
-
-    for (var m in metrics) {
-      testMetrics.add(m.calculate(e, testClass, testName));
-    }
-
-    return testMetrics;
-  }
-
-  List<TestSmell> detectTestSmells(
-    ExpressionStatement e,
-    TestClass testClass,
-    String testName, [
-    List<String>? selectedSmells,
-  ]) {
-    List<TestSmell> testSmells = List.empty(growable: true);
-
-    //se mudar de local essa lista a detecção fica lenta.
+  /// Creates the list of detectors once, optionally filtered.
+  List<AbstractDetector> _createDetectors([List<String>? selectedSmells]) {
     List<AbstractDetector> detectors = [
       ConditionalTestLogicDetector(),
       ConstructorInitializationDetector(),
@@ -137,7 +111,6 @@ class DNoseCore {
       DependentTestDetector(),
     ];
 
-    // Filter detectors based on selected smells if provided
     if (selectedSmells != null && selectedSmells.isNotEmpty) {
       detectors =
           detectors.where((d) {
@@ -146,6 +119,43 @@ class DNoseCore {
             );
           }).toList();
     }
+
+    return detectors;
+  }
+
+  /// Creates the list of metrics once.
+  List<AbstractMetric> _createMetrics() {
+    return [LinesOfCodeMetric(), CyclomaticComplexityMetric()];
+  }
+
+  List<TestMetric> calculeTestMetrics(
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
+    List<TestMetric> testMetrics = List.empty(growable: true);
+
+    List<AbstractMetric> metrics = [
+      LinesOfCodeMetric(),
+      CyclomaticComplexityMetric(),
+    ];
+
+    for (var m in metrics) {
+      testMetrics.add(m.calculate(e, testClass, testName));
+    }
+
+    return testMetrics;
+  }
+
+  List<TestSmell> detectTestSmells(
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName, [
+    List<String>? selectedSmells,
+  ]) {
+    List<TestSmell> testSmells = List.empty(growable: true);
+
+    List<AbstractDetector> detectors = _createDetectors(selectedSmells);
 
     for (var d in detectors) {
       testSmells.addAll(d.detect(e, testClass, testName));
@@ -167,8 +177,12 @@ class DNoseCore {
     LazyTestDetector.reset();
     WidgetSetupDetector.reset();
 
-    testSmells.addAll(_scan(n, testClass, selectedSmells));
-    testMetrics.addAll(_scanMetric(n, testClass));
+    // Reuse detector and metric instances for all tests in this file
+    final detectors = _createDetectors(selectedSmells);
+    final metrics = _createMetrics();
+
+    // Single traversal: smells + metrics together
+    _scanAll(n, testClass, detectors, metrics, testSmells, testMetrics);
 
     if (selectedSmells == null ||
         selectedSmells.isEmpty ||
@@ -185,51 +199,37 @@ class DNoseCore {
     return (testSmells, testMetrics);
   }
 
-  List<TestMetric> _scanMetric(AstNode n, TestClass testClass) {
-    List<TestMetric> testMetrics = List.empty(growable: true);
-    n.childEntities.whereType<AstNode>().forEach((element) {
-      if (isTest(element)) {
-        String testName = getTestName(element);
-        _logger.info("Test Function Detect: $testName - ${element.toSource()}");
-        testMetrics.addAll(
-          calculeTestMetrics(
-            element as ExpressionStatement,
-            testClass,
-            testName,
-          ),
-        );
-      }
-      testMetrics.addAll(_scanMetric(element, testClass));
-    });
-    return testMetrics;
-  }
-
-  List<TestSmell> _scan(
+  /// Single-pass traversal: detects smells AND calculates metrics in one walk.
+  void _scanAll(
     AstNode n,
-    TestClass testClass, [
-    List<String>? selectedSmells,
-  ]) {
-    List<TestSmell> testSmells = List.empty(growable: true);
+    TestClass testClass,
+    List<AbstractDetector> detectors,
+    List<AbstractMetric> metrics,
+    List<TestSmell> testSmells,
+    List<TestMetric> testMetrics,
+  ) {
     n.childEntities.whereType<AstNode>().forEach((element) {
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
+        final expr = element as ExpressionStatement;
 
-        LazyTestDetector.collectMethodCalls(
-          element as ExpressionStatement,
-          testClass,
-          testName,
-        );
+        // Collect cross-test data
+        LazyTestDetector.collectMethodCalls(expr, testClass, testName);
+        WidgetSetupDetector.collectSetupPatterns(expr, testClass, testName);
 
-        WidgetSetupDetector.collectSetupPatterns(element, testClass, testName);
+        // Detect smells (reusing detector instances)
+        for (var d in detectors) {
+          testSmells.addAll(d.detect(expr, testClass, testName));
+        }
 
-        testSmells.addAll(
-          detectTestSmells(element, testClass, testName, selectedSmells),
-        );
+        // Calculate metrics (reusing metric instances)
+        for (var m in metrics) {
+          testMetrics.add(m.calculate(expr, testClass, testName));
+        }
       }
-      testSmells.addAll(_scan(element, testClass, selectedSmells));
+      _scanAll(element, testClass, detectors, metrics, testSmells, testMetrics);
     });
-    return testSmells;
   }
 
   String getCodeTestByDescription(String path, String description) {

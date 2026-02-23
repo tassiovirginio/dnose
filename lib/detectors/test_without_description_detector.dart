@@ -1,57 +1,44 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
-import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
-class TestWithoutDescriptionDetector implements AbstractDetector {
+class TestWithoutDescriptionDetector extends AbstractDetector {
   @override
   get testSmellName => "Test Without Description";
 
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
   @override
-  List<TestSmell> detect(AstNode e, TestClass testClass, String testName) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
-    _detect(e, testClass, testName);
-    return testSmells;
-  }
-
-  void _detect(AstNode e, TestClass testClass, String testName) {
-    if (e is SimpleStringLiteral &&
-        e.parent is ArgumentList &&
-        e.parent!.parent is MethodInvocation &&
-        e.value.trim().isEmpty &&
-        e.parent!.parent!.toString().contains("test(")) {
+  void visitSimpleStringLiteral(SimpleStringLiteral node) {
+    if (node.parent is ArgumentList &&
+        node.parent!.parent is MethodInvocation &&
+        node.value.trim().isEmpty &&
+        node.parent!.parent!.toString().contains("test(")) {
       testSmells.add(
         TestSmell(
           name: testSmellName,
           testName: testName,
-          testClass: testClass,
-          code: e.parent!.parent!.toSource(),
-          codeMD5: Util.md5(e.parent!.parent!.toSource()),
+          path: testClass.path,
+          projectName: testClass.projectName,
+          moduleAtual: testClass.moduleAtual,
+          commit: testClass.commit,
+          code: node.parent!.parent!.toSource(),
+          codeMD5: Util.md5(node.parent!.parent!.toSource()),
           codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
+          codeTestMD5: Util.md5(codeTest),
           startTest: startTest,
           endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
+          start: testClass.lineNumber(node.offset),
+          end: testClass.lineNumber(node.end),
+          collumnStart: testClass.columnNumber(node.offset),
+          collumnEnd: testClass.columnNumber(node.end),
+          offset: node.offset,
+          endOffset: node.end,
         ),
       );
-    } else {
-      e.childEntities.whereType<AstNode>().forEach(
-        (e) => _detect(e, testClass, testName),
-      );
+      // Don't recurse (preserving original else-branch behavior)
+      return;
     }
+    super.visitSimpleStringLiteral(node);
   }
 
   @override

@@ -2,16 +2,10 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
-import 'package:dnose/utils/util.dart';
 
-class DefaultTestDetector implements AbstractDetector {
+class DefaultTestDetector extends AbstractDetector {
   @override
   get testSmellName => "Default Test";
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
   List<TestSmell> detect(
@@ -19,51 +13,27 @@ class DefaultTestDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
+    this.testSmells = [];
+    this.testClass = testClass;
+    this.testName = testName;
+    this.codeTest = e.toSource();
+    this.startTest = testClass.lineNumber(e.offset);
+    this.endTest = testClass.lineNumber(e.end);
 
     if (_isDefaultFlutterTest(e, testName)) {
-      testSmells.add(
-        TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.toSource(),
-          codeMD5: Util.md5(e.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
-        ),
-      );
+      testSmells.add(createSmell(e));
     }
 
     return testSmells;
   }
 
-  @override
-  void reset() {
-    testSmells.clear();
-  }
-
   bool _isDefaultFlutterTest(ExpressionStatement e, String testName) {
-    // Check if it's a testWidgets call
     if (e.expression is! MethodInvocation) return false;
     var methodInvocation = e.expression as MethodInvocation;
 
     if (methodInvocation.methodName.name != 'testWidgets') return false;
-
-    // Check if the test name contains "Counter increments smoke test"
     if (!testName.contains('Counter increments smoke test')) return false;
 
-    // Check the function body for characteristic patterns
     if (methodInvocation.argumentList.arguments.length < 2) return false;
     var functionExpr = methodInvocation.argumentList.arguments[1];
 
@@ -71,7 +41,6 @@ class DefaultTestDetector implements AbstractDetector {
 
     String bodyText = functionExpr.body.toSource().toLowerCase();
 
-    // Check for key patterns in the default Flutter test
     bool hasPumpWidget = bodyText.contains('pumpwidget');
     bool hasFindText = bodyText.contains('find.text');
     bool hasFindsOneWidget = bodyText.contains('findsonewidget');
@@ -80,8 +49,13 @@ class DefaultTestDetector implements AbstractDetector {
     bool hasByIcon = bodyText.contains('byicon');
     bool hasIconsAdd = bodyText.contains('icons.add');
 
-    return hasPumpWidget && hasFindText && hasFindsOneWidget &&
-           hasFindsNothing && hasTap && hasByIcon && hasIconsAdd;
+    return hasPumpWidget &&
+        hasFindText &&
+        hasFindsOneWidget &&
+        hasFindsNothing &&
+        hasTap &&
+        hasByIcon &&
+        hasIconsAdd;
   }
 
   @override

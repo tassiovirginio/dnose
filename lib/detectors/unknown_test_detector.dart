@@ -1,17 +1,13 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
-class UnknownTestDetector implements AbstractDetector {
+class UnknownTestDetector extends AbstractDetector {
   @override
   get testSmellName => "Unknown Test";
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
-
-  List<TestSmell> testSmells = List.empty(growable: true);
 
   @override
   List<TestSmell> detect(
@@ -19,56 +15,21 @@ class UnknownTestDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
+    this.testSmells = [];
+    this.testClass = testClass;
+    this.testName = testName;
+    this.codeTest = e.toSource();
+    this.startTest = testClass.lineNumber(e.offset);
+    this.endTest = testClass.lineNumber(e.end);
 
-    var list = flow(e);
+    // Collect assertions using a visitor
+    final collector = _AssertionCollector();
+    e.accept(collector);
 
-    if (list.isEmpty) {
-      testSmells.add(
-        TestSmell(
-          name: testSmellName,
-          testName: testName,
-          testClass: testClass,
-          code: e.toSource(),
-          codeMD5: Util.md5(e.toSource()),
-          codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
-          startTest: startTest,
-          endTest: endTest,
-          start: testClass.lineNumber(e.offset),
-          end: testClass.lineNumber(e.end),
-          collumnStart: testClass.columnNumber(e.offset),
-          collumnEnd: testClass.columnNumber(e.end),
-          offset: e.offset,
-          endOffset: e.end,
-        ),
-      );
+    if (collector.assertions.isEmpty) {
+      testSmells.add(createSmell(e));
     }
 
-    // if (e.toSource().contains("expect") == false &&
-    // e.toSource().contains("expectLater") == false &&
-    // e.toSource().contains("verify") == false &&
-    // e.toSource().contains("assert") == false) {
-    //   testSmells.add(TestSmell(
-    //       name: testSmellName,
-    //       testName: testName,
-    //       testClass: testClass,
-    //       code: e.toSource(),
-    //       codeMD5: Util.MD5(e.toSource()),
-    //       codeTest: codeTest,
-    //       codeTestMD5: Util.MD5(codeTest!),
-    //       startTest: startTest,
-    //       endTest: endTest,
-    //       start: testClass.lineNumber(e.offset),
-    //       end: testClass.lineNumber(e.end),
-    //       collumnStart: testClass.columnNumber(e.offset),
-    //       collumnEnd: testClass.columnNumber(e.end),
-    //       offset: e.offset,
-    //       endOffset: e.end
-    //   ));
-    // }
     return testSmells;
   }
 
@@ -104,23 +65,17 @@ class UnknownTestDetector implements AbstractDetector {
   }
 }
 
-List<MethodInvocation> flow(AstNode e) {
-  List<MethodInvocation> listMethods = List.empty(growable: true);
+/// Internal visitor to collect assertion method invocations.
+class _AssertionCollector extends RecursiveAstVisitor<void> {
+  final List<MethodInvocation> assertions = [];
 
-  if (e is MethodInvocation &&
-      (e.methodName.name == "expect" ||
-          e.methodName.name == "expectLater" ||
-          // e.methodName.name == "verify" || -> esse verify é do Mock 
-          e.methodName.name == "assert")) {
-    listMethods.add(e);
-  }
-
-  List lista = e.childEntities.toList();
-  for (var e2 in lista) {
-    if (e2 is AstNode) {
-      listMethods.addAll(flow(e2));
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name == "expect" ||
+        node.methodName.name == "expectLater" ||
+        node.methodName.name == "assert") {
+      assertions.add(node);
     }
+    super.visitMethodInvocation(node);
   }
-
-  return listMethods;
 }

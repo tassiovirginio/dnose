@@ -1,15 +1,19 @@
-import 'package:dnose/models/test_class.dart';
-
 class TestMetric {
   String name, testName, code;
-  TestClass testClass;
+
+  // Flattened from TestClass — serializable across Isolates
+  String path, projectName, moduleAtual, commit;
+
   int start, end;
   int value;
 
   TestMetric({
     required this.name,
     required this.testName,
-    required this.testClass,
+    required this.path,
+    required this.projectName,
+    required this.moduleAtual,
+    required this.commit,
     required this.code,
     required this.start,
     required this.end,

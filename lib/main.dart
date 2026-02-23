@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -279,11 +280,14 @@ List<FileSystemEntity> listarSemPastasOcultas(String pathProject) {
   }).toList();
 }
 
+/// Max concurrent files being processed simultaneously.
+final int _maxConcurrency = Platform.numberOfProcessors;
+
 Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   String pathProject, [
   List<String>? selectedSmells,
 ]) async {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.level = Level.ALL;
 
   _logger.info("==============================================");
   _logger.info("========= Dart Test Smells Detector ==========");
@@ -292,100 +296,204 @@ Future<(List<TestSmell>, List<TestMetric>, List<String>)> _processar(
   String commitAtual = await getCommit(pathProject);
   await generateGitLogCsv(pathProject, dirResults.path);
 
-  DNoseCore dnoseCore = DNoseCore();
-
-  List<TestSmell> listaTotal = List.empty(growable: true);
-  List<TestMetric> listaTotalMetrics = List.empty(growable: true);
-  List<String> listaArquivosTestes = List.empty(growable: true);
-
-  // Directory dir = Directory(pathProject);
-  // List<FileSystemEntity> entries = dir.listSync(recursive: true).toList();
-
   final entries = listarSemPastasOcultas(pathProject);
 
   String projectName = pathProject.split("/").last;
 
   Progresso.setProject(projectName);
 
-  String moduleAtual = "";
+  // Pre-compute module map: directory -> module name
+  final moduleMap = _buildModuleMap(entries);
 
-  String diretorioAtual = "";
+  // Filter test files
+  final testFiles =
+      entries
+          .where(
+            (f) =>
+                f.path.endsWith("_test.dart") && isBinaryFile(f.path) == false,
+          )
+          .toList();
 
+  // Process files concurrently with bounded concurrency
+  final List<_FileResult> results = await _processFilesConcurrently(
+    testFiles,
+    pathProject,
+    projectName,
+    commitAtual,
+    moduleMap,
+    selectedSmells,
+  );
+
+  // Aggregate results
+  List<TestSmell> listaTotal = [];
+  List<TestMetric> listaTotalMetrics = [];
+  List<String> listaArquivosTestes = [];
+
+  for (final result in results) {
+    listaArquivosTestes.add(result.filePath);
+    listaTotal.addAll(result.smells);
+    listaTotalMetrics.addAll(result.metrics);
+  }
+
+  return (listaTotal, listaTotalMetrics, listaArquivosTestes);
+}
+
+/// Pre-compute module names for all directories to avoid repeated I/O.
+Map<String, String> _buildModuleMap(List<FileSystemEntity> entries) {
+  final moduleMap = <String, String>{};
   for (var file in entries) {
-    Progresso.adicionarBloco();
-
-    if (diretorioAtual.isEmpty) {
-      diretorioAtual = file.parent.path;
-    } else if (diretorioAtual != file.parent.path) {
-      diretorioAtual = file.parent.path;
-      File file2 = File("$diretorioAtual/pubspec.yaml");
-
-      if (file2.existsSync()) {
-        String yamlString = "";
+    final dir = file.parent.path;
+    if (!moduleMap.containsKey(dir)) {
+      File pubspec = File("$dir/pubspec.yaml");
+      if (pubspec.existsSync()) {
         try {
-          yamlString = file2.readAsStringSync();
+          String yamlString = pubspec.readAsStringSync();
           Map yaml = loadYaml(yamlString);
-          moduleAtual = yaml['name'];
+          moduleMap[dir] = yaml['name'] ?? "";
         } catch (e) {
-          moduleAtual = "";
+          moduleMap[dir] = "";
         }
+      } else {
+        moduleMap[dir] = "";
       }
     }
+  }
+  return moduleMap;
+}
 
-    if (file.path.endsWith("_test.dart") == true &&
-        isBinaryFile(file.path) == false) {
-      listaArquivosTestes.add(file.path);
-      _logger.info("Analyzing: ${file.path}");
-      //contador de procentagem para a tela
-      DNoseCore.contProcessProject++;
+/// Process files concurrently with a semaphore limiting max parallelism.
+Future<List<_FileResult>> _processFilesConcurrently(
+  List<FileSystemEntity> testFiles,
+  String pathProject,
+  String projectName,
+  String commitAtual,
+  Map<String, String> moduleMap,
+  List<String>? selectedSmells,
+) async {
+  final results = <Future<_FileResult>>[];
+  int running = 0;
 
+  // Simple semaphore using a completer queue
+  final waitQueue = <Completer<void>>[];
+
+  Future<void> acquire() async {
+    if (running < _maxConcurrency) {
+      running++;
+      return;
+    }
+    final completer = Completer<void>();
+    waitQueue.add(completer);
+    await completer.future;
+    running++;
+  }
+
+  void release() {
+    running--;
+    // Update progress
+    Progresso.adicionarBloco();
+    DNoseCore.contProcessProject++;
+
+    if (waitQueue.isNotEmpty) {
+      waitQueue.removeAt(0).complete();
+    }
+  }
+
+  for (var file in testFiles) {
+    final future = () async {
+      await acquire();
       try {
-        TestClass testClass = TestClass(
-          commit: commitAtual,
-          path: file.path,
-          moduleAtual: moduleAtual,
-          projectName: projectName,
-        );
-        var (testSmells, testMetrics) = dnoseCore.scan(
-          testClass,
+        return await _processOneFile(
+          file,
+          pathProject,
+          projectName,
+          commitAtual,
+          moduleMap[file.parent.path] ?? "",
           selectedSmells,
         );
+      } finally {
+        release();
+      }
+    }();
+    results.add(future);
+  }
 
-        //Blame
-        Map<String, BlameLine> fileBlame = blameFile(file.path, pathProject);
+  return Future.wait(results);
+}
 
-        for (var ts in testSmells) {
-          if (fileBlame.isEmpty == true) continue;
-          try {
-            BlameLine? blameLine = fileBlame[ts.start.toString()];
-            ts.lineNumber = blameLine!.lineNumber;
-            ts.commitAuthor = blameLine.commit;
-            ts.author = blameLine.author;
-            ts.dateStr = blameLine.dateStr;
-            ts.timeStr = blameLine.timeStr;
-            ts.summary = blameLine.summary;
-            //sentiment
-            SentimentResult sentimentResult = Sentiment.analysis(
-              blameLine.summary.toString(),
-              emoji: true,
-            );
-            ts.score = sentimentResult.score;
-            ts.comparative = sentimentResult.comparative;
-            ts.words = sentimentResult.words;
-          } catch (e) {
-            print(e);
-          }
-        }
+/// Process a single test file: parse AST, detect smells, calculate metrics, blame.
+Future<_FileResult> _processOneFile(
+  FileSystemEntity file,
+  String pathProject,
+  String projectName,
+  String commitAtual,
+  String moduleAtual,
+  List<String>? selectedSmells,
+) async {
+  _logger.info("Analyzing: ${file.path}");
 
-        listaTotal.addAll(testSmells);
-        listaTotalMetrics.addAll(testMetrics);
+  try {
+    DNoseCore dnoseCore = DNoseCore();
+
+    TestClass testClass = TestClass(
+      commit: commitAtual,
+      path: file.path,
+      moduleAtual: moduleAtual,
+      projectName: projectName,
+    );
+
+    var (testSmells, testMetrics) = dnoseCore.scan(testClass, selectedSmells);
+
+    // Async blame — non-blocking I/O
+    Map<String, BlameLine> fileBlame = await blameFileAsync(
+      file.path,
+      pathProject,
+    );
+
+    for (var ts in testSmells) {
+      if (fileBlame.isEmpty) continue;
+      try {
+        BlameLine? blameLine = fileBlame[ts.start.toString()];
+        ts.lineNumber = blameLine!.lineNumber;
+        ts.commitAuthor = blameLine.commit;
+        ts.author = blameLine.author;
+        ts.dateStr = blameLine.dateStr;
+        ts.timeStr = blameLine.timeStr;
+        ts.summary = blameLine.summary;
+        // sentiment
+        SentimentResult sentimentResult = Sentiment.analysis(
+          blameLine.summary.toString(),
+          emoji: true,
+        );
+        ts.score = sentimentResult.score;
+        ts.comparative = sentimentResult.comparative;
+        ts.words = sentimentResult.words;
       } catch (e) {
         print(e);
       }
     }
-  }
 
-  return (listaTotal, listaTotalMetrics, listaArquivosTestes);
+    return _FileResult(
+      filePath: file.path,
+      smells: testSmells,
+      metrics: testMetrics,
+    );
+  } catch (e) {
+    print(e);
+    return _FileResult(filePath: file.path, smells: [], metrics: []);
+  }
+}
+
+/// Result of processing a single file.
+class _FileResult {
+  final String filePath;
+  final List<TestSmell> smells;
+  final List<TestMetric> metrics;
+
+  _FileResult({
+    required this.filePath,
+    required this.smells,
+    required this.metrics,
+  });
 }
 
 int qtd(String texto, String palavra) {
@@ -444,10 +552,10 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     int qtdLineTeste = ts.endTest - ts.startTest + 1;
 
     sink4.write(
-      "${ts.testClass.projectName}"
+      "${ts.projectName}"
       ";${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")}"
-      ";${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name}"
-      ";${ts.start};${ts.end};${ts.testClass.commit};$qtdLine;$qtdLineTeste;"
+      ";${ts.moduleAtual};${ts.path};${ts.name}"
+      ";${ts.start};${ts.end};${ts.commit};$qtdLine;$qtdLineTeste;"
       "$containsFor;$containsWhile;$containsIf;$containsSleep;"
       "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
       "$containsForTeste;$containsWhileTeste;$containsIfTeste;$containsSleepTeste;"
@@ -456,8 +564,8 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     );
 
     sink.write(
-      "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};"
-      "${ts.name};${ts.start};${ts.end};${ts.testClass.commit};",
+      "${ts.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.moduleAtual};${ts.path};"
+      "${ts.name};${ts.start};${ts.end};${ts.commit};",
     );
     sink.write(
       "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
@@ -466,7 +574,7 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     sink.write("${ts.score};${ts.comparative};${ts.words};\n");
 
     _logger.info(
-      "${ts.testClass.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.testClass.moduleAtual};${ts.testClass.path};${ts.name};${ts.start};${ts.end};${ts.testClass.commit}",
+      "${ts.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.moduleAtual};${ts.path};${ts.name};${ts.start};${ts.end};${ts.commit}",
     );
     _logger.info("Code: ${ts.code}");
 
@@ -521,10 +629,10 @@ Future<bool> createMatricsCSV(List<TestMetric> listaTotal) async {
   );
   for (var m in listaTotal) {
     sink.write(
-      "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}\n",
+      "${m.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.moduleAtual};${m.path};${m.name};${m.start};${m.end};${m.value};${m.commit}\n",
     );
     _logger.info(
-      "${m.testClass.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.testClass.moduleAtual};${m.testClass.path};${m.name};${m.start};${m.end};${m.value};${m.testClass.commit}",
+      "${m.projectName};${m.testName.replaceAll(";", ",").replaceAll("\n", ".")};${m.moduleAtual};${m.path};${m.name};${m.start};${m.end};${m.value};${m.commit}",
     );
     _logger.info("Code: ${m.code}");
   }

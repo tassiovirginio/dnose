@@ -2,16 +2,10 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
-import 'package:dnose/utils/util.dart';
 
-class EagerTestDetector implements AbstractDetector {
+class EagerTestDetector extends AbstractDetector {
   @override
   get testSmellName => "Eager Test";
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
 
   @override
   List<TestSmell> detect(
@@ -19,41 +13,24 @@ class EagerTestDetector implements AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    List<TestSmell> smells = [];
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
+    this.testSmells = [];
+    this.testClass = testClass;
+    this.testName = testName;
+    this.codeTest = e.toSource();
+    this.startTest = testClass.lineNumber(e.offset);
+    this.endTest = testClass.lineNumber(e.end);
 
     Map<String, Set<String>> objectMethods = {};
-
     _collectMethodCalls(e, objectMethods);
 
     for (var entry in objectMethods.entries) {
       if (entry.value.length >= 3) {
-        smells.add(
-          TestSmell(
-            name: testSmellName,
-            testName: testName,
-            testClass: testClass,
-            code: e.toSource(),
-            codeMD5: Util.md5(e.toSource()),
-            start: testClass.lineNumber(e.offset),
-            end: testClass.lineNumber(e.end),
-            collumnStart: testClass.columnNumber(e.offset),
-            collumnEnd: testClass.columnNumber(e.end),
-            codeTest: codeTest,
-            codeTestMD5: Util.md5(codeTest!),
-            startTest: startTest,
-            endTest: endTest,
-            offset: e.offset,
-            endOffset: e.end,
-          ),
-        );
+        testSmells.add(createSmell(e));
         break;
       }
     }
 
-    return smells;
+    return testSmells;
   }
 
   void _collectMethodCalls(

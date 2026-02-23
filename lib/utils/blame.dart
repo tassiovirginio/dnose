@@ -117,3 +117,101 @@ Map<String, BlameLine> blameFile(String arquivo, String workingDirectory) {
 
   return mapa;
 }
+
+/// Async version of blameFile — uses Process.run instead of Process.runSync.
+Future<Map<String, BlameLine>> blameFileAsync(
+  String arquivo,
+  String workingDirectory,
+) async {
+  Map<String, BlameLine> mapa = {};
+
+  try {
+    String pathParaGit = arquivo;
+    try {
+      pathParaGit = File(arquivo).resolveSymbolicLinksSync();
+    } catch (e) {
+      print("Aviso: Não foi possível resolver links para $arquivo: $e");
+    }
+
+    arquivo = pathParaGit.replaceAll("$workingDirectory/", "");
+
+    final check = await Process.run('git', [
+      'ls-files',
+      '--error-unmatch',
+      arquivo,
+    ], workingDirectory: workingDirectory);
+    if (check.exitCode != 0) {
+      print("Erro: O arquivo '$arquivo' não está sob controle do git.");
+      return mapa;
+    }
+
+    final result = await Process.run('git', [
+      'blame',
+      '--line-porcelain',
+      arquivo,
+    ], workingDirectory: workingDirectory);
+    if (result.exitCode != 0) {
+      print('Erro ao executar git blame.');
+      return mapa;
+    }
+
+    _parseBlameOutput(result.stdout.toString(), mapa);
+  } catch (e) {
+    print('Erro ao processar o arquivo: $e');
+    return {};
+  }
+
+  return mapa;
+}
+
+/// Shared parsing logic for blame output.
+void _parseBlameOutput(String output, Map<String, BlameLine> mapa) {
+  String? commit;
+  String? author;
+  String? dateStr;
+  String? timeStr;
+  String? summary;
+  String? lineNumber;
+
+  final lines = output.split('\n');
+
+  for (final line in lines) {
+    if (line.length > 40 && RegExp(r'^[a-fA-F0-9]{40} ').hasMatch(line)) {
+      final parts = line.split(' ');
+      commit = parts[0].substring(0, 8);
+      lineNumber = parts.length > 2 ? parts[2] : null;
+    } else if (line.startsWith('author ')) {
+      author = line.substring('author '.length);
+    } else if (line.startsWith('author-time ')) {
+      final timestamp = int.tryParse(line.substring('author-time '.length));
+      if (timestamp != null) {
+        final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+        dateStr =
+            '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+        timeStr =
+            '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}';
+      }
+    } else if (line.startsWith('summary ')) {
+      summary = line.substring('summary '.length);
+    } else if (line.startsWith('\t')) {
+      if ([
+        commit,
+        author,
+        dateStr,
+        timeStr,
+        summary,
+        lineNumber,
+      ].every((e) => e != null)) {
+        mapa[lineNumber!] = BlameLine(
+          lineNumber,
+          commit,
+          author,
+          dateStr,
+          timeStr,
+          summary,
+        );
+      }
+      commit = author = dateStr = timeStr = summary = lineNumber = null;
+    }
+  }
+}

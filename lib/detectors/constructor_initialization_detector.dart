@@ -1,17 +1,13 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:dnose/detectors/abstract_detector.dart';
 import 'package:dnose/models/test_class.dart';
 import 'package:dnose/models/test_smell.dart';
 import 'package:dnose/utils/util.dart';
 
-class ConstructorInitializationDetector implements AbstractDetector {
+class ConstructorInitializationDetector extends AbstractDetector {
   @override
   get testSmellName => "Constructor Initialization";
-
-  List<TestSmell> testSmells = List.empty(growable: true);
-
-  String? codeTest;
-  int startTest = 0, endTest = 0;
 
   // Armazena classes com construtores e suas inicializações
   static final Map<String, List<String>> _constructorInitializations = {};
@@ -20,21 +16,24 @@ class ConstructorInitializationDetector implements AbstractDetector {
 
   @override
   List<TestSmell> detect(
-      ExpressionStatement e, TestClass testClass, String testName) {
-
-    codeTest = e.toSource();
-    startTest = testClass.lineNumber(e.offset);
-    endTest = testClass.lineNumber(e.end);
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
+    this.testSmells = [];
+    this.testClass = testClass;
+    this.testName = testName;
+    this.codeTest = e.toSource();
+    this.startTest = testClass.lineNumber(e.offset);
+    this.endTest = testClass.lineNumber(e.end);
 
     final currentFile = testClass.root.toString();
     if (_currentFile != currentFile) {
       _constructorInitializations.clear();
-      testSmells.clear();
       _currentFile = currentFile;
       _fileScanned = false;
     }
 
-    // Escaneia o arquivo uma vez
     if (!_fileScanned) {
       final compilationUnit = _findCompilationUnit(testClass.root);
       if (compilationUnit != null) {
@@ -43,7 +42,6 @@ class ConstructorInitializationDetector implements AbstractDetector {
       _fileScanned = true;
     }
 
-    // Agora verifica se ESTE teste específico está dentro de uma classe com construtor
     _checkForSmellInTest(e, testClass, testName);
 
     return testSmells;
@@ -52,102 +50,51 @@ class ConstructorInitializationDetector implements AbstractDetector {
   CompilationUnit? _findCompilationUnit(AstNode node) {
     AstNode? current = node;
     while (current != null) {
-      if (current is CompilationUnit) {
-        return current;
-      }
+      if (current is CompilationUnit) return current;
       current = current.parent;
     }
     return null;
   }
 
   void _scanEntireFile(CompilationUnit root) {
-    for (var declaration in root.declarations) {
-      if (declaration is ClassDeclaration) {
-        _analyzeClass(declaration);
-      }
-    }
+    final scanner = _ClassScanner(_constructorInitializations);
+    root.accept(scanner);
   }
 
-  void _analyzeClass(ClassDeclaration classDecl) {
-    final className = classDecl.name.lexeme;
-
-    // Verifica se é uma classe de teste (nome termina com "Test")
-    if (!className.endsWith('Test')) return;
-
-    // Procura por construtores
-    for (var member in classDecl.members) {
-      if (member is ConstructorDeclaration) {
-        final initializations = _extractInitializations(member);
-        if (initializations.isNotEmpty) {
-          _constructorInitializations[className] = initializations;
-        }
-        break;
-      }
-    }
-  }
-
-  List<String> _extractInitializations(ConstructorDeclaration constructor) {
-    final initializations = <String>[];
-
-    // Verifica inicializadores no construtor (this.field = value)
-    for (var initializer in constructor.initializers) {
-      if (initializer is ConstructorFieldInitializer) {
-        initializations.add(initializer.fieldName.name);
-      }
-    }
-
-    // Verifica corpo do construtor
-    final body = constructor.body;
-    if (body is BlockFunctionBody) {
-      _findAssignmentsInBlock(body.block, initializations);
-    }
-
-    return initializations;
-  }
-
-  void _findAssignmentsInBlock(Block block, List<String> initializations) {
-    for (var statement in block.statements) {
-      if (statement is ExpressionStatement) {
-        final expression = statement.expression;
-        if (expression is AssignmentExpression) {
-          final leftSide = expression.leftHandSide;
-          
-          if (leftSide is PropertyAccess && leftSide.toString().startsWith('this.')) {
-            final fieldName = leftSide.toString().substring(5);
-            initializations.add(fieldName);
-          } else if (leftSide is SimpleIdentifier) {
-            // Também pega assignments diretos como: calculator = Calculator();
-            initializations.add(leftSide.name);
-          }
-        }
-      }
-    }
-  }
-
-  void _checkForSmellInTest(ExpressionStatement e, TestClass testClass, String testName) {
-    // Encontra a classe que contém este teste
+  void _checkForSmellInTest(
+    ExpressionStatement e,
+    TestClass testClass,
+    String testName,
+  ) {
     final className = _findEnclosingTestClass(e);
-    
-    if (className != null && _constructorInitializations.containsKey(className)) {
+
+    if (className != null &&
+        _constructorInitializations.containsKey(className)) {
       final fields = _constructorInitializations[className]!;
-      
-      // Reporta um smell para ESTE teste específico
-      testSmells.add(TestSmell(
+
+      testSmells.add(
+        TestSmell(
           name: testSmellName,
           testName: testName,
-          testClass: testClass,
-          code: 'Test class "$className" initializes fixtures in constructor: ${fields.join(", ")}',
+          path: testClass.path,
+          projectName: testClass.projectName,
+          moduleAtual: testClass.moduleAtual,
+          commit: testClass.commit,
+          code:
+              'Test class "$className" initializes fixtures in constructor: ${fields.join(", ")}',
           codeMD5: Util.md5(e.toSource()),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end),
           collumnStart: testClass.columnNumber(e.offset),
           collumnEnd: testClass.columnNumber(e.end),
           codeTest: codeTest,
-          codeTestMD5: Util.md5(codeTest!),
+          codeTestMD5: Util.md5(codeTest),
           startTest: startTest,
           endTest: endTest,
           offset: e.offset,
-          endOffset: e.end));
+          endOffset: e.end,
+        ),
+      );
     }
   }
 
@@ -156,9 +103,7 @@ class ConstructorInitializationDetector implements AbstractDetector {
     while (current != null) {
       if (current is ClassDeclaration) {
         final className = current.name.lexeme;
-        if (className.endsWith('Test')) {
-          return className;
-        }
+        if (className.endsWith('Test')) return className;
       }
       current = current.parent;
     }
@@ -207,5 +152,66 @@ void main() {
   });
 }
 ''';
+  }
+}
+
+/// Internal visitor to scan class declarations for constructor initializations.
+class _ClassScanner extends RecursiveAstVisitor<void> {
+  final Map<String, List<String>> constructorInitializations;
+
+  _ClassScanner(this.constructorInitializations);
+
+  @override
+  void visitClassDeclaration(ClassDeclaration node) {
+    final className = node.name.lexeme;
+    if (!className.endsWith('Test')) return;
+
+    for (var member in node.members) {
+      if (member is ConstructorDeclaration) {
+        final initializations = _extractInitializations(member);
+        if (initializations.isNotEmpty) {
+          constructorInitializations[className] = initializations;
+        }
+        break;
+      }
+    }
+    // Don't call super — we don't need to recurse into class bodies
+  }
+
+  List<String> _extractInitializations(ConstructorDeclaration constructor) {
+    final initializations = <String>[];
+
+    for (var initializer in constructor.initializers) {
+      if (initializer is ConstructorFieldInitializer) {
+        initializations.add(initializer.fieldName.name);
+      }
+    }
+
+    final body = constructor.body;
+    if (body is BlockFunctionBody) {
+      final finder = _ConstructorAssignmentFinder(initializations);
+      body.block.accept(finder);
+    }
+
+    return initializations;
+  }
+}
+
+/// Internal visitor to find assignments in constructor bodies.
+class _ConstructorAssignmentFinder extends RecursiveAstVisitor<void> {
+  final List<String> initializations;
+
+  _ConstructorAssignmentFinder(this.initializations);
+
+  @override
+  void visitAssignmentExpression(AssignmentExpression node) {
+    final leftSide = node.leftHandSide;
+    if (leftSide is PropertyAccess && leftSide.toString().startsWith('this.')) {
+      final fieldName = leftSide.toString().substring(5);
+      initializations.add(fieldName);
+    } else if (leftSide is SimpleIdentifier) {
+      initializations.add(leftSide.name);
+    }
+    super.visitAssignmentExpression(node);
   }
 }
