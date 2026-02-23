@@ -26,12 +26,12 @@ jobs:
 
       - name: Compile Dart server for Linux
         # Usando o nome que você tinha para Linux
-        run: dart compile exe bin/dnose.dart -o dnose_linux_amd64.exe
+        run: dart compile exe bin/dnose.dart -o dnose_linux_amd64
 
       - name: Upload Linux release asset
         uses: softprops/action-gh-release@v1
         with:
-          files: dnose_linux_amd64.exe
+          files: dnose_linux_amd64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
