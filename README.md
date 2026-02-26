@@ -10,7 +10,21 @@
 
 ## Download Executables (Linux and Windows*) - *Alfa
 
-- [Last Realease](https://github.com/tassiovirginio/dnose/releases/latest)
+- [Last Release - GitHub](https://github.com/tassiovirginio/dnose/releases/latest)
+
+### Install via Command Line (Linux)
+
+You can easily install or update DNose on Linux by running one of the commands below in your terminal:
+
+**Using curl:**
+```bash
+curl -sSL https://raw.githubusercontent.com/tassiovirginio/dnose/main/install.sh | sh
+```
+
+**Using wget:**
+```bash
+wget -qO- https://raw.githubusercontent.com/tassiovirginio/dnose/main/install.sh | sh
+```
 
 
 ### List of Detected Test Smells
