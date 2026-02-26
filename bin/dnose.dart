@@ -40,6 +40,8 @@ import 'package:shelf_plus/shelf_plus.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:dotenv/dotenv.dart';
 
+const String version = '2.0.1';
+
 final ip = InternetAddress.anyIPv4;
 final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
@@ -91,7 +93,22 @@ List<AbstractDetector> detectors = [
   DependentTestDetector(),
 ];
 
-void main() async {
+void main(List<String> args) async {
+  if (args.isNotEmpty && args[0] == '--version') {
+    print('dnose version $version');
+    exit(0);
+  }
+  if (args.isNotEmpty && args[0] == '--help') {
+    print('''
+dnose - Dart Test Smell Detector
+
+Usage:
+  dnose           Start the web interface
+  dnose --version Show version
+  dnose --help    Show this help message
+''');
+    exit(0);
+  }
   print('''
   ██████╗ ███╗   ██╗ ██████╗ ███████╗███████╗
   ██╔══██╗████╗  ██║██╔═══██╗██╔════╝██╔════╝

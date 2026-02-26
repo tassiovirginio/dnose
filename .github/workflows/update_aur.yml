@@ -1,0 +1,86 @@
+name: Update AUR
+
+on:
+  workflow_run:
+    workflows: ["Build and Release Multi-Platform"]
+    types:
+      - completed
+  
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag version (ex: v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+jobs:
+  aur:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pacman -Sy --noconfirm git openssh pacman-contrib
+
+      - name: Setup SSH
+        run: |
+          mkdir -p /root/.ssh
+          printf "%s\n" "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > /root/.ssh/id_ed25519
+          chmod 600 /root/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> /root/.ssh/known_hosts
+
+      - name: Clone AUR repo
+        run: |
+          git clone ssh://aur@aur.archlinux.org/dnose-bin.git aur
+
+      - name: Update PKGBUILD and Checksums
+        run: |
+          TAG_NAME="${{ github.event.workflow_run.head_branch }}"
+          
+          if [ -z "$TAG_NAME" ]; then
+            TAG_NAME="${{ inputs.tag_name }}"
+          fi
+          
+          VERSION=${TAG_NAME#v}
+          
+          echo "Processing Tag: $TAG_NAME | Version: $VERSION"
+
+          cd aur
+
+          sed -i "s/^pkgver=.*/pkgver=$VERSION/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+
+          useradd -m builder
+          chown -R builder:builder .
+
+          su builder -c "updpkgsums"
+          su builder -c "makepkg --printsrcinfo > .SRCINFO"
+
+          git config --global --add safe.directory $PWD
+
+      - name: Commit and push
+        run: |
+          cd aur
+          TAG_NAME="${{ github.event.workflow_run.head_branch }}"
+          if [ -z "$TAG_NAME" ]; then
+            TAG_NAME="${{ inputs.tag_name }}"
+          fi
+          
+          rm -f *.tar.gz
+          
+          git config user.name "Tássio Virginio"
+          git config user.email "tassiovirginio@gmail.com"
+          
+          git add PKGBUILD .SRCINFO
+          
+          if git diff --cached --quiet; then
+            echo "No changes to commit - PKGBUILD is already up to date"
+          else
+            git commit -m "Update to $TAG_NAME"
+            git push
+          fi
