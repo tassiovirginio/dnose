@@ -24,6 +24,7 @@ import 'package:dnose/detectors/sleepy_fixture_detector.dart';
 import 'package:dnose/detectors/test_without_description_detector.dart';
 import 'package:dnose/detectors/unknown_test_detector.dart';
 import 'package:dnose/detectors/verbose_test_detector.dart';
+import 'package:dnose/detectors/general_fixture_detector.dart';
 import 'package:dnose/detectors/widget_setup_detector.dart';
 import 'package:dnose/metrics/abstract_metric.dart';
 import 'package:dnose/metrics/cyclomatic_complexity_metric.dart';
@@ -66,6 +67,7 @@ class DNoseCore {
     DefaultTestDetector().testSmellName,
     SensitiveEqualityDetector().testSmellName,
     DependentTestDetector().testSmellName,
+    GeneralFixtureDetector().testSmellName,
   ];
 
   final Set<String> listTestNames = {
@@ -110,6 +112,7 @@ class DNoseCore {
       MysteryGuestDetector(),
       RedundantAssertionDetector(),
       DependentTestDetector(),
+      GeneralFixtureDetector(),
     ];
 
     if (selectedSmells != null && selectedSmells.isNotEmpty) {
@@ -182,6 +185,7 @@ class DNoseCore {
 
     LazyTestDetector.reset();
     WidgetSetupDetector.reset();
+    GeneralFixtureDetector.reset();
 
     // Reuse detector and metric instances for all tests in this file
     final detectors = _createDetectors(selectedSmells);
@@ -202,6 +206,12 @@ class DNoseCore {
       testSmells.addAll(WidgetSetupDetector.detectWidgetSetup());
     }
 
+    if (selectedSmells == null ||
+        selectedSmells.isEmpty ||
+        selectedSmells.contains('general_fixture')) {
+      testSmells.addAll(GeneralFixtureDetector.detectGeneralFixtures());
+    }
+
     return (testSmells, testMetrics);
   }
 
@@ -215,6 +225,15 @@ class DNoseCore {
     List<TestMetric> testMetrics,
   ) {
     n.childEntities.whereType<AstNode>().forEach((element) {
+      // Collect setUp variables for General Fixture detection
+      if (element is ExpressionStatement &&
+          element.beginToken.toString() == 'setUp') {
+        final setupBody = _extractSetupBody(element);
+        if (setupBody != null) {
+          GeneralFixtureDetector.collectSetupData(setupBody, testClass);
+        }
+      }
+
       if (isTest(element)) {
         String testName = getTestName(element);
         _logger.info("Test Function Detect: $testName - ${element.toSource()}");
@@ -223,6 +242,7 @@ class DNoseCore {
         // Collect cross-test data
         LazyTestDetector.collectMethodCalls(expr, testClass, testName);
         WidgetSetupDetector.collectSetupPatterns(expr, testClass, testName);
+        GeneralFixtureDetector.collectTestData(expr, testClass, testName);
 
         // Detect smells (reusing detector instances)
         for (var d in detectors) {
@@ -291,5 +311,20 @@ class DNoseCore {
     mapa.forEach((key, value) {
       print("$key -> $value");
     });
+  }
+
+  /// Extracts the FunctionBody from a setUp(...) call, if present.
+  FunctionBody? _extractSetupBody(ExpressionStatement element) {
+    final methodInvocations = element.childEntities.whereType<MethodInvocation>();
+    for (final invocation in methodInvocations) {
+      if (invocation.methodName.name == 'setUp') {
+        for (final arg in invocation.argumentList.arguments) {
+          if (arg is FunctionExpression) {
+            return arg.body;
+          }
+        }
+      }
+    }
+    return null;
   }
 }

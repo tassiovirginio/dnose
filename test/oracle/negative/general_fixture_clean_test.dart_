@@ -1,0 +1,110 @@
+/// Oracle Negative: General Fixture - CLEAN CODE
+/// Tests that use ALL setUp variables → NO General Fixture smell expected
+/// General Fixture is detected when a test ignores ≥1 of the setUp variables.
+/// Expected detections: 0
+
+import 'package:test/test.dart';
+
+class AuthService {
+  final String username;
+  final String password;
+
+  AuthService({required this.username, required this.password});
+
+  bool login() => username.isNotEmpty && password.isNotEmpty;
+  void logout() {}
+}
+
+class EmailClient {
+  final String server;
+  final int port;
+
+  EmailClient({required this.server, required this.port});
+
+  bool isConnected() => server.isNotEmpty && port > 0;
+}
+
+class Database {
+  final String host;
+  bool connected = false;
+
+  Database({required this.host});
+
+  void connect() => connected = true;
+  void disconnect() => connected = false;
+  bool isConnected() => connected;
+}
+
+void main() {
+  late AuthService authService;
+  late EmailClient emailClient;
+  late Database database;
+
+  setUp(() {
+    authService = AuthService(username: 'admin', password: 'secret');
+    emailClient = EmailClient(server: 'smtp.test.com', port: 587);
+    database = Database(host: 'localhost');
+  });
+
+  // CLEAN: Uses ALL setUp variables (authService, emailClient, database)
+  test('full system integration test', () {
+    expect(authService.login(), isTrue);
+    expect(emailClient.isConnected(), isTrue);
+    database.connect();
+    expect(database.isConnected(), isTrue);
+  });
+
+  // CLEAN: Also uses all three setUp variables
+  test('complete setup teardown cycle', () {
+    final loggedIn = authService.login();
+    final emailReady = emailClient.isConnected();
+    database.connect();
+
+    expect(loggedIn, isTrue);
+    expect(emailReady, isTrue);
+    expect(database.isConnected(), isTrue);
+
+    authService.logout();
+    database.disconnect();
+    expect(database.isConnected(), isFalse);
+  });
+
+  // CLEAN: Uses all three variables in property checks
+  test('validates all service connections', () {
+    expect(authService.login(), isTrue);
+    expect(emailClient.server, equals('smtp.test.com'));
+    expect(database.host, equals('localhost'));
+  });
+
+  // CLEAN: Uses all three setUp variables in combined assertion
+  test('all services are properly initialized', () {
+    final auth = authService.login();
+    final email = emailClient.isConnected();
+    database.connect();
+    expect(auth && email && database.isConnected(), isTrue);
+  });
+
+  // CLEAN: Uses all setUp variables in sequence
+  test('services operate independently', () {
+    expect(authService.login(), isTrue);
+    expect(emailClient.port, equals(587));
+    expect(database.host, isNotEmpty);
+  });
+
+  // CLEAN: Uses all setUp variables checking properties
+  test('service configurations are correct', () {
+    expect(authService.username, equals('admin'));
+    expect(emailClient.server, equals('smtp.test.com'));
+    expect(database.host, equals('localhost'));
+  });
+
+  // CLEAN: All setUp variables used in teardown-like pattern
+  test('services can be reset', () {
+    database.connect();
+    expect(database.isConnected(), isTrue);
+    database.disconnect();
+    expect(database.isConnected(), isFalse);
+    expect(authService.login(), isTrue);
+    expect(emailClient.isConnected(), isTrue);
+  });
+}
