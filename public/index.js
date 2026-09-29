@@ -23,16 +23,21 @@ function loadTestSmellsNames() {
     const values2 = [];
     req4.onload = (e) => {
         const lines = req4.response.split("\n");
+        const pairs = [];
         for (let i = 1; i < lines.length; i++) {
             const nome = lines[i].split(";")[0];
             const value = lines[i].split(";")[1];
             if (nome !== "") {
-                names_.push(nome);
-                const valueLog = Math.log(value);
-                values.push(value);
-                values2.push(valueLog);
+                pairs.push({ name: nome, value: parseFloat(value) });
             }
         }
+        // Ordenar em ordem decrescente pelo valor
+        pairs.sort((a, b) => b.value - a.value);
+        pairs.forEach(p => {
+            names_.push(p.name);
+            values.push(p.value);
+            values2.push(Math.log(p.value));
+        });
         loadChart('myChart', names_, values, '# of Test Smells');
         loadChart2('myChart2', names_, values2, '# of Test Smells (log))');
     };
@@ -519,11 +524,11 @@ function process_all() {
     hideResultButtons();
     showLoading();
 
+    const selectedSmells = getSelectedSmells();
     const req = new XMLHttpRequest();
 
     req.onload = async () => {
         showResultButtons();
-        
 
         document.getElementById("projectname").innerHTML = "ALL";
 
@@ -538,7 +543,7 @@ function process_all() {
         hideLoading();
     };
 
-    req.open("GET", "/processar_all", true);
+    req.open("GET", "/processar_all?smells=" + selectedSmells, true);
     req.send();
 }
 

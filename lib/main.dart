@@ -214,7 +214,7 @@ Future<String> processar(
   return "OK";
 }
 
-Future<String> processarAll() async {
+Future<String> processarAll([List<String>? selectedSmells]) async {
   List<TestSmell> listaTotal = List.empty(growable: true);
   List<TestMetric> listaTotalMetrics = List.empty(growable: true);
   List<String> listaArquivosTestes = List.empty(growable: true);
@@ -232,7 +232,7 @@ Future<String> processarAll() async {
         listaTotal2,
         listaTotalMetrics2,
         listaArquivosTestes2,
-      ) = await _processar(folder.path);
+      ) = await _processar(folder.path, selectedSmells);
 
       listaTotal.addAll(listaTotal2);
       listaTotalMetrics.addAll(listaTotalMetrics2);
@@ -534,6 +534,14 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     "\n",
   );
 
+  // Sanitiza campo: remove \r\n/\r/\n e troca ; por , para não quebrar o CSV
+  String s(String? v) => (v ?? '')
+      .replaceAll('\r\n', ' ')
+      .replaceAll('\r', ' ')
+      .replaceAll('\n', ' ')
+      .replaceAll(';', ',')
+      .replaceAll('"', '');
+
   for (TestSmell ts in listaTotal) {
     String codeLine = ts.code.trim().replaceAll(" ", "");
     var containsFor = codeLine.contains('for(') ? 1 : 0;
@@ -564,9 +572,9 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     int qtdLineTeste = ts.endTest - ts.startTest + 1;
 
     sink4.write(
-      "${ts.projectName}"
-      ";${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")}"
-      ";${ts.moduleAtual};${ts.path};${ts.name}"
+      "${s(ts.projectName)}"
+      ";${s(ts.testName)}"
+      ";${s(ts.moduleAtual)};${s(ts.path)};${s(ts.name)}"
       ";${ts.start};${ts.end};${ts.commit};$qtdLine;$qtdLineTeste;"
       "$containsFor;$containsWhile;$containsIf;$containsSleep;"
       "$containsExpect;$containsCatch;$containsThrow;$containsTry;$containsNumber;$containsPrint;$containsFile;"
@@ -576,17 +584,17 @@ Future<bool> createCSV(List<TestSmell> listaTotal) async {
     );
 
     sink.write(
-      "${ts.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.moduleAtual};${ts.path};"
-      "${ts.name};${ts.start};${ts.end};${ts.commit};",
+      "${s(ts.projectName)};${s(ts.testName)};${s(ts.moduleAtual)};${s(ts.path)};"
+      "${s(ts.name)};${ts.start};${ts.end};${ts.commit};",
     );
     sink.write(
-      "${ts.lineNumber};${ts.commitAuthor};${ts.author!.replaceAll(";", ",")};${ts.dateStr};"
-      "${ts.timeStr};${ts.summary!.replaceAll(";", ",").replaceAll("\n", ".").replaceAll('"', "")};",
+      "${ts.lineNumber};${s(ts.commitAuthor)};${s(ts.author)};${s(ts.dateStr)};"
+      "${s(ts.timeStr)};${s(ts.summary)};",
     );
-    sink.write("${ts.score};${ts.comparative};${ts.words};\n");
+    sink.write("${ts.score};${ts.comparative};${s(ts.words?.toString())};\n");
 
     _logger.info(
-      "${ts.projectName};${ts.testName.replaceAll(";", ",").replaceAll("\n", ".")};${ts.moduleAtual};${ts.path};${ts.name};${ts.start};${ts.end};${ts.commit}",
+      "${s(ts.projectName)};${s(ts.testName)};${s(ts.moduleAtual)};${s(ts.path)};${s(ts.name)};${ts.start};${ts.end};${ts.commit}",
     );
     _logger.info("Code: ${ts.code}");
 

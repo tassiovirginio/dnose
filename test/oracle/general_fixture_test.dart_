@@ -1,0 +1,51 @@
+// Oracle file: General Fixture test smell
+// Rules:
+//   setUp assigns: userService, emailService, database (3 vars)
+//   A test is flagged if it does NOT use at least one of those vars.
+//
+// POSITIVE (smell) tests: testLogin, testLogout, testRegister
+//   - testLogin:   uses userService + database, NOT emailService  → SMELL
+//   - testLogout:  uses userService only, NOT emailService + database → SMELL
+//   - testRegister: uses emailService only, NOT userService + database → SMELL
+//
+// NEGATIVE (no smell) test: testFullFlow
+//   - uses all three vars → NO SMELL
+//
+// Total expected smells: 3
+
+import 'package:test/test.dart';
+
+void main() {
+  late dynamic userService;
+  late dynamic emailService;
+  late dynamic database;
+
+  setUp(() {
+    userService = Object();   // field 1
+    emailService = Object();  // field 2
+    database = Object();      // field 3
+  });
+
+  // SMELL: does NOT use emailService
+  test('testLogin', () {
+    expect(userService, isNotNull);
+    expect(database, isNotNull);
+  });
+
+  // SMELL: does NOT use emailService nor database
+  test('testLogout', () {
+    expect(userService, isNotNull);
+  });
+
+  // SMELL: does NOT use userService nor database
+  test('testRegister', () {
+    expect(emailService, isNotNull);
+  });
+
+  // NO SMELL: uses all three setUp variables
+  test('testFullFlow', () {
+    expect(userService, isNotNull);
+    expect(emailService, isNotNull);
+    expect(database, isNotNull);
+  });
+}

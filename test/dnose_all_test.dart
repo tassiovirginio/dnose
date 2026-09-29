@@ -220,6 +220,14 @@ void main() {
     );
   });
 
+  test("Detect: General Fixture", () {
+    verify(
+      name: "General Fixture",
+      qtd: 3,
+      pathFile: "/test/oracle/general_fixture_test.dart_",
+    );
+  });
+
   // ============================================
   // NEGATIVE TESTS (Clean code - expect 0 smells)
   // ============================================
@@ -293,6 +301,14 @@ void main() {
       name: "Widget Setup",
       qtd: 0,
       pathFile: "/test/oracle/negative/widget_setup_clean_test.dart_",
+    );
+  });
+
+  test("Negative: General Fixture Clean (expect 0)", () {
+    verify(
+      name: "General Fixture",
+      qtd: 0,
+      pathFile: "/test/oracle/negative/general_fixture_clean_test.dart_",
     );
   });
 }

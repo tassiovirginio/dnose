@@ -25,6 +25,7 @@ import 'package:dnose/detectors/verbose_test_detector.dart';
 import 'package:dnose/detectors/expected_resolution_omission_detector.dart';
 import 'package:dnose/detectors/mystery_guest_detector.dart';
 import 'package:dnose/detectors/redundant_assertion_detector.dart';
+import 'package:dnose/detectors/general_fixture_detector.dart';
 import 'package:dnose/dnose_core.dart';
 import 'package:dnose/main.dart';
 import 'package:dnose/utils/git_utils.dart';
@@ -91,6 +92,7 @@ List<AbstractDetector> detectors = [
   MysteryGuestDetector(),
   RedundantAssertionDetector(),
   DependentTestDetector(),
+  GeneralFixtureDetector(),
 ];
 
 void main(List<String> args) async {
@@ -500,7 +502,12 @@ Handler init() {
   });
 
   app.get('/processar_all', (Request request) async {
-    await processarAll();
+    String? selectedSmellsParam = request.url.queryParameters['smells'];
+    List<String>? selectedSmells;
+    if (selectedSmellsParam != null && selectedSmellsParam.isNotEmpty) {
+      selectedSmells = selectedSmellsParam.split(';');
+    }
+    await processarAll(selectedSmells);
     return Response.ok("Processamento concluído");
   });
 

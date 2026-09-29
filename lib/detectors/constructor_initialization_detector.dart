@@ -27,7 +27,8 @@ class ConstructorInitializationDetector extends AbstractDetector {
     this.startTest = testClass.lineNumber(e.offset);
     this.endTest = testClass.lineNumber(e.end);
 
-    final currentFile = testClass.root.toString();
+    // Usa o PATH do arquivo como chave de identidade (mais confiável que root.toString())
+    final currentFile = testClass.path;
     if (_currentFile != currentFile) {
       _constructorInitializations.clear();
       _currentFile = currentFile;
@@ -57,6 +58,7 @@ class ConstructorInitializationDetector extends AbstractDetector {
   }
 
   void _scanEntireFile(CompilationUnit root) {
+    // Escaneia TODAS as classes do arquivo (não só as que terminam em "Test")
     final scanner = _ClassScanner(_constructorInitializations);
     root.accept(scanner);
   }
@@ -66,12 +68,29 @@ class ConstructorInitializationDetector extends AbstractDetector {
     TestClass testClass,
     String testName,
   ) {
-    final className = _findEnclosingTestClass(e);
+    if (_constructorInitializations.isEmpty) return;
 
-    if (className != null &&
-        _constructorInitializations.containsKey(className)) {
-      final fields = _constructorInitializations[className]!;
+    String? detectedClass;
+    List<String>? detectedFields;
 
+    // Padrão 1 (clássico): test() está DENTRO de uma classe com CI
+    final enclosingClass = _findEnclosingClass(e);
+    if (enclosingClass != null &&
+        _constructorInitializations.containsKey(enclosingClass)) {
+      detectedClass = enclosingClass;
+      detectedFields = _constructorInitializations[enclosingClass];
+    }
+
+    // Padrão 2 (moderno): alguma classe com CI é instanciada DENTRO do test()
+    if (detectedClass == null) {
+      final instantiatedClass = _findInstantiatedCIClass(e);
+      if (instantiatedClass != null) {
+        detectedClass = instantiatedClass;
+        detectedFields = _constructorInitializations[instantiatedClass];
+      }
+    }
+
+    if (detectedClass != null && detectedFields != null) {
       testSmells.add(
         TestSmell(
           name: testSmellName,
@@ -81,7 +100,7 @@ class ConstructorInitializationDetector extends AbstractDetector {
           moduleAtual: testClass.moduleAtual,
           commit: testClass.commit,
           code:
-              'Test class "$className" initializes fixtures in constructor: ${fields.join(", ")}',
+              'Class "$detectedClass" initializes fixtures in constructor: ${detectedFields.join(", ")}',
           codeMD5: Util.md5(e.toSource()),
           start: testClass.lineNumber(e.offset),
           end: testClass.lineNumber(e.end),
@@ -98,16 +117,27 @@ class ConstructorInitializationDetector extends AbstractDetector {
     }
   }
 
-  String? _findEnclosingTestClass(AstNode node) {
+  /// Padrão 1: caminha para cima no AST desde o test() até encontrar uma
+  /// ClassDeclaration que contenha o nó (qualquer nome de classe).
+  String? _findEnclosingClass(AstNode node) {
     AstNode? current = node.parent;
     while (current != null) {
       if (current is ClassDeclaration) {
-        final className = current.name.lexeme;
-        if (className.endsWith('Test')) return className;
+        return current.name.lexeme;
       }
       current = current.parent;
     }
     return null;
+  }
+
+  /// Padrão 2: procura instanciações de classes com CI dentro do corpo do test().
+  /// Ex: `final h = MyHelper()` dentro do test() → retorna "MyHelper".
+  String? _findInstantiatedCIClass(ExpressionStatement e) {
+    final finder = _InstantiationFinder(
+      _constructorInitializations.keys.toSet(),
+    );
+    e.accept(finder);
+    return finder.foundClass;
   }
 
   @override
@@ -155,7 +185,12 @@ void main() {
   }
 }
 
-/// Internal visitor to scan class declarations for constructor initializations.
+// ─────────────────────────────────────────────────────────────────────────────
+// Visitors internos
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Escaneia TODAS as classes do arquivo (qualquer nome) e coleta as que têm
+/// construtores com inicializações de campos.
 class _ClassScanner extends RecursiveAstVisitor<void> {
   final Map<String, List<String>> constructorInitializations;
 
@@ -164,7 +199,6 @@ class _ClassScanner extends RecursiveAstVisitor<void> {
   @override
   void visitClassDeclaration(ClassDeclaration node) {
     final className = node.name.lexeme;
-    if (!className.endsWith('Test')) return;
 
     for (var member in node.members) {
       if (member is ConstructorDeclaration) {
@@ -175,18 +209,20 @@ class _ClassScanner extends RecursiveAstVisitor<void> {
         break;
       }
     }
-    // Don't call super — we don't need to recurse into class bodies
+    // Não recursa dentro de classes — classes aninhadas são raras em Dart
   }
 
   List<String> _extractInitializations(ConstructorDeclaration constructor) {
     final initializations = <String>[];
 
+    // Inicializações via lista de inicializadores: MyClass() : field = value;
     for (var initializer in constructor.initializers) {
       if (initializer is ConstructorFieldInitializer) {
         initializations.add(initializer.fieldName.name);
       }
     }
 
+    // Inicializações via atribuição no corpo: this.field = value; ou field = value;
     final body = constructor.body;
     if (body is BlockFunctionBody) {
       final finder = _ConstructorAssignmentFinder(initializations);
@@ -197,7 +233,7 @@ class _ClassScanner extends RecursiveAstVisitor<void> {
   }
 }
 
-/// Internal visitor to find assignments in constructor bodies.
+/// Encontra atribuições no corpo do construtor.
 class _ConstructorAssignmentFinder extends RecursiveAstVisitor<void> {
   final List<String> initializations;
 
@@ -213,5 +249,23 @@ class _ConstructorAssignmentFinder extends RecursiveAstVisitor<void> {
       initializations.add(leftSide.name);
     }
     super.visitAssignmentExpression(node);
+  }
+}
+
+/// Procura instanciações (`ClassName()`) de classes que têm CI,
+/// dentro do corpo de um test().
+class _InstantiationFinder extends RecursiveAstVisitor<void> {
+  final Set<String> ciClassNames;
+  String? foundClass;
+
+  _InstantiationFinder(this.ciClassNames);
+
+  @override
+  void visitInstanceCreationExpression(InstanceCreationExpression node) {
+    final typeName = node.constructorName.type.name2.lexeme;
+    if (ciClassNames.contains(typeName) && foundClass == null) {
+      foundClass = typeName;
+    }
+    super.visitInstanceCreationExpression(node);
   }
 }

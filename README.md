@@ -39,6 +39,7 @@ wget -qO- https://raw.githubusercontent.com/tassiovirginio/dnose/main/install.sh
 - [x] **Empty Test**
 - [x] **Exception Handling**
 - [x] **Expected Resolution Omission**
+- [x] **General Fixture**
 - [x] **Ignored Test**
 - [x] **Lazy Test**
 - [x] **Magic Number**
